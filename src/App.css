@@ -5,6 +5,10 @@ body {
   height: 100%;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .primary-bg,
 .primary-btn,
 .selected-method {
