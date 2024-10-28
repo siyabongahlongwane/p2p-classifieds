@@ -1,0 +1,40 @@
+@import '../../colors.css';
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    color: var(--gray);
+    font-size: 14px;
+}
+
+.menu-item:hover .icon-label {
+    color: var(--blue);
+    font-weight: bold;
+}
+
+.menu-item .icon-label,
+.menu-item {
+    display: flex;
+    align-items: center;
+}
+
+.menu-item .icon-label {
+    gap: 1rem;
+}
+
+.menu-item:hover .icon-label .svg-icon,
+.active-icon,
+.active-icon-label {
+    color: var(--blue);
+}
+
+
+
+.menu-item .active-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--blue);
+}
