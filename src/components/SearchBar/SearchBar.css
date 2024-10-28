@@ -1,0 +1,20 @@
+@import '../../colors.css';
+
+.search-bar {
+    position: relative;
+    width: 320px;
+}
+
+.search-bar input {
+    width: 100%;
+    border: 1px solid #E4E4E4;
+    border-radius: .5rem;
+    padding: .5rem;
+}
+
+.search-bar .icon {
+    position: absolute;
+    top: 50%;
+    transform: translate(50%, -50%);
+    right: 1.5rem;
+}
