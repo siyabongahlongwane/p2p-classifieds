@@ -1,6 +1,7 @@
 import { Box, Button, Grid2, Stack, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
 import './Auth.css'
+import { Link } from 'react-router-dom'
 
 const SignIn = () => {
   const [selectedLoginMethod, setSelectedLoginMethod] = useState('pwd')
@@ -107,9 +108,11 @@ const SignIn = () => {
           />
           <Typography component={'small'} color='gray' fontWeight={300}>
             Don't have an account?
-            <Typography ml={1} component={'span'} color='#000'>
-              Sign up.
-            </Typography>
+            <Link to={'/sign-up'}>
+              <Typography ml={1} component={'span'} color='#000'>
+                Sign up
+              </Typography>
+            </Link>
           </Typography>
         </Stack>
       </Stack>
@@ -126,4 +129,4 @@ const SignIn = () => {
   )
 }
 
-export default SignIn;
+export default SignIn
