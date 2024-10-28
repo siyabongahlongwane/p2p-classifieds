@@ -1,0 +1,3 @@
+.selected-method {
+    transition: background-color 1s ease;
+}

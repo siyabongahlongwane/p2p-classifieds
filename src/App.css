@@ -1,7 +1,34 @@
-#root {
+#root,
+html,
+body {
   margin: 0;
+  height: 100%;
+}
+
+.primary-bg,
+.primary-btn,
+.selected-method {
+  background-color: #c2b280 !important;
+}
+
+.primary-btn {
+  color: #000 !important;
+}
+
+.primary-btn,
+.like {
+  transition: opacity .5s ease;
+}
+
+.primary-btn:hover,
+.like:hover {
+  opacity: .75;
 }
 
 .pointer {
   cursor: pointer;
+}
+
+input:not([type="file" i], [type="image" i], [type="checkbox" i], [type="radio" i]) {
+  height: .6em !important;
 }
