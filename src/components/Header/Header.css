@@ -1,0 +1,65 @@
+@import '../../colors.css';
+
+.header,
+.profile-section,
+.user-actions,
+.icons,
+.profile-section,
+.user-details,
+.user-name,
+.avatar, .menu-search {
+    display: flex;
+    align-items: center;
+}
+
+.header {
+    justify-content: space-between;
+}
+
+.user-actions {
+    gap: 1rem;
+}
+
+.user-actions .icons {
+    gap: .5rem;
+    margin-top: .5rem;
+}
+
+.profile-section, .menu-search {
+    gap: .5rem;
+}
+
+.user-details {
+    gap: 1rem;
+}
+
+.user-name {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.avatar {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background-color: var(--gray);
+    justify-content: center;
+    color: var(--white);
+}
+
+.user-name span {
+    color: var(--gray);
+}
+
+.ellipsis {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.separator {
+    background-color: #e4e4e4;
+    height: 1px;
+    width: 100%;
+}
