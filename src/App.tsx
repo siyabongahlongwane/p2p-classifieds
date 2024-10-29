@@ -4,6 +4,8 @@ import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
 import Home from "./pages/Home/Home";
 import AppWrapper from "./components/AppWrapper/AppWrapper";
+import Cart from "./pages/Cart/Cart";
+import Likes from "./pages/Likes/Likes";
 
 function App() {
   return (
@@ -11,10 +13,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AppWrapper />}>
-            <Route path="/home" element={<Home />}></Route>
-            <Route path="/my-shop" element={<Home />}></Route>
-            <Route path="/messages" element={<Home />}></Route>
-            <Route path="/settings" element={<Home />}></Route>
+            <Route path="home" element={<Home />}></Route>
+            <Route path="cart" element={<Cart />}></Route>
+            <Route path="likes" element={<Likes />}></Route>
+            <Route path="my-shop" element={<Home />}></Route>
+            <Route path="messages" element={<Home />}></Route>
+            <Route path="settings" element={<Home />}></Route>
           </Route>
           <Route path="/sign-in" element={<SignIn />}></Route>
           <Route path="/sign-up" element={<SignUp />}></Route>
