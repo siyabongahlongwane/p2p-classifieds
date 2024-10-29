@@ -1,3 +1,5 @@
+@import '../../colors.css';
+
 .product {
   transition: transform .5s ease, border .5s ease;
   border: 3px solid transparent;
@@ -5,5 +7,5 @@
 
 .product:hover {
   transform: scale(1.05);
-  border: 3px solid #d32f2f;
+  border: 3px solid var(--blue);
 }

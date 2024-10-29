@@ -23,7 +23,7 @@ const ProductItem = () => {
           <img
             src="https://images.yaga.co.za/f68o1btkar/a2a66f.jpeg?s=300&f=webp"
             alt="Image"
-            width={180}
+            width={'100%'}
           />
         </Box>
         <Stack p={1} gap={0.5}>
@@ -35,13 +35,13 @@ const ProductItem = () => {
             <Typography fontSize={16} fontWeight={500}>R{250}</Typography>
             {liked ? (
               <Favorite
-                color="error"
+                htmlColor="var(--brown)"
                 onClick={() => setLiked(!liked)}
                 className="pointer like"
-              />
-            ) : (
-              <FavoriteBorderOutlined
-                color="error"
+                />
+              ) : (
+                <FavoriteBorderOutlined
+                htmlColor="var(--brown)"
                 onClick={() => setLiked(!liked)}
                 className="pointer like"
               />
@@ -57,7 +57,7 @@ const ProductItem = () => {
                 bgcolor={!isInCart ? "#c2b280" : "#d32f2f"}
                 borderRadius={2}
                 p={0.5}
-                className="pointer primary-btn"
+                className="pointer"
               >
                 {!isInCart ? (
                   <ShoppingCart sx={{ ...iconStyles }} />
@@ -67,7 +67,7 @@ const ProductItem = () => {
                 <Typography
                   fontSize={11}
                   color={!isInCart ? "#000" : "#fff"}
-                  fontWeight={"bold"}
+                  fontWeight={"400"}
                 >
                   {isInCart ? "Remove from cart" : " Add to cart"}
                 </Typography>
