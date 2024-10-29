@@ -11,8 +11,8 @@ const MenuItem = ({ item, activeMenuItem, setActiveMenuItem, index }: any) => {
     return (
         <div className='menu-item' onClick={() => logout ? logout('setUser') : setActiveMenuItem(index)}>
             <div className="icon-label">
-                <Icon htmlColor={isActive ? 'var(--blue)' : ''} />
-                <Typography className={isActive ? 'active-icon-label' : ''} fontWeight={isActive ? 'bold' : 'normal'} >{label}</Typography>
+                <Icon htmlColor={isActive ? 'var(--blue)' : 'var(--gray)'} />
+                <Typography color={isActive ? 'var(--blue)' : 'var(--black)'} fontWeight={isActive ? '400' : '300'} >{label}</Typography>
             </div>
             {
                 index === activeMenuItem && <div className='active-indicator' />
