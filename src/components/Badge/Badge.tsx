@@ -1,12 +1,23 @@
 import { SvgIconComponent } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 
-const Badge = ({ count, Icon }: { count: number, Icon: SvgIconComponent }) => {
+const Badge = ({
+  count,
+  Icon,
+  onClick,
+}: {
+  count: number;
+  Icon: SvgIconComponent;
+  onClick?: () => void;
+}) => {
   return (
-    <Box position="relative">
+    <Box
+      className={onClick ? "pointer" : ""}
+      position="relative"
+      onClick={() => (onClick ? onClick() : null)}
+    >
       <Icon htmlColor="gray" />
       <Box
-        className="badge"
         position={"absolute"}
         bottom={18}
         left={12}
