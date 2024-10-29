@@ -8,11 +8,13 @@ import {
   ShoppingCartOutlined,
 } from "@mui/icons-material";
 import Badge from "../Badge/Badge";
+import { useNavigate } from "react-router-dom";
 // import { UserContext } from '../../context/UserContext';
 // import Drawer from '../Drawer/Drawer';
 
 const Header = () => {
   // const { user } = useContext(UserContext);
+  const navigate = useNavigate();
   const user = {name:'', email: ''};
   return (
     <Box className="header">
@@ -22,9 +24,9 @@ const Header = () => {
       </Box>
       <Box className="user-actions">
         <Box className="icons">
-          <Badge count={100} Icon={ShoppingCartOutlined} />
-          <Badge count={3} Icon={FavoriteBorderOutlined} />
-          <Badge count={5} Icon={NotificationsOutlined} />
+          <Badge onClick={() => navigate('cart')} count={100} Icon={ShoppingCartOutlined} />
+          <Badge onClick={() => navigate('likes')} count={3} Icon={FavoriteBorderOutlined} />
+          <Badge onClick={() => navigate('cart')} count={5} Icon={NotificationsOutlined} />
         </Box>
         <Box className="profile-section">
           <Box className="avatar" bgcolor={'var(--blue)'}>
