@@ -3,39 +3,40 @@ import MenuItem from "../MenuItem/MenuItem";
 import { useState } from 'react';
 import { HomeOutlined, LocalShippingOutlined, LogoutOutlined, MarkChatUnreadOutlined, SettingsOutlined, ShoppingBagOutlined } from "@mui/icons-material";
 import useAuth from "../../hooks/useAuth";
+import { MenuItem as MenuItemType} from "../../typings/MenuItem.type";
 
 const Menu = () => {
     const [activeMenuItem, setActiveMenuItem] = useState(0);
-    const menuItems = [
+    const menuItems: MenuItemType[] = [
         {
             Icon: HomeOutlined,
-            route: '',
-            label: 'Home'
+            route: 'home',
+            label: 'Home',
         },
         {
             Icon:  ShoppingBagOutlined,
-            route: '',
-            label: 'My Shop'
+            route: 'my-shop',
+            label: 'My Shop',
         },
         {
             Icon:  LocalShippingOutlined,
-            route: '',
-            label: 'My Orders'
+            route: 'my-orders',
+            label: 'My Orders',
         },
         {
             Icon:  MarkChatUnreadOutlined,
-            route: '',
-            label: 'Messages'
+            route: 'messages',
+            label: 'Messages',
         },
         {
             Icon:  SettingsOutlined,
-            route: '',
-            label: 'Settings'
+            route: 'settings',
+            label: 'Settings',
         },
         {
             Icon:  LogoutOutlined,
-            route: '',
             label: 'Logout',
+            route: '',
             logout: useAuth().logout
         },
     ]

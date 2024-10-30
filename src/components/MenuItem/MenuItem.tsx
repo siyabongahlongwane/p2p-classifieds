@@ -1,17 +1,40 @@
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import "./MenuItem.css";
 import { Typography } from "@mui/material";
 
 import { UserContext } from "../../context/User/UserContext";
+import { useNavigate } from "react-router-dom";
+import { MenuItem as MenuItemType } from "../../typings/MenuItem.type";
+import { User } from "../../typings/User.type";
 
-const MenuItem = ({ item, activeMenuItem, setActiveMenuItem, index }: any) => {
+const MenuItem = ({
+  item,
+  activeMenuItem,
+  setActiveMenuItem,
+  index,
+}: {
+  item: MenuItemType;
+  activeMenuItem: number;
+  setActiveMenuItem: Dispatch<SetStateAction<number>>;
+  index: number;
+}) => {
   const { setUser } = useContext(UserContext);
-  const { label, Icon, logout } = item;
+  const navigate = useNavigate();
+  const { label, Icon, logout, route } = item;
   const isActive = index === activeMenuItem;
+
+  const handleItemClick = (route: string) => {
+    setActiveMenuItem(index);
+    navigate(route);
+  };
   return (
     <div
       className="menu-item"
-      onClick={() => (logout ? logout(setUser) : setActiveMenuItem(index))}
+      onClick={() =>
+        logout
+          ? logout(setUser as Dispatch<SetStateAction<User | null>>)
+          : handleItemClick(route)
+      }
     >
       <div className="icon-label">
         <Icon htmlColor={isActive ? "var(--blue)" : "var(--gray)"} />
