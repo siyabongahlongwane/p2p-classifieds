@@ -2,7 +2,7 @@ import "./Menu.css";
 import MenuItem from "../MenuItem/MenuItem";
 import { useState } from 'react';
 import { HomeOutlined, LocalShippingOutlined, LogoutOutlined, MarkChatUnreadOutlined, SettingsOutlined, ShoppingBagOutlined } from "@mui/icons-material";
-// import useAuth from "../../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 
 const Menu = () => {
     const [activeMenuItem, setActiveMenuItem] = useState(0);
@@ -36,7 +36,7 @@ const Menu = () => {
             Icon:  LogoutOutlined,
             route: '',
             label: 'Logout',
-            // logout: useAuth().logout
+            logout: useAuth().logout
         },
     ]
     return (

@@ -87,7 +87,7 @@ const useAuth = () => {
         setTimeout(() => {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            navigate('/login');
+            navigate('/home');
         }, 500);
     };
 
