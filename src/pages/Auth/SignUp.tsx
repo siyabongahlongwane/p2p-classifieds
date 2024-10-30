@@ -8,8 +8,41 @@ import {
 } from "@mui/material";
 import "./Auth.css";
 import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { useState } from "react";
 
 const SignUp = () => {
+  const { error, loading, signUp } = useAuth();
+  const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
+
+  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const first_name = formData.get("first_name") as string;
+    const last_name = formData.get("last_name") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const password = formData.get("password") as string;
+    console.log(form);
+    signUp(first_name, last_name, email, phone, password);
+  };
+
+  const handleInputChange = (e: {
+    target: { name: string; value: string };
+  }) => {
+    const { name, value } = e.target;
+    setForm({
+      ...form,
+      [name]: value,
+    });
+  };
+
   return (
     <Grid2
       display={"grid"}
@@ -24,20 +57,32 @@ const SignUp = () => {
             <Typography fontWeight={400} variant="body2" color="gray">
               Register your account below
             </Typography>
+            <Typography
+              fontWeight={400}
+              variant="body2"
+              color="red"
+              fontSize={18}
+            >
+              {error || ""}
+            </Typography>
           </Stack>
 
           <Box
             component={"form"}
+            onSubmit={handleSignUp}
             display={"flex"}
             flexDirection={"column"}
             gap={2}
           >
             <Stack gap={1}>
-              <Typography variant="subtitle2">Frist Name</Typography>
+              <Typography variant="subtitle2">First Name</Typography>
               <TextField
                 error={false}
                 placeholder="Enter Frist Name"
                 helperText=""
+                value={form.first_name}
+                name="first_name"
+                onChange={handleInputChange}
               />
             </Stack>
             <Stack gap={1}>
@@ -46,6 +91,9 @@ const SignUp = () => {
                 error={false}
                 placeholder="Enter Last Name"
                 helperText=""
+                value={form.last_name}
+                name="last_name"
+                onChange={handleInputChange}
               />
             </Stack>
             <Stack gap={1}>
@@ -54,6 +102,9 @@ const SignUp = () => {
                 error={false}
                 placeholder="Enter Email"
                 helperText=""
+                value={form.email}
+                name="email"
+                onChange={handleInputChange}
               />
             </Stack>
             <Stack gap={1}>
@@ -62,6 +113,9 @@ const SignUp = () => {
                 error={false}
                 placeholder="Enter Phone"
                 helperText=""
+                value={form.phone}
+                name="phone"
+                onChange={handleInputChange}
               />
             </Stack>
             <Stack gap={1}>
@@ -70,10 +124,18 @@ const SignUp = () => {
                 error={false}
                 placeholder="Enter Password"
                 helperText=""
+                value={form.password}
+                name="password"
+                onChange={handleInputChange}
               />
             </Stack>
-            <Button variant="contained" className="primary-btn">
-              Login
+            <Button
+              variant="contained"
+              className="primary-btn"
+              type="submit"
+              style={{ pointerEvents: loading ? "none" : "auto" }}
+            >
+              {loading ? "Loading..." : "Sign Up"}
             </Button>
           </Box>
         </Stack>
@@ -83,7 +145,7 @@ const SignUp = () => {
           </Typography>
           <img
             className="pointer"
-            src="../../../public/google-sign-in.svg"
+            src="/google-sign-in.svg"
             alt="Google Sign In"
           />
           <Typography component={"small"} color="gray" fontWeight={300}>
@@ -99,7 +161,7 @@ const SignUp = () => {
       <Box
         style={{
           backgroundImage:
-            "linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3)), url(../../../public/stationery.jpg)",
+            "linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3)), url(/stationery.jpg)",
         }}
         height={"inherit"}
         width={"100%"}
