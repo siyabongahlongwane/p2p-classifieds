@@ -8,23 +8,31 @@ import {
 import { useState } from "react";
 import "./Product.css";
 
-const ProductItem = () => {
+const ProductItem = ({ product }) => {
   const [liked, setLiked] = useState(true);
   const [isInCart, setIsInCart] = useState(true);
   const [isSold] = useState(true);
-
+  const { price, status, photos } = product;
   return (
-    <Stack width={180} className="pointer product" position={'relative'}>
-    {isSold && <Box position={'absolute'} top={0} right={0} bgcolor={'#000'} color={'#fff'} fontWeight={'bold'} p={0.5}>
-      Sold
-    </Box>}
+    <Stack width={180} className="pointer product" position={"relative"}>
+      {isSold && (
+        <Box
+          position={"absolute"}
+          top={0}
+          right={0}
+          bgcolor={"#000"}
+          color={"#fff"}
+          fontWeight={"bold"}
+          border={'.5px solid #fff'}
+          borderRadius={'0px 0px 0px 8px'}
+          p={0.5}
+        >
+         <Typography fontSize={12} fontWeight={"400"}  > {status}</Typography>
+        </Box>
+      )}
       <Paper>
         <Box>
-          <img
-            src="https://images.yaga.co.za/f68o1btkar/a2a66f.jpeg?s=300&f=webp"
-            alt="Image"
-            width={'100%'}
-          />
+          <img src={photos[0]?.photo_url} alt="Image" width={"100%"} />
         </Box>
         <Stack p={1} gap={0.5}>
           <Box
@@ -32,15 +40,17 @@ const ProductItem = () => {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Typography fontSize={16} fontWeight={500}>R{250}</Typography>
+            <Typography fontSize={16} fontWeight={500}>
+              R{price}
+            </Typography>
             {liked ? (
               <Favorite
                 htmlColor="var(--brown)"
                 onClick={() => setLiked(!liked)}
                 className="pointer like"
-                />
-              ) : (
-                <FavoriteBorderOutlined
+              />
+            ) : (
+              <FavoriteBorderOutlined
                 htmlColor="var(--brown)"
                 onClick={() => setLiked(!liked)}
                 className="pointer like"
