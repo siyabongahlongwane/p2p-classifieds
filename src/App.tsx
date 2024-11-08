@@ -6,6 +6,8 @@ import Home from "./pages/Home/Home";
 import AppWrapper from "./components/AppWrapper/AppWrapper";
 import Cart from "./pages/Cart/Cart";
 import Likes from "./pages/Likes/Likes";
+import MyShop from "./pages/MyShop/MyShop";
+import AddProduct from "./pages/AddProduct/AddProduct";
 
 function App() {
   return (
@@ -16,7 +18,9 @@ function App() {
             <Route path="home" element={<Home />}></Route>
             <Route path="cart" element={<Cart />}></Route>
             <Route path="likes" element={<Likes />}></Route>
-            <Route path="my-shop" element={<Home />}></Route>
+            <Route path="my-shop" element={<MyShop />}>
+              <Route path="add-product" element={<AddProduct />}></Route>
+            </Route>
             <Route path="messages" element={<Home />}></Route>
             <Route path="settings" element={<Home />}></Route>
           </Route>
