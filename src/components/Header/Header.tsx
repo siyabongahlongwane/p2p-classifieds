@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import "./Header.css";
 import SearchBar from "../SearchBar/SearchBar";
 import { Box, Button, Typography } from "@mui/material";
@@ -10,11 +10,27 @@ import {
 import Badge from "../Badge/Badge";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/User/UserContext";
+import useApi from "../../hooks/useApi";
+import { useStore } from "../../stores/store";
 // import Drawer from '../Drawer/Drawer';
 
 const Header = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+
+  const {
+    loading,
+    get,
+  } = useApi(`${import.meta.env.VITE_API_URL}`);
+
+  const { setLikes, likes } = useStore();
+  const fetchLikes = async () => {
+    const likes = await get("/likes/fetch-likes");
+    setLikes(likes);
+  };
+  useEffect(() => {
+    fetchLikes();
+  }, []);
 
   return (
     <Box className="header">
@@ -31,7 +47,7 @@ const Header = () => {
           />
           <Badge
             onClick={() => navigate("likes")}
-            count={3}
+            count={loading ? 0 : likes.length}
             Icon={FavoriteBorderOutlined}
           />
           {user && (
@@ -61,10 +77,7 @@ const Header = () => {
             </Box>
           </Box>
         ) : (
-          <Button
-            variant="outlined"
-            onClick={() => navigate("/sign-in")}
-          >
+          <Button variant="outlined" onClick={() => navigate("/sign-in")}>
             Sign In
           </Button>
         )}

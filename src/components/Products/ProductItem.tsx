@@ -5,14 +5,51 @@ import {
   FavoriteBorderOutlined,
   ShoppingCart,
 } from "@mui/icons-material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./Product.css";
+import useApi from "../../hooks/useApi";
+import { UserContext } from "../../context/User/UserContext";
+import { useStore } from "../../stores/store";
+import { isLiked } from "../../utils/product.util";
 
 const ProductItem = ({ product }) => {
-  const [liked, setLiked] = useState(true);
-  const [isInCart, setIsInCart] = useState(true);
-  const [isSold] = useState(true);
-  const { price, status, photos } = product;
+  const { price, status, photos, product_id } = product;
+  const [liked, setLiked] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
+  const [isSold] = useState(false);
+  const { user } = useContext(UserContext);
+
+  const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
+
+  const { setLikes, likes } = useStore();
+
+  useEffect(() => {
+    setLiked(
+      isLiked(
+        product_id,
+        likes.map((p: any) => p.product_id)
+      )
+    );
+  }, [liked, likes.length]);
+  const handleAddLike = async () => {
+    const endpoint = `/likes/add-like`;
+    const newLike = await post(endpoint, { product_id, user_id: user.user_id });
+    
+    setLikes([...likes, newLike]);
+    setLiked(true);
+  };
+
+  const handleRemoveLike = () => {
+    remove(
+      `/likes/remove-like/${
+        likes.find((p: any) => p.product_id === product_id).like_id
+      }`
+    ).then(() => {
+      setLikes(likes.filter((p: any) => p.product_id !== product_id));
+      setLiked(false);
+    });
+  };
+
   return (
     <Stack width={180} className="pointer product" position={"relative"}>
       {isSold && (
@@ -23,11 +60,13 @@ const ProductItem = ({ product }) => {
           bgcolor={"#000"}
           color={"#fff"}
           fontWeight={"bold"}
-          border={'.5px solid #fff'}
-          borderRadius={'0px 0px 0px 8px'}
+          border={".5px solid #fff"}
+          borderRadius={"0px 0px 0px 8px"}
           p={0.5}
         >
-         <Typography fontSize={12} fontWeight={"400"}  > {status}</Typography>
+          <Typography fontSize={12} fontWeight={"400"}>
+            {status}
+          </Typography>
         </Box>
       )}
       <Paper>
@@ -46,13 +85,13 @@ const ProductItem = ({ product }) => {
             {liked ? (
               <Favorite
                 htmlColor="var(--brown)"
-                onClick={() => setLiked(!liked)}
+                onClick={() => handleRemoveLike()}
                 className="pointer like"
               />
             ) : (
               <FavoriteBorderOutlined
                 htmlColor="var(--brown)"
-                onClick={() => setLiked(!liked)}
+                onClick={() => handleAddLike()}
                 className="pointer like"
               />
             )}
