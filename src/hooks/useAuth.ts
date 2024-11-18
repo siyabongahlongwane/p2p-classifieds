@@ -45,7 +45,6 @@ const useAuth = () => {
     // Sign In function
     const signIn = async (email: string, password: string, selectedLoginMethod: string, setContextUser: Dispatch<SetStateAction<User>>) => {
         setLoading(true);
-        console.log(selectedLoginMethod);
         if (selectedLoginMethod !== 'pwd') {
             console.log('GET OTP');
             setLoading(false);
@@ -65,9 +64,9 @@ const useAuth = () => {
                 throw new Error(result.err || 'Login failed');
             }
 
-            setContextUser(result.user);
-            localStorage.setItem('token', result.token || '');
-            localStorage.setItem('user', JSON.stringify(result.user || ''));
+            setContextUser(result.payload);
+            localStorage.setItem('token', result.payload.token || '');
+            localStorage.setItem('user', JSON.stringify(result.payload || ''));
             setTimeout(() => {
                 navigate('/home');
             }, 1500);

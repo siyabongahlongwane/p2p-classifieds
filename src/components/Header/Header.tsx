@@ -18,15 +18,19 @@ const Header = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const {
-    loading,
-    get,
-  } = useApi(`${import.meta.env.VITE_API_URL}`);
+  const { loading, get } = useApi(`${import.meta.env.VITE_API_URL}`);
 
-  const { setLikes, likes } = useStore();
+  const { setLikes, likes = [] } = useStore();
   const fetchLikes = async () => {
-    const likes = await get("/likes/fetch-likes");
-    setLikes(likes);
+    if (user) {
+      const likes = await get(`/likes/fetch-likes?user_id=${user.user_id}`);
+      try {
+        setLikes(likes);
+      } catch (err) {
+        setLikes([]);
+        console.error(err);
+      }
+    }
   };
   useEffect(() => {
     fetchLikes();
