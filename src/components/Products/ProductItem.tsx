@@ -33,21 +33,24 @@ const ProductItem = ({ product }) => {
   }, [liked, likes?.length, user]);
   const handleAddLike = async () => {
     const endpoint = `/likes/add-like`;
-    const newLike = await post(endpoint, { product_id, user_id: user.user_id });
-
-    setLikes([...likes, newLike]);
+    const newLikes = await post(endpoint, {
+      product_id,
+      user_id: user.user_id,
+    });
+    setLikes([...newLikes]);
     setLiked(true);
   };
 
   const handleRemoveLike = () => {
-    remove(
-      `/likes/remove-like/${
-        likes.find((p: any) => p.product_id === product_id)?.like_item.like_id
-      }`
-    ).then(() => {
-      setLikes(likes.filter((p: any) => p.product_id !== product_id));
-      setLiked(false);
-    });
+    const likeToRemove = likes.find((p: any) => p.product_id === product_id)
+      ?.like_item.like_id;
+    const newLikes = likes.filter((p: any) => p.product_id !== product_id);
+    remove(`/likes/remove-like/${likeToRemove}?user_id=${user.user_id}`).then(
+      () => {
+        setLikes([...newLikes]);
+        setLiked(false);
+      }
+    );
   };
 
   return (
