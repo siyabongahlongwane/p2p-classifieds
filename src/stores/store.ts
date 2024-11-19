@@ -5,6 +5,8 @@ import { devtools } from 'zustand/middleware';
 type Store = {
     likes: any[],
     cart: any[],
+    selectedProduct: any;
+    categories: any;
     isLoading: boolean,
     error: Error | null | any,
     toast: {
@@ -37,6 +39,8 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
     cart: [],
     isLoading: false,
     error: null,
+    selectedProduct: null,
+    categories: [],
     toast: {
         isOpen: false,
         message: '',

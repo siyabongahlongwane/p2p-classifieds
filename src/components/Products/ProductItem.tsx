@@ -11,6 +11,7 @@ import useApi from "../../hooks/useApi";
 import { UserContext } from "../../context/User/UserContext";
 import { useStore } from "../../stores/store";
 import { isLiked, existsInCart } from "../../utils/product.util";
+import { useNavigate } from "react-router-dom";
 
 const ProductItem = ({ product }) => {
   const { price, status, photos, product_id } = product;
@@ -21,8 +22,9 @@ const ProductItem = ({ product }) => {
 
   const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
 
-  const { setLikes, likes, setCart, cart } = useStore();
+  const { setLikes, likes, setCart, cart, setField } = useStore();
 
+  const navigate = useNavigate();
   useEffect(() => {
     setLiked(
       isLiked(
@@ -88,7 +90,15 @@ const ProductItem = ({ product }) => {
   };
 
   return (
-    <Stack width={180} className="pointer product" position={"relative"}>
+    <Stack
+      width={180}
+      className="pointer product"
+      position={"relative"}
+      onClick={() => {
+        setField("selectedProduct", product);
+        navigate(`/view-product/${product_id}`);
+      }}
+    >
       {isSold && (
         <Box
           position={"absolute"}
