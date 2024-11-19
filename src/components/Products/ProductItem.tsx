@@ -10,7 +10,7 @@ import "./Product.css";
 import useApi from "../../hooks/useApi";
 import { UserContext } from "../../context/User/UserContext";
 import { useStore } from "../../stores/store";
-import { isLiked } from "../../utils/product.util";
+import { isLiked, existsInCart } from "../../utils/product.util";
 
 const ProductItem = ({ product }) => {
   const { price, status, photos, product_id } = product;
@@ -21,7 +21,7 @@ const ProductItem = ({ product }) => {
 
   const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
 
-  const { setLikes, likes } = useStore();
+  const { setLikes, likes, setCart, cart } = useStore();
 
   useEffect(() => {
     setLiked(
@@ -31,6 +31,16 @@ const ProductItem = ({ product }) => {
       )
     );
   }, [liked, likes?.length, user]);
+
+  useEffect(() => {
+    setIsInCart(
+      existsInCart(
+        product_id,
+        cart.map((p: any) => p.product_id)
+      )
+    );
+  }, [isInCart, cart?.length, user]);
+
   const handleAddLike = async () => {
     const endpoint = `/likes/add-like`;
     const newLikes = await post(endpoint, {
@@ -51,6 +61,30 @@ const ProductItem = ({ product }) => {
         setLiked(false);
       }
     );
+  };
+
+  const handleAddToCart = async () => {
+    const endpoint = `/cart/add-cart-item`;
+    const newCart = await post(endpoint, {
+      product_id,
+      user_id: user.user_id,
+    });
+    setCart([...newCart]);
+    setIsInCart(true);
+  };
+
+  const handleRemoveFromCart = () => {
+    const { cart_item_id } = cart.find(
+      (p: any) => p.product_id === product_id
+    ).cart_item;
+
+    const newCart = cart.filter((p: any) => p.product_id !== product_id);
+    remove(
+      `/cart/remove-cart-item/${cart_item_id}?user_id=${user.user_id}`
+    ).then(() => {
+      setCart([...newCart]);
+      setIsInCart(false);
+    });
   };
 
   return (
@@ -102,7 +136,9 @@ const ProductItem = ({ product }) => {
           <Stack display={"flex"} gap={0.5}>
             <Box display={"flex"} justifyContent={"center"}>
               <Box
-                onClick={() => setIsInCart(!isInCart)}
+                onClick={() =>
+                  !isInCart ? handleAddToCart() : handleRemoveFromCart()
+                }
                 display={"flex"}
                 gap={0.5}
                 alignItems={"center"}

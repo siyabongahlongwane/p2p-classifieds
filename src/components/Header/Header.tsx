@@ -21,13 +21,18 @@ const Header = () => {
   const { loading, get } = useApi(`${import.meta.env.VITE_API_URL}`);
 
   const { setLikes, likes = [] } = useStore();
+  const { setCart, cart = [] } = useStore();
   const fetchLikes = async () => {
     if (user) {
       const likes = await get(`/likes/fetch-likes?user_id=${user.user_id}`);
+      const cart = await get(`/cart/fetch-cart?user_id=${user.user_id}`);
       try {
         setLikes(likes);
+        console.log(cart)
+        setCart(cart);
       } catch (err) {
         setLikes([]);
+        setCart([]);
         console.error(err);
       }
     }
@@ -46,7 +51,7 @@ const Header = () => {
         <Box className="icons">
           <Badge
             onClick={() => navigate("cart")}
-            count={100}
+            count={loading ? 0 : cart.length}
             Icon={ShoppingCartOutlined}
           />
           <Badge
@@ -57,7 +62,7 @@ const Header = () => {
           {user && (
             <Badge
               onClick={() => navigate("cart")}
-              count={5}
+              count={loading ? 0 : cart.length}
               Icon={NotificationsOutlined}
             />
           )}

@@ -4,6 +4,7 @@ import { devtools } from 'zustand/middleware';
 
 type Store = {
     likes: any[],
+    cart: any[],
     isLoading: boolean,
     error: Error | null | any,
     toast: {
@@ -25,6 +26,7 @@ type Store = {
 
 type StoreActions = {
     setLikes: (likes: any[]) => void,
+    setCart: (likes: any[]) => void,
     setIsLoading: (isLoading: boolean) => void,
     setField: ([key]: any, val: any) => void,
     setToast: (toast: any) => void
@@ -32,6 +34,7 @@ type StoreActions = {
 
 export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
     likes: [],
+    cart: [],
     isLoading: false,
     error: null,
     toast: {
@@ -49,6 +52,7 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
         component: null
     },
     setLikes: (likes) => set({ likes }),
+    setCart: (cart) => set({ cart }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setField: (key, val) => set({ [key]: val }),
     setToast: (toast) => set({ toast })
