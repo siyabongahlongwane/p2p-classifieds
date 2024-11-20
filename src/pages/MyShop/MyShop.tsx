@@ -41,7 +41,7 @@ const MyShop = () => {
   return (
     <Stack>
       <Box display={"flex"} alignItems={"center"} gap={3}>
-        <PageHeader header="Your Shop" />
+        <PageHeader header="My Shop" />
         {user && !isAddNewProduct && (
           <Box
             mb={"16px"}

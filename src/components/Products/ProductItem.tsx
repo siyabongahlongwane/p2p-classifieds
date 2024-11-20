@@ -90,15 +90,7 @@ const ProductItem = ({ product }) => {
   };
 
   return (
-    <Stack
-      width={180}
-      className="pointer product"
-      position={"relative"}
-      onClick={() => {
-        setField("selectedProduct", product);
-        navigate(`/view-product/${product_id}`);
-      }}
-    >
+    <Stack width={180} className="product" position={"relative"}>
       {isSold && (
         <Box
           position={"absolute"}
@@ -118,7 +110,16 @@ const ProductItem = ({ product }) => {
       )}
       <Paper>
         <Box>
-          <img src={photos[0]?.photo_url} alt="Image" width={"100%"} />
+          <img
+            src={photos[0]?.photo_url}
+            alt="Image"
+            width={"100%"}
+            className="pointer"
+            onClick={() => {
+              setField("selectedProduct", product);
+              navigate(`/view-product/${product_id}`);
+            }}
+          />
         </Box>
         <Stack p={1} gap={0.5}>
           <Box
