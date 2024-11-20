@@ -8,6 +8,10 @@ type Store = {
     selectedProduct: any;
     categories: any;
     isLoading: boolean,
+    checkoutCrumbs: Array<{
+        title: string,
+        route: string
+    }>,
     error: Error | null | any,
     toast: {
         isOpen: boolean,
@@ -41,6 +45,18 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
     error: null,
     selectedProduct: null,
     categories: [],
+    checkoutCrumbs: [{
+        title: 'My Cart',
+        route: '/cart'
+    },
+    {
+        title: 'Shipping Address',
+        route: '/shipping-address'
+    },
+    {
+        title: 'Payment',
+        route: '/payment'
+    }],
     toast: {
         isOpen: false,
         message: '',
