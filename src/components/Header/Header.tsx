@@ -20,15 +20,13 @@ const Header = () => {
 
   const { loading, get } = useApi(`${import.meta.env.VITE_API_URL}`);
 
-  const { setLikes, likes = [] } = useStore();
-  const { setCart, cart = [] } = useStore();
+  const { setLikes, likes = [], setCart, cart = [], setField, orderObject } = useStore();
   const fetchLikes = async () => {
     if (user) {
       const likes = await get(`/likes/fetch-likes?user_id=${user.user_id}`);
       const cart = await get(`/cart/fetch-cart?user_id=${user.user_id}`);
       try {
         setLikes(likes);
-        console.log(cart)
         setCart(cart);
       } catch (err) {
         setLikes([]);
@@ -40,6 +38,10 @@ const Header = () => {
   useEffect(() => {
     fetchLikes();
   }, []);
+
+  useEffect(() => {
+    setField('orderObject', {...orderObject, cart})
+  }, [cart]);
 
   return (
     <Box className="header">

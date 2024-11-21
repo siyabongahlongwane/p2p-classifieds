@@ -6,6 +6,7 @@ import useApi from "../../hooks/useApi";
 import {
   ChatBubbleOutlineRounded,
   FavoriteBorder,
+  PinDropOutlined,
   ShoppingCartOutlined,
 } from "@mui/icons-material";
 import "react-image-gallery/styles/css/image-gallery.css";
@@ -52,7 +53,6 @@ const ViewProduct = () => {
 
   useEffect(() => {
     setImages((prev) => {
-      console.log({ prev, data });
       return selectedProduct?.photos?.map((photo) => {
         return {
           original: photo.photo_url,
@@ -91,6 +91,10 @@ const ViewProduct = () => {
             <Typography color={"gray"}>
               {selectedProduct?.description}
             </Typography>
+              <Box display={'flex'} alignItems={'center'} gap={.5} color={"gray"}>
+                <PinDropOutlined></PinDropOutlined>
+              <Typography variant="body2">{selectedProduct?.location}</Typography>
+              </Box>
             <Box gap={1} display={"flex"}>
               <Chip label={selectedProduct?.condition}></Chip>
               <Chip

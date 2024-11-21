@@ -1,8 +1,8 @@
 import { Typography } from "@mui/material";
 
-const PageHeader = ({ header }: { header: string }) => {
+const PageHeader = ({ header, fontWeight = 300, fontSize = 20 }: { header: string, fontWeight?: number, fontSize?: number }) => {
   return (
-    <Typography fontWeight={"300"} variant="h1" fontSize={20} mb={2}>
+    <Typography fontWeight={fontWeight} variant="h1" fontSize={fontSize} mb={2}>
       {header}
     </Typography>
   );

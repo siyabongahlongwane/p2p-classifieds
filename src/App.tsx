@@ -9,6 +9,8 @@ import Likes from "./pages/Likes/Likes";
 import MyShop from "./pages/MyShop/MyShop";
 import AddProduct from "./pages/AddProduct/AddProduct";
 import ViewProduct from "./pages/ViewProduct/ViewProduct";
+import ShippingDetails from "./pages/ShippingDetails/ShippingDetails";
+import Payment from "./pages/Payment/Payment";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
               path="/view-product/:product_id"
               element={<ViewProduct />}
             ></Route>
+            <Route path="shipping-details" element={<ShippingDetails />}></Route>
+            <Route path="payment" element={<Payment />}></Route>
           </Route>
           <Route path="/sign-in" element={<SignIn />}></Route>
           <Route path="/sign-up" element={<SignUp />}></Route>

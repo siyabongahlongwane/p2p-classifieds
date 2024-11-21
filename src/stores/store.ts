@@ -27,7 +27,8 @@ type Store = {
         title: string,
         description: string,
         component?: any
-    }
+    },
+    orderObject: any
 }
 
 type StoreActions = {
@@ -50,8 +51,8 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
         route: '/cart'
     },
     {
-        title: 'Shipping Address',
-        route: '/shipping-address'
+        title: 'Shipping Details',
+        route: '/shipping-details'
     },
     {
         title: 'Payment',
@@ -70,6 +71,13 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
         title: '',
         description: '',
         component: null
+    },
+    orderObject: {
+        deliveryCost: 0,
+        province: '',
+        pudoLockerLocation: '',
+        phoneNumber: '',
+        paymentOption: 'Ozow'
     },
     setLikes: (likes) => set({ likes }),
     setCart: (cart) => set({ cart }),
