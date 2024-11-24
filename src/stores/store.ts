@@ -6,7 +6,9 @@ type Store = {
     likes: any[],
     cart: any[],
     selectedProduct: any;
-    categories: any;
+    categories: Array<{title: string, category_id: number}>;
+    provinces: string[];
+    productConditions: string[];
     isLoading: boolean,
     checkoutCrumbs: Array<{
         title: string,
@@ -46,6 +48,8 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
     error: null,
     selectedProduct: null,
     categories: [],
+    provinces: ["Eastern Cape", "Free State", "Gauteng", "KwaZulu-Natal", "Limpopo", "Mpumalanga", "Northern Cape", "North West", "Western Cape"],
+    productConditions: ['New', 'Used', 'Good', 'Well Worn', 'Other'],
     checkoutCrumbs: [{
         title: 'My Cart',
         route: '/cart'

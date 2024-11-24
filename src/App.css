@@ -36,3 +36,12 @@ body {
 input:not([type="file" i], [type="image" i], [type="checkbox" i], [type="radio" i]) {
   height: .6em !important;
 }
+
+label[data-shrink=false]+.MuiInputBase-formControl .css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+  height: 42px;
+  box-sizing: border-box;
+}
+
+.MuiFormHelperText-root {
+  color: red !important;
+}
