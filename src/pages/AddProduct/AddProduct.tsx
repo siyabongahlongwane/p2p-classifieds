@@ -1,33 +1,23 @@
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import { Controller, useForm } from "react-hook-form";
 import { useStore } from "../../stores/store";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import useApi from "../../hooks/useApi";
 import FilePickerWithPreview from "../../components/FilePickerWithPreview/FilePickerWithPreview";
-
+import useFirebaseStorage from "../../hooks/useFirebaseStorage";
+import { newProduct } from "../../typings/NewProduct.type";
+import { NewProduct } from "../../typings";
+import { UserContext } from "../../context/User/UserContext";
 const AddProduct = () => {
-  const { categories, provinces, productConditions, setField } = useStore();
-  const { get } = useApi(import.meta.env.VITE_API_URL);
-  type NewProduct = {
-    title: string;
-    description: string;
-    price: string;
-    category_id: string;
-    condition: string;
-    location: string;
-    province: string;
-  }
+  const { user } = useContext(UserContext);
+  const { user_id, shop_id } = user;
+  const { categories, provinces, productConditions, productPhotos, setField } = useStore();
+  const { get, post } = useApi(import.meta.env.VITE_API_URL);
+  const { uploadFiles, isLoading, error } = useFirebaseStorage();
+  const [fileUrls, setFileUrls] = useState([]);
 
   const form = useForm<NewProduct>({
-    defaultValues: {
-      title: '',
-      description: '',
-      price: '',
-      category_id: '',
-      condition: '',
-      location: '',
-      province: '',
-    }
+    defaultValues: { ...newProduct }
   })
 
 
@@ -47,16 +37,42 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-  const onSubmit = (data: NewProduct) => {
-    console.log(data);
+  const onSubmit = async (formData: NewProduct) => {
+    try {
+      if (productPhotos.length > 0) {
+        const urls = await uploadFiles(productPhotos, "classfieds");
+        console.log("Files uploaded successfully!");
+        if (urls.length > 0) {
+          formData.productPhotos = urls.map(url => ({ photo_url: url }));
+          addNewProduct(formData);
+        }
+        setFileUrls((prevUrls: any) => [...prevUrls, ...urls]);
+        console.log({ fileUrls });
+
+      } else {
+        alert("No photos selected!");
+      }
+    } catch (err) {
+      console.error("Photo upload failed:", err);
+    }
+  }
+
+  const addNewProduct = async (product: NewProduct & { productPhotos: string[] }) => {
+    try {
+      const res = await post("/product/add-new-product", { ...product, user_id, shop_id });
+      console.log(res)
+    } catch (error) {
+      console.error(error);
+    }
   }
   return (
     <Stack gap={1} display={'grid'} gridTemplateColumns={"2fr 1.5fr"}>
       <Stack>
-        <Typography variant="body1" mb={2}>Product Images</Typography>
+        <Typography variant="body1" mb={2}>Product Images </Typography>
+        <Typography variant="body2">{error}</Typography>
         <Stack display={'grid'} gridTemplateColumns={"1fr 1fr 1fr"} gap={1}>
           {[...Array(3)].map((_, index) => <Box key={index}>
-            <FilePickerWithPreview />
+            <FilePickerWithPreview position={index} />
           </Box>
           )}
         </Stack>

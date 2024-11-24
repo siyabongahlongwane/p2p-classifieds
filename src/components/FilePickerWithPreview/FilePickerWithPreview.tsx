@@ -2,26 +2,32 @@ import React, { useState } from "react";
 import { Button, Box, Typography, IconButton, Card, CardMedia } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useStore } from "../../stores/store";
 
-const FilePickerWithPreview = () => {
+const FilePickerWithPreview = ({ position }: { position: number }) => {
+    const { productPhotos, setField } = useStore();
     const [file, setFile] = useState(null); // Stores the file object
-    const [preview, setPreview] = useState(null); // Stores the file preview URL
+    const [preview, setPreview] = useState(''); // Stores the file preview URL
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0]; // Get the first selected file
         if (selectedFile) {
-            if (selectedFile.size > 2 * 1024 * 1024) { // 2MB limit
-                alert("File size should not exceed 2MB");
+            console.log('FILE SIZE', selectedFile.size)
+            if (selectedFile.size > 3 * 1024 * 1024) { // 2MB limit
+                alert("File size should not exceed 3MB");
                 return;
             }
             setFile(selectedFile);
+            productPhotos[position] = selectedFile;
+            console.log('SELECTED FILE', productPhotos)
+            setField('productPhotos', productPhotos);
             setPreview(URL.createObjectURL(selectedFile)); // Create a preview URL
         }
     };
 
     const clearFile = () => {
         setFile(null);
-        setPreview(null);
+        setPreview('');
         URL.revokeObjectURL(preview); // Free up memory
     };
 
