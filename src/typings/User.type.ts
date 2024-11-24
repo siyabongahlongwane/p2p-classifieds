@@ -1,5 +1,6 @@
 export type User = {
     user_id: number;
+    shop_id: number;
     google_id: string | null;
     first_name: string;
     last_name: string;

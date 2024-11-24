@@ -122,6 +122,7 @@ const SignIn = () => {
                 </Box>
                 <TextField
                   error={false}
+                  type="password"
                   placeholder="Enter Password"
                   helperText=""
                   value={password}
@@ -145,7 +146,7 @@ const SignIn = () => {
           </Typography>
           <img
             className="pointer"
-            src="../../../public/google-sign-in.svg"
+            src="google-sign-in.svg"
             alt="Google Sign In"
           />
           <Typography component={"small"} color="gray" fontWeight={300}>

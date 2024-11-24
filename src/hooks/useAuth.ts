@@ -65,7 +65,7 @@ const useAuth = () => {
             }
 
             setContextUser(result.payload);
-            localStorage.setItem('token', result.payload.token || '');
+            localStorage.setItem('token', result.token || '');
             localStorage.setItem('user', JSON.stringify(result.payload || ''));
             setTimeout(() => {
                 navigate('/home');

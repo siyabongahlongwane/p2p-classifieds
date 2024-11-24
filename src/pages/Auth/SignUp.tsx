@@ -122,6 +122,7 @@ const SignUp = () => {
               <Typography variant="subtitle2">Password</Typography>
               <TextField
                 error={false}
+                type="password"
                 placeholder="Enter Password"
                 helperText=""
                 value={form.password}
