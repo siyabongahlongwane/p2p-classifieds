@@ -8,14 +8,16 @@ import useFirebaseStorage from "../../hooks/useFirebaseStorage";
 import { newProduct } from "../../typings/NewProduct.type";
 import { NewProduct } from "../../typings";
 import { UserContext } from "../../context/User/UserContext";
+import { useParams } from "react-router-dom";
 const AddProduct = () => {
   const { user } = useContext(UserContext);
   const { user_id, shop_id } = user;
-  const { categories, provinces, productConditions, productPhotos, setField } = useStore();
-  const { get, post } = useApi(import.meta.env.VITE_API_URL);
+  const { categories, provinces, productConditions, productPhotos, productStatuses, setField } = useStore();
+  const { get, post, put } = useApi(import.meta.env.VITE_API_URL);
   const { uploadFiles, isLoading, error } = useFirebaseStorage();
   const [fileUrls, setFileUrls] = useState([]);
-
+  const { product_id } = useParams();
+  const [isEdit] = useState(!!product_id);
   const form = useForm<NewProduct>({
     defaultValues: { ...newProduct }
   })
@@ -37,17 +39,40 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
+  const fetchProduct = async () => {
+    const [product] = await get(`/product/fetch?user_id=${user_id}&product_id=${product_id}`);
+    setField("productPhotos", product["photos"]);
+    Object.keys(newProduct).forEach(key => {
+      form.setValue(key as keyof NewProduct, product[key]);
+    })
+    try {
+      // setField("categories", categories);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if(isEdit) fetchProduct();
+  }, []);
+
+
+
   const onSubmit = async (formData: NewProduct) => {
     try {
       if (productPhotos.length > 0) {
+        if (isEdit) {
+          return updateProduct(formData);
+        }
         const urls = await uploadFiles(productPhotos, "classfieds");
         console.log("Files uploaded successfully!");
+
         if (urls.length > 0) {
           formData.productPhotos = urls.map(url => ({ photo_url: url }));
           addNewProduct(formData);
         }
         setFileUrls((prevUrls: any) => [...prevUrls, ...urls]);
-        console.log({ fileUrls });
 
       } else {
         alert("No photos selected!");
@@ -57,9 +82,18 @@ const AddProduct = () => {
     }
   }
 
-  const addNewProduct = async (product: NewProduct & { productPhotos: string[] }) => {
+  const addNewProduct = async (product: NewProduct) => {
     try {
       const res = await post("/product/add-new-product", { ...product, user_id, shop_id });
+      console.log(res)
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updateProduct = async (updatedProduct: NewProduct) => {
+    try {
+      const res = await put(`/product/update-product/${product_id}`, { ...updatedProduct, user_id, shop_id });
       console.log(res)
     } catch (error) {
       console.error(error);
@@ -81,27 +115,39 @@ const AddProduct = () => {
         <Stack spacing={2}>
           <Typography variant="body1">Product Info</Typography>
           <FormControl fullWidth margin="normal">
-            <TextField error={!!errors.title} label='Title' type='text' {...register('title', {
-              required: 'Title is required'
-            })} />
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              error={!!errors.title} label='Title' type='text' {...register('title', {
+                required: 'Title is required'
+              })} />
             <FormHelperText>{errors.title?.message}</FormHelperText>
 
           </FormControl>
           <FormControl fullWidth margin="normal">
-            <TextField error={!!errors.description} label='Description' type='text' {...register('description', {
-              required: 'Description is required'
-            })} />
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              error={!!errors.description} label='Description' type='text' {...register('description', {
+                required: 'Description is required'
+              })} />
             <FormHelperText>{errors.description?.message}</FormHelperText>
 
           </FormControl>
           <FormControl fullWidth margin="normal">
-            <TextField error={!!errors.price} label='Price' type='text' {...register('price', {
-              required: 'Price is required',
-              pattern: {
-                value: /^\d+(\.\d+)?$/,
-                message: 'Enter a valid price'
-              }
-            })} />
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              error={!!errors.price} label='Price' type='text' {...register('price', {
+                required: 'Price is required',
+                pattern: {
+                  value: /^\d+(\.\d+)?$/,
+                  message: 'Enter a valid price'
+                }
+              })} />
             <FormHelperText>{errors.price?.message}</FormHelperText>
 
           </FormControl>
@@ -173,11 +219,36 @@ const AddProduct = () => {
             <FormHelperText>{errors.province?.message}</FormHelperText>
           </FormControl>
 
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="category-label">Status</InputLabel>
+            <Controller
+              name="status"
+              control={control}
+              rules={{ required: 'Status is required' }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  labelId="category-label"
+                  label="Status"
+                  error={!!errors.status}
+                >
+                  {
+                    productStatuses.map((status) => <MenuItem key={status} value={status}>{status}</MenuItem>)
+                  }
+                </Select>
+              )}
+            />
+            <FormHelperText>{errors.status?.message}</FormHelperText>
+          </FormControl>
 
           <FormControl fullWidth margin="normal">
-            <TextField error={!!errors.location} label='Location' type='text' {...register('location', {
-              required: 'Location is required'
-            })} />
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              error={!!errors.location} label='Location' type='text' {...register('location', {
+                required: 'Location is required'
+              })} />
             <FormHelperText>{errors.location?.message}</FormHelperText>
           </FormControl>
 

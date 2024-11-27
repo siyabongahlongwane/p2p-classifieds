@@ -23,6 +23,7 @@ function App() {
             <Route path="likes" element={<Likes />}></Route>
             <Route path="my-shop" element={<MyShop />}>
               <Route path="add-product" element={<AddProduct />}></Route>
+              <Route path="edit-product/:product_id" element={<AddProduct />}></Route>
             </Route>
             <Route path="messages" element={<Home />}></Route>
             <Route path="settings" element={<Home />}></Route>

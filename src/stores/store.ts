@@ -31,7 +31,9 @@ type Store = {
         component?: any
     },
     orderObject: any,
-    productPhotos: any[]
+    productPhotos: any[],
+    selectedShop: any,
+    productStatuses: string[]
 }
 
 type StoreActions = {
@@ -85,6 +87,8 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
         paymentOption: 'Ozow'
     },
     productPhotos: [],
+    selectedShop: {},
+    productStatuses: ['Available', 'Sold', 'Unpublished'],
     setLikes: (likes) => set({ likes }),
     setCart: (cart) => set({ cart }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),

@@ -6,7 +6,8 @@ export type NewProduct = {
     condition: string;
     location: string;
     province: string;
-    productPhotos: Array<{ photo_url: string }>;
+    status?: string;
+    productPhotos: Array<{ photo_url: string, photo_id?: number }>;
 }
 
 class NewProductCls {
@@ -17,6 +18,7 @@ class NewProductCls {
     condition = '';
     location = '';
     province = '';
+    status = 'Available';
     productPhotos = [];
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Box, Typography, IconButton, Card, CardMedia } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -31,6 +31,11 @@ const FilePickerWithPreview = ({ position }: { position: number }) => {
         URL.revokeObjectURL(preview); // Free up memory
     };
 
+    useEffect(() => {
+        if (productPhotos[position]) {
+            setPreview(productPhotos[position]['photo_url'])
+        }
+    }, [productPhotos])
     return (
         <Box sx={{ pb: 3 }}>
             <Button
@@ -39,7 +44,7 @@ const FilePickerWithPreview = ({ position }: { position: number }) => {
                 startIcon={<UploadFileIcon />}
                 sx={{ marginBottom: 2 }}
             >
-                Upload File
+                Select File
                 <input type="file" hidden accept="image/*" onChange={handleFileChange} />
             </Button>
 
@@ -52,14 +57,14 @@ const FilePickerWithPreview = ({ position }: { position: number }) => {
                         alt={file?.name}
                         sx={{ border: "1px solid #ccc" }}
                     />
-                    <Box sx={{ padding: 2 }}>
+                    {file && <Box sx={{ padding: 2 }}>
                         <Typography variant="body1" noWrap>
-                            {file.name}
+                            {file?.name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {(file.size / (1024 * 1024)).toFixed(2)} MB
+                            {(file?.size / (1024 * 1024)).toFixed(2)} MB
                         </Typography>
-                    </Box>
+                    </Box>}
                     <IconButton
                         color="error"
                         onClick={clearFile}
