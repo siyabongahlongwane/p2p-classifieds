@@ -80,6 +80,7 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
         component: null
     },
     orderObject: {
+        user_id: '',
         deliveryCost: 0,
         province: '',
         pudoLockerLocation: '',

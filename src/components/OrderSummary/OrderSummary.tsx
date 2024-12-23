@@ -1,19 +1,33 @@
 import { Box, Button, Divider, Paper, Stack, Typography } from "@mui/material";
 import { useStore } from "../../stores/store";
 import { useEffect } from "react";
+import useApi from "../../hooks/useApi";
+import { User } from "../../typings";
 
-const OrderSummary = () => {
+const OrderSummary = ({ user }: { user: User }) => {
     const { cart, orderObject, setField } = useStore();
     const itemsCount = cart.length > 1 ? `${cart.length} items` : `${cart.length} item`;
+    const { loading, post } = useApi(`${import.meta.env.VITE_API_URL}`);
 
     useEffect(() => {
         const cartTotal = +(cart.reduce((acc, curr) => +acc + (+curr.price), 0).toFixed(2));
         const total = +(cartTotal + (+orderObject.deliveryCost)).toFixed(2)
 
-        setField('orderObject', { ...orderObject, cartTotal, total });
+        setField('orderObject', { ...orderObject, cart, cartTotal, total });
     }, [cart, orderObject.deliveryCost])
 
     const { total, shippingMethod, deliveryCost, cartTotal, paymentOption } = orderObject;
+
+    const payNow = async () => {
+        try {
+            setField('orderObject', { ...orderObject, user_id: user.user_id });
+            const customerDetails = { firstName: user.first_name, lastName: user.last_name };
+            const res = await post('/orders/create-order', { ...orderObject, user_id: user.user_id, customerDetails });
+            console.log(res);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <Paper >
@@ -45,7 +59,7 @@ const OrderSummary = () => {
                     <Typography fontSize={14} variant="body2" fontWeight={400} color="gray">Total Payable</Typography>
                     <Typography fontSize={14} variant="body2" fontWeight={500} color="gray">R{total}</Typography>
                 </Box>
-                <Button color="primary" variant="contained">Pay now</Button>
+                <Button onClick={() => payNow()} color="primary" variant="contained">Pay now</Button>
             </Stack>
         </Paper>
     )
