@@ -21,17 +21,17 @@ const ViewProduct = () => {
     {
       name: "Add To Cart",
       icon: ShoppingCartOutlined,
-      onClick: () => {},
+      onClick: () => { },
     },
     {
       name: "Like",
       icon: FavoriteBorder,
-      onClick: () => {},
+      onClick: () => { },
     },
     {
       name: "Message Seller",
       icon: ChatBubbleOutlineRounded,
-      onClick: () => {},
+      onClick: () => { },
     },
   ];
   const fetchCategories = async () => {
@@ -43,39 +43,39 @@ const ViewProduct = () => {
     }
   };
 
-  useEffect(() => {
-    if (!selectedProduct) {
-      get("/product/fetch?product_id=" + product_id).then(() => {
-        setField("selectedProduct", data[0]);
-      });
-    }
-  }, [product_id, selectedProduct]);
+  const transformPhotos = (photos) => {
+    return photos.map((photo) => ({
+      original: photo.photo_url,
+      thumbnail: photo.photo_url,
+    }));
+  }
 
   useEffect(() => {
-    setImages((prev) => {
-      return selectedProduct?.photos?.map((photo) => {
-        return {
-          original: photo.photo_url,
-          thumbnail: photo.photo_url,
-        };
+    if (!selectedProduct) {
+      get("/product/fetch?product_id=" + product_id).then(([product]) => {
+        setField("selectedProduct", product);
+        setImages(transformPhotos(product.photos));
       });
-    });
+    }
+    else setImages(transformPhotos(selectedProduct.photos));
+
     fetchCategories();
-  }, []);
+  }, [product_id, selectedProduct]);
+
   return (
     <Stack>
       {loading ? (
         <Typography>...loading</Typography>
       ) : error ? (
         <Typography>{error}</Typography>
-      ) : (
+      ) : selectedProduct ? (
         <Stack
           display={"grid"}
           gridTemplateColumns={"1.2fr 1.5fr"}
           gap={3}
           p={"0 1.5em 0 0"}
         >
-          <Grid2>
+          {<Grid2>
             <ImageGallery
               items={images}
               showPlayButton={true}
@@ -83,18 +83,18 @@ const ViewProduct = () => {
               slideInterval={2000}
               slideOnThumbnailOver={true}
               showIndex={true}
-              onPlay={() => {}}
+              onPlay={() => { }}
             />
-          </Grid2>
+          </Grid2>}
           <Grid2 display={"flex"} flexDirection={"column"} gap={2} mt={10}>
             <Typography variant="h5">{selectedProduct?.title}</Typography>
             <Typography color={"gray"}>
               {selectedProduct?.description}
             </Typography>
-              <Box display={'flex'} alignItems={'center'} gap={.5} color={"gray"}>
-                <PinDropOutlined></PinDropOutlined>
+            <Box display={'flex'} alignItems={'center'} gap={.5} color={"gray"}>
+              <PinDropOutlined></PinDropOutlined>
               <Typography variant="body2">{selectedProduct?.location}</Typography>
-              </Box>
+            </Box>
             <Box gap={1} display={"flex"}>
               <Chip label={selectedProduct?.condition}></Chip>
               <Chip
@@ -116,8 +116,8 @@ const ViewProduct = () => {
               <Typography variant="body2">+ Buyer Protection fee</Typography>
             </Stack>
             <Box display={"flex"} gap={4} justifyContent={"space-around"}>
-              {actions.map((action) => (
-                <Stack alignItems={"center"} gap={1} className="pointer">
+              {actions.map((action, index) => (
+                <Stack key={index} alignItems={"center"} gap={1} className="pointer">
                   <action.icon htmlColor="var(--blue)" />
                   <Typography fontSize={12} fontWeight={300} variant="body2">
                     {action.name}
@@ -127,7 +127,10 @@ const ViewProduct = () => {
             </Box>
           </Grid2>
         </Stack>
-      )}
+      )
+        :
+        <Typography>Product not found</Typography>
+      }
     </Stack>
   );
 };
