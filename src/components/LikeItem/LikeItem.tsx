@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Favorite, FavoriteBorderOutlined } from "@mui/icons-material";
-import { Box } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { useStore } from "../../stores/store";
 import { isLiked } from "../../utils/product.util";
 import useApi from "../../hooks/useApi";
@@ -57,9 +57,10 @@ const LikeItem = ({ user_id, product_id }: LikeItemProps) => {
 
 
     return (
-        <Box onClick={handleLike}>
+        <Stack direction="column" spacing={1} alignItems="center" onClick={handleLike}>
             {liked ? <Favorite htmlColor="var(--blue)" /> : <FavoriteBorderOutlined htmlColor="var(--blue)" />}
-        </Box>
+            <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300} >{liked ? 'Remove from likes' : 'Add to likes'}</Typography>
+        </Stack>
     );
 };
 
