@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import useApi from "../../hooks/useApi";
 import FilePickerWithPreview from "../../components/FilePickerWithPreview/FilePickerWithPreview";
 import useFirebaseStorage from "../../hooks/useFirebaseStorage";
-import { newProduct } from "../../typings/NewProduct.type";
+import { newProduct } from "../../typings/Product.type";
 import { NewProduct } from "../../typings";
 import { UserContext } from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
