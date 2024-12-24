@@ -1,10 +1,11 @@
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { CartItem } from '../typings';
 
 type Store = {
     likes: any[],
-    cart: any[],
+    cart: CartItem[],
     selectedProduct: any;
     categories: Array<{title: string, category_id: number}>;
     provinces: string[];
