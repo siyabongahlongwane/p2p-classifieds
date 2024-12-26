@@ -4,36 +4,22 @@ import { useStore } from "../../stores/store";
 import { useParams } from "react-router-dom";
 import useApi from "../../hooks/useApi";
 import {
-  ChatBubbleOutlineRounded,
-  FavoriteBorder,
   PinDropOutlined,
-  ShoppingCartOutlined,
 } from "@mui/icons-material";
 import "react-image-gallery/styles/css/image-gallery.css";
 import ImageGallery from "react-image-gallery";
+import LikeItem from "../../components/LikeItem/LikeItem";
+import CartItem from "../../components/CartItem/CartItem";
+import { Photo } from "../../typings";
+import StartChat from "../../components/StartChat/StartChat";
 
 const ViewProduct = () => {
   const { selectedProduct, setField, categories } = useStore();
   const { product_id } = useParams();
-  const { get, data, loading, error } = useApi(import.meta.env.VITE_API_URL);
-  const [images, setImages] = useState([]);
-  const actions = [
-    {
-      name: "Add To Cart",
-      icon: ShoppingCartOutlined,
-      onClick: () => { },
-    },
-    {
-      name: "Like",
-      icon: FavoriteBorder,
-      onClick: () => { },
-    },
-    {
-      name: "Message Seller",
-      icon: ChatBubbleOutlineRounded,
-      onClick: () => { },
-    },
-  ];
+  const { get, loading, error } = useApi(import.meta.env.VITE_API_URL);
+  const [images, setImages] = useState<Array<{ original: string, thumbnail: string }>>([]);
+
+
   const fetchCategories = async () => {
     const categories = await get("/categories/fetch");
     try {
@@ -43,7 +29,7 @@ const ViewProduct = () => {
     }
   };
 
-  const transformPhotos = (photos) => {
+  const transformPhotos = (photos: Photo[]) => {
     return photos.map((photo) => ({
       original: photo.photo_url,
       thumbnail: photo.photo_url,
@@ -116,14 +102,15 @@ const ViewProduct = () => {
               <Typography variant="body2">+ Buyer Protection fee</Typography>
             </Stack>
             <Box display={"flex"} gap={4} justifyContent={"space-around"}>
-              {actions.map((action, index) => (
-                <Stack key={index} alignItems={"center"} gap={1} className="pointer">
-                  <action.icon htmlColor="var(--blue)" />
-                  <Typography fontSize={12} fontWeight={300} variant="body2">
-                    {action.name}
-                  </Typography>
-                </Stack>
-              ))}
+              <Stack alignItems={"center"} gap={1} className="pointer">
+                <LikeItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} />
+              </Stack>
+              <Stack alignItems={"center"} gap={1} className="pointer">
+                <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} />
+              </Stack>
+              <Stack alignItems={"center"} gap={1} className="pointer">
+                <StartChat text="Seller" />
+              </Stack>
             </Box>
           </Grid2>
         </Stack>

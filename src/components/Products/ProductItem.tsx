@@ -1,47 +1,28 @@
 import { Box, Paper, Stack, Typography } from "@mui/material";
 import {
-  Delete,
   Favorite,
   FavoriteBorderOutlined,
-  ShoppingCart,
 } from "@mui/icons-material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import "./Product.css";
 import useApi from "../../hooks/useApi";
 import { UserContext } from "../../context/User/UserContext";
 import { useStore } from "../../stores/store";
-import { isLiked, existsInCart } from "../../utils/product.util";
 import { useNavigate } from "react-router-dom";
+import CartItem from "../CartItem/CartItem";
+import { CartItem as ICartItem, LikeItem } from "../../typings";
 
-const ProductItem = ({ product }) => {
+const ProductItem = ({ product }: { product: ICartItem }) => {
   const { price, status, photos, product_id } = product;
   const [liked, setLiked] = useState(false);
-  const [isInCart, setIsInCart] = useState(false);
   const [isSold] = useState(false);
   const { user } = useContext(UserContext);
 
   const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
 
-  const { setLikes, likes, setCart, cart, setField } = useStore();
+  const { setLikes, likes, setField } = useStore();
 
   const navigate = useNavigate();
-  useEffect(() => {
-    setLiked(
-      isLiked(
-        product_id,
-        likes.map((p: any) => p.product_id)
-      )
-    );
-  }, [liked, likes?.length, user]);
-
-  useEffect(() => {
-    setIsInCart(
-      existsInCart(
-        product_id,
-        cart.map((p: any) => p.product_id)
-      )
-    );
-  }, [isInCart, cart?.length, user]);
 
   const handleAddLike = async () => {
     const endpoint = `/likes/add-like`;
@@ -54,39 +35,15 @@ const ProductItem = ({ product }) => {
   };
 
   const handleRemoveLike = () => {
-    const likeToRemove = likes.find((p: any) => p.product_id === product_id)
+    const likeToRemove = likes.find((p: LikeItem) => p.product_id === product_id)
       ?.like_item.like_id;
-    const newLikes = likes.filter((p: any) => p.product_id !== product_id);
+    const newLikes = likes.filter((p: LikeItem) => p.product_id !== product_id);
     remove(`/likes/remove-like/${likeToRemove}?user_id=${user.user_id}`).then(
       () => {
         setLikes([...newLikes]);
         setLiked(false);
       }
     );
-  };
-
-  const handleAddToCart = async () => {
-    const endpoint = `/cart/add-cart-item`;
-    const newCart = await post(endpoint, {
-      product_id,
-      user_id: user.user_id,
-    });
-    setCart([...newCart]);
-    setIsInCart(true);
-  };
-
-  const handleRemoveFromCart = () => {
-    const { cart_item_id } = cart.find(
-      (p: any) => p.product_id === product_id
-    ).cart_item;
-
-    const newCart = cart.filter((p: any) => p.product_id !== product_id);
-    remove(
-      `/cart/remove-cart-item/${cart_item_id}?user_id=${user.user_id}`
-    ).then(() => {
-      setCart([...newCart]);
-      setIsInCart(false);
-    });
   };
 
   return (
@@ -146,31 +103,7 @@ const ProductItem = ({ product }) => {
           </Box>
           <Stack display={"flex"} gap={0.5}>
             <Box display={"flex"} justifyContent={"center"}>
-              <Box
-                onClick={() =>
-                  !isInCart ? handleAddToCart() : handleRemoveFromCart()
-                }
-                display={"flex"}
-                gap={0.5}
-                alignItems={"center"}
-                bgcolor={!isInCart ? "#c2b280" : "#d32f2f"}
-                borderRadius={2}
-                p={0.5}
-                className="pointer"
-              >
-                {!isInCart ? (
-                  <ShoppingCart sx={{ ...iconStyles }} />
-                ) : (
-                  <Delete sx={{ ...iconStyles }} />
-                )}
-                <Typography
-                  fontSize={11}
-                  color={!isInCart ? "#000" : "#fff"}
-                  fontWeight={"400"}
-                >
-                  {isInCart ? "Remove from cart" : " Add to cart"}
-                </Typography>
-              </Box>
+              <CartItem user_id={user?.user_id} product_id={product?.product_id} isButton />
             </Box>
           </Stack>
         </Stack>
@@ -180,11 +113,3 @@ const ProductItem = ({ product }) => {
 };
 
 export default ProductItem;
-
-const iconStyles = {
-  fontSize: 14,
-  color: "#000",
-  backgroundColor: "#fff",
-  borderRadius: "50%",
-  padding: 0.3,
-};

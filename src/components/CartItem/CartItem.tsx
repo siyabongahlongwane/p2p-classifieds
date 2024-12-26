@@ -1,17 +1,18 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useStore } from "../../stores/store";
 import useApi from "../../hooks/useApi";
 import { existsInCart } from "../../utils/product.util";
 import { CartItem as ICartItem } from "../../typings";
-import { AddShoppingCart, Delete } from "@mui/icons-material";
+import { AddShoppingCart, Delete, ShoppingCart } from "@mui/icons-material";
 
 export interface CartItemProps {
     product_id: number;
     user_id: number;
+    isButton?: boolean;
 }
 
-const CartItem = ({ product_id, user_id }: CartItemProps) => {
+const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
     const { cart, setCart } = useStore();
     const [isInCart, setIsInCart] = useState(
         existsInCart(product_id, cart.map((p: ICartItem) => p.product_id))
@@ -61,11 +62,52 @@ const CartItem = ({ product_id, user_id }: CartItemProps) => {
     };
 
     return (
-        <Stack direction="column" spacing={1} alignItems="center">
-            {isInCart ? <Delete htmlColor="var(--blue)" onClick={handleCartItem} /> : <AddShoppingCart htmlColor="var(--blue)" onClick={handleCartItem} />}
-            <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300}>{isInCart ? 'Remove from cart' : 'Add to cart'}</Typography>
-        </Stack>
+        <>
+            {
+                isButton ?
+                    <Box
+                        onClick={handleCartItem}
+                        display={"flex"}
+                        gap={0.5}
+                        alignItems={"center"}
+                        bgcolor={!isInCart ? "#c2b280" : "#d32f2f"}
+                        borderRadius={2}
+                        p={0.5}
+                        className="pointer"
+                    >
+                        {!isInCart ? (
+                            <ShoppingCart sx={{ ...iconStyles }} />
+                        ) : (
+                            <Delete sx={{ ...iconStyles }} />
+                        )}
+                        <Typography
+                            fontSize={11}
+                            color={!isInCart ? "#000" : "#fff"}
+                            fontWeight={"400"}
+                        >
+                            {isInCart ? "Remove from cart" : " Add to cart"}
+                        </Typography>
+                    </Box>
+
+                    :
+                    <Stack direction="column" spacing={1} alignItems="center">
+                        {isInCart ? <Delete htmlColor="var(--blue)" onClick={handleCartItem} /> : <AddShoppingCart htmlColor="var(--blue)" onClick={handleCartItem} />}
+                        <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300}>{isInCart ? 'Remove from cart' : 'Add to cart'}</Typography>
+                    </Stack>
+
+            }
+        </>
+
     );
 };
 
 export default CartItem;
+
+
+const iconStyles = {
+    fontSize: 14,
+    color: "#000",
+    backgroundColor: "#fff",
+    borderRadius: "50%",
+    padding: 0.3,
+};
