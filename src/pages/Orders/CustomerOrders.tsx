@@ -7,7 +7,7 @@ import useApi from '../../hooks/useApi';
 import { OrderPreview, OrderWithItems } from '../../typings/Order.int';
 import { useNavigate } from 'react-router-dom';
 
-const MyOrders = () => {
+const CustomerOrders = () => {
   const { user } = useContext(UserContext);
   const { get } = useApi(`${import.meta.env.VITE_API_URL}`);
   const [orders, setOrders] = useState<OrderPreview[]>([]);
@@ -16,17 +16,17 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        let orders = await get(`/orders/fetch-orders?user_id=${user.user_id}`);
+        let orders = await get(`/orders/fetch-orders?shop_id=${user.shop_id}`);
         orders = orders.map((order: OrderWithItems) => {
           return {
             order_id: order.order_id,
-            buyerName: 'Owner By You',
+            buyerName: `${order.user.first_name} ${order.user.last_name}`,
             date: new Date(order.created_at).toLocaleString(),
             totalAmount: order.total_price,
             status: order.status,
           }
         })
-        console.log(orders);
+
         setOrders(orders);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -34,10 +34,11 @@ const MyOrders = () => {
     };
     fetchOrders();
   }, []);
+
   return (
     <>
       <Box display={"flex"} alignItems={"center"} gap={3}>
-        <PageHeader header={"My Orders"} />
+        <PageHeader header={"Customers Orders"} />
         <Box
           mb={"16px"}
           border={"1px solid var(--blue)"}
@@ -47,14 +48,14 @@ const MyOrders = () => {
           p={0.5}
           className="pointer"
           sx={{ ":hover": { opacity: 0.75 } }}
-          onClick={() => navigate('../customer-orders')}
+          onClick={() => navigate('../my-orders')}
         >
-          <Typography fontSize={12}>View Customer Orders</Typography>
+          <Typography fontSize={12}>View My Orders</Typography>
         </Box>
       </Box>
-      <OrdersList orders={orders} showEdit={false} />
+      <OrdersList orders={orders} showEdit />
     </>
   )
 }
 
-export default MyOrders;
+export default CustomerOrders;

@@ -21,7 +21,7 @@ const Menu = () => {
         {
             Icon:  LocalShippingOutlined,
             route: 'orders/my-orders',
-            label: 'My Orders',
+            label: 'Orders',
         },
         {
             Icon:  MarkChatUnreadOutlined,

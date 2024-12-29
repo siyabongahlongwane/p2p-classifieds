@@ -25,4 +25,13 @@ export interface OrderWithItems {
     created_at: string;
     updated_at: string;
     items: OrderItem[];
+    user: { first_name: string, last_name: string };
+}
+
+export interface OrderPreview {
+    order_id: string;
+    buyerName: string;
+    date: string;
+    totalAmount: string;
+    status: string;
 }
