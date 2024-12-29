@@ -11,6 +11,9 @@ import AddProduct from "./pages/AddProduct/AddProduct";
 import ViewProduct from "./pages/ViewProduct/ViewProduct";
 import ShippingDetails from "./pages/ShippingDetails/ShippingDetails";
 import Payment from "./pages/Payment/Payment";
+import OrderOutcome from "./components/OrderOutcome/OrderOutcome";
+import Orders from "./pages/Orders/Orders";
+import MyOrders from "./pages/Orders/MyOrders";
 
 function App() {
   return (
@@ -21,6 +24,12 @@ function App() {
             <Route path="home" element={<Home />}></Route>
             <Route path="cart" element={<Cart />}></Route>
             <Route path="likes" element={<Likes />}></Route>
+            <Route path="orders" element={<Orders />}>
+              <Route path="my-orders" element={<MyOrders />}></Route>
+              <Route path="thank-you" element={<OrderOutcome />}></Route>
+              <Route path="failed-order" element={<OrderOutcome />}></Route>
+              <Route path="canceled-order" element={<OrderOutcome />}></Route>
+            </Route>
             <Route path="my-shop" element={<MyShop />}>
               <Route path="add-product" element={<AddProduct />}></Route>
               <Route path="edit-product/:product_id" element={<AddProduct />}></Route>

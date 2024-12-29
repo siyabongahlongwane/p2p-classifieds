@@ -23,7 +23,8 @@ const OrderSummary = ({ user }: { user: User }) => {
             setField('orderObject', { ...orderObject, user_id: user.user_id });
             const customerDetails = { firstName: user.first_name, lastName: user.last_name };
             const res = await post('/orders/create-order', { ...orderObject, user_id: user.user_id, customerDetails });
-            console.log(res);
+            if(!res?.url) throw new Error(`Error creating order: ${res?.errorMessage || 'Could not open payment gateway'}`);
+            window.open(res.url, '_self');
         } catch (error) {
             console.error(error);
         }

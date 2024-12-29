@@ -20,7 +20,7 @@ const Menu = () => {
         },
         {
             Icon:  LocalShippingOutlined,
-            route: 'my-orders',
+            route: 'orders/my-orders',
             label: 'My Orders',
         },
         {
