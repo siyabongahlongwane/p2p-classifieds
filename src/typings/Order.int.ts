@@ -25,7 +25,7 @@ export interface OrderWithItems {
     created_at: string;
     updated_at: string;
     items: OrderItem[];
-    user: { first_name: string, last_name: string };
+    user: { first_name: string, last_name: string, email: string, phone: string };
 }
 
 export interface OrderPreview {

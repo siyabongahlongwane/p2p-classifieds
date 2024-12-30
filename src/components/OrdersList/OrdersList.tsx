@@ -14,11 +14,12 @@ import {
     TableFooter,
 } from "@mui/material";
 import { OrderPreview } from "../../typings/Order.int";
+import { useNavigate } from "react-router-dom";
 
 const OrdersList = ({ orders, showEdit }: { orders: OrderPreview[], showEdit: boolean }) => {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
-
+    const navigate = useNavigate();
     const filteredOrders = orders.filter(
         (order) =>
             order.buyerName.toLowerCase().includes(search.toLowerCase()) ||
@@ -63,7 +64,7 @@ const OrdersList = ({ orders, showEdit }: { orders: OrderPreview[], showEdit: bo
                                 <TableCell>R{order.totalAmount}</TableCell>
                                 <TableCell>{order.status}</TableCell>
                                 <TableCell>
-                                    <Button size="small" variant="outlined" color="primary" sx={{ mr: 1 }}>
+                                    <Button onClick={() => navigate(`../view-order/${order.order_id}`)} size="small" variant="outlined" color="primary" sx={{ mr: 1 }}>
                                         View
                                     </Button>
                                     {
