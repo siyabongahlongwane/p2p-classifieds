@@ -10,8 +10,8 @@ import {
   TableRow,
   Paper,
   Button,
-  Rating,
-  Grid2,
+  // Rating,
+  Grid2
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../../hooks/useApi";
@@ -20,24 +20,46 @@ import PageHeader from "../../components/PageHeader/PageHeader";
 import { UserContext } from "../../context/User/UserContext";
 
 const ViewOrder = () => {
-  const { get, loading } = useApi(`${import.meta.env.VITE_API_URL}`);
+  const { get, loading, post } = useApi(`${import.meta.env.VITE_API_URL}`);
   const [order, setOrder] = useState<OrderWithItems>({} as OrderWithItems);
   const navigate = useNavigate();
-  const [rating, setRating] = useState<number | null>(null);
+  // const [rating, setRating] = useState<number | null>(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isCancelled, setIsCancelled] = useState(false);
   const { order_id } = useParams();
   const { user } = useContext(UserContext);
   const [isOwner, setIsOwner] = useState(false);
-  const handleConfirmReceipt = () => {
-    // Mock API call
+  const handleConfirmReceipt = async () => {
     setIsConfirmed(true);
-    console.log("Order receipt confirmed:", order.order_id);
+
+    try {
+      const { order_id, shop_id } = order;
+      const { first_name: updatedBy } = order.user;
+      const updatedOrder = await post(`/orders/update-seller-order-status`, { order_id, updatedBy, shop_id });
+      setOrder(updatedOrder);
+    } catch (error) {
+      console.error("Error confirming order receipt:", error);
+    }
   };
 
-  const handleRating = (newRating: number | null) => {
-    setRating(newRating);
-    console.log("Rated order:", { orderId: order.order_id, rating: newRating });
+  const handleCancelOrder = async () => {
+    setIsCancelled(true);
+
+    try {
+      const { order_id } = order;
+      const { first_name: updatedBy } = user;
+      const updatedOrder = await post(`/orders/update-customer-order-status`, { order_id, updatedBy, status: 'Cancelled' });
+      setOrder(updatedOrder);
+      setIsCancelled(updatedOrder.status === 'Cancelled')
+    } catch (error) {
+      console.error("Error confirming order receipt:", error);
+    }
   };
+
+  // const handleRating = (newRating: number | null) => {
+  //   setRating(newRating);
+  //   console.log("Rated order:", { orderId: order.order_id, rating: newRating });
+  // };
 
   useEffect(() => {
     if (!order_id) navigate('/orders/my-orders');
@@ -46,6 +68,7 @@ const ViewOrder = () => {
         const [order] = await get(`/orders/fetch-orders?order_id=${order_id}`);
         setIsOwner(user.user_id == order.user_id);
         setOrder(order);
+        setIsCancelled(order.status === 'Cancelled')
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -62,9 +85,28 @@ const ViewOrder = () => {
           <Box>
             <PageHeader header={"Order Details"} />
             {
-              !loading && (!isOwner) && <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} mb={2}>
-                <Typography variant="h6" color="primary"><b>Customer</b>  - {order.user?.first_name} {order.user?.last_name}</Typography>
-                {!isConfirmed &&<Button variant="contained" size="small" color="error">Cancel Order</Button>}
+              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} mb={2}>
+                {(!loading && (!isOwner) ? <Typography variant="h6" color="primary"><b>Customer</b>  - {order.user?.first_name} {order.user?.last_name}</Typography> : <span></span>)
+                }
+                {
+                  !isOwner && order.status !== "Received By Buyer"
+                    ?
+                    <Button variant="contained" size="small" color="error" onClick={handleCancelOrder} disabled={isCancelled}>Cancel Order</Button>
+                    :
+                    (isOwner ?
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={handleConfirmReceipt}
+                        disabled={order.status == "Received By Buyer" || isConfirmed}
+                      >
+                        {order.status == "Received By Buyer" ? "Receipt Confirmed" : "Confirm Receipt"}
+                      </Button>
+                      :
+                      <></>
+                    )
+                }
               </Box>
             }
 
@@ -125,7 +167,7 @@ const ViewOrder = () => {
 
             {/* Rating and Confirm Receipt */}
             <Box sx={{ mt: 3 }}>
-              {order.status === "Received By Buyer" && (
+              {/* {order.status === "Received By Buyer" && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h6">Rate Your Order</Typography>
                   <Rating
@@ -133,16 +175,7 @@ const ViewOrder = () => {
                     onChange={(_event, newValue) => handleRating(newValue)}
                   />
                 </Box>
-              )}
-
-              {isOwner && <Button
-                variant="contained"
-                color="primary"
-                onClick={handleConfirmReceipt}
-                disabled={isConfirmed}
-              >
-                {isConfirmed ? "Receipt Confirmed" : "Confirm Receipt"}
-              </Button>}
+              )} */}
             </Box>
           </Box>
       }
