@@ -16,10 +16,16 @@ import Orders from "./pages/Orders/Orders";
 import MyOrders from "./pages/Orders/MyOrders";
 import CustomerOrders from "./pages/Orders/CustomerOrders";
 import ViewOrder from "./pages/Orders/ViewOrder";
+import Loader from "./components/Loader/Loader";
+import useLoaderStore from "./stores/useLoaderStore";
 
 function App() {
+  const { loading } = useLoaderStore();
   return (
     <>
+      {
+        loading && <Loader />
+      }
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AppWrapper />}>

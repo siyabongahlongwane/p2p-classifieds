@@ -1,12 +1,13 @@
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { CartItem } from '../typings';
+import { CartItem, LikeItem, PlainProduct } from '../typings';
+import { ReactNode } from 'react';
 
 type Store = {
-    likes: any[],
+    likes: LikeItem[],
     cart: CartItem[],
-    selectedProduct: any;
+    selectedProduct: PlainProduct | null;
     categories: Array<{title: string, category_id: number}>;
     provinces: string[];
     productConditions: string[];
@@ -15,7 +16,7 @@ type Store = {
         title: string,
         route: string
     }>,
-    error: Error | null | any,
+    error: Error | null | string,
     toast: {
         isOpen: boolean,
         message: string,
@@ -29,7 +30,7 @@ type Store = {
         isOpen: boolean,
         title: string,
         description: string,
-        component?: any
+        component?: ReactNode
     },
     orderObject: any,
     productPhotos: any[],
@@ -38,10 +39,10 @@ type Store = {
 }
 
 type StoreActions = {
-    setLikes: (likes: any[]) => void,
-    setCart: (likes: any[]) => void,
+    setLikes: (likes: LikeItem[]) => void,
+    setCart: (likes: CartItem[]) => void,
     setIsLoading: (isLoading: boolean) => void,
-    setField: ([key]: any, val: any) => void,
+    setField: ([key]: string, val: any) => void,
     setToast: (toast: any) => void
 }
 
