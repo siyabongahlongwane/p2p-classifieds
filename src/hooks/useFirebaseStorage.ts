@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "firebase/storage";
 import { storage } from "../configs/firebase"; // Adjust the path to your firebase.js file
+import useLoaderStore from "../stores/useLoaderStore";
 
 const useFirebaseStorage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const { showLoader, hideLoader } = useLoaderStore();
   /**
    * Upload multiple files to Firebase Storage
    * @param {File[]} files - Array of File objects to upload
@@ -21,6 +23,7 @@ const useFirebaseStorage = () => {
     setError(null);
 
     try {
+      showLoader();
       const uploadPromises = files.map((file) => {
         const fileRef = ref(storage, `${folder}/${file.name}`);
         return uploadBytes(fileRef, file).then(() => getDownloadURL(fileRef));
@@ -32,6 +35,7 @@ const useFirebaseStorage = () => {
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
+      hideLoader();
       throw err;
     }
   };
@@ -47,6 +51,7 @@ const useFirebaseStorage = () => {
     setError(null);
 
     try {
+      showLoader();
       const result = await listAll(folderRef);
       const urls = await Promise.all(result.items.map((item) => getDownloadURL(item)));
       setIsLoading(false);
@@ -54,6 +59,7 @@ const useFirebaseStorage = () => {
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
+      hideLoader();
       throw err;
     }
   };
@@ -68,11 +74,13 @@ const useFirebaseStorage = () => {
     setError(null);
 
     try {
+      showLoader();
       await deleteObject(fileRef);
       setIsLoading(false);
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
+      hideLoader();
       throw err;
     }
   };

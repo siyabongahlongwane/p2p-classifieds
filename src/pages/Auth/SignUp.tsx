@@ -10,6 +10,7 @@ import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useState } from "react";
+import useLoaderStore from "../../stores/useLoaderStore";
 
 const SignUp = () => {
   const { error, loading, signUp } = useAuth();
@@ -21,6 +22,7 @@ const SignUp = () => {
     password: "",
   });
 
+  const { showLoader, hideLoader } = useLoaderStore();
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -29,8 +31,9 @@ const SignUp = () => {
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
     const password = formData.get("password") as string;
-    console.log(form);
-    signUp(first_name, last_name, email, phone, password);
+
+    
+    signUp(first_name, last_name, email, phone, password, showLoader, hideLoader);
   };
 
   const handleInputChange = (e: {

@@ -10,9 +10,10 @@ const useAuth = () => {
     const serverURL = import.meta.env.VITE_API_URL;
 
     // Register function, setContextUser: () => void)
-    const signUp = async (first_name: string, last_name: string, email: string, phone: string, password: string) => {
+    const signUp = async (first_name: string, last_name: string, email: string, phone: string, password: string, showLoader: () => void, hideLoader: () => void) => {
         setLoading(true);
         try {
+            showLoader();
             const response = await fetch(serverURL + '/auth/sign-up', {
                 method: 'POST',
                 headers: {
@@ -31,6 +32,7 @@ const useAuth = () => {
 
             setTimeout(() => {
                 navigate('/sign-in');
+                hideLoader();
             }, 1500);
             setError('');
         } catch (err: unknown) {
@@ -39,11 +41,15 @@ const useAuth = () => {
             }
         } finally {
             setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+                hideLoader();
+            }, 1500);
         }
     };
 
     // Sign In function
-    const signIn = async (email: string, password: string, selectedLoginMethod: string, setContextUser: Dispatch<SetStateAction<User>>) => {
+    const signIn = async (email: string, password: string, selectedLoginMethod: string, setContextUser: Dispatch<SetStateAction<User>>, showLoader: () => void, hideLoader: () => void) => {
         setLoading(true);
         if (selectedLoginMethod !== 'pwd') {
             console.log('GET OTP');
@@ -51,6 +57,7 @@ const useAuth = () => {
             return
         }
         try {
+            showLoader();
             const response = await fetch(`${serverURL}/auth/sign-in?email=${email}&password=${password}`, {
                 method: 'GET',
                 headers: {
@@ -76,7 +83,10 @@ const useAuth = () => {
                 setError(err.message);
             }
         } finally {
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+                hideLoader();
+            }, 1500);
         }
     };
 

@@ -22,8 +22,8 @@ const Loader = () => {
             bgcolor="rgba(0, 0, 0, 0.5)"
             zIndex={9999}
         >
-            <CircularProgress size={60} style={{ color: 'white' }} />
-            {message && <p style={{ color: 'white', marginTop: 10 }}>Loading</p>}
+            <CircularProgress size={60} style={{ color: '#016ec0' }} />
+            {message && <p style={{ color: '#fff', marginTop: 10 }}>Loading</p>}
         </Box>
     );
 };

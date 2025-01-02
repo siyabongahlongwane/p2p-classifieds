@@ -11,6 +11,7 @@ import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { UserContext } from "../../context/User/UserContext";
+import useLoaderStore from "../../stores/useLoaderStore";
 
 const SignIn = () => {
   const [selectedLoginMethod, setSelectedLoginMethod] = useState("pwd");
@@ -20,9 +21,10 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { showLoader, hideLoader } = useLoaderStore();
   const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    signIn(email, password, selectedLoginMethod, setUser);
+    signIn(email, password, selectedLoginMethod, setUser, showLoader, hideLoader);
   };
 
   useEffect(() => {
