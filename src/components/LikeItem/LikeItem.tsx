@@ -10,10 +10,10 @@ import useToastStore from "../../stores/useToastStore";
 interface LikeItemProps {
     user_id: number;
     product_id: number;
-    isButton?: boolean;
+    showLabel?: boolean;
 }
 
-const LikeItem = ({ user_id, product_id, isButton }: LikeItemProps) => {
+const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
     const { likes, setLikes } = useStore();
     const [liked, setIsLiked] = useState(false);
     const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
@@ -64,7 +64,7 @@ const LikeItem = ({ user_id, product_id, isButton }: LikeItemProps) => {
         <Stack direction="column" spacing={1} alignItems="center" onClick={handleLike} className="pointer">
             {liked ? <Favorite htmlColor="var(--blue)" /> : <FavoriteBorderOutlined htmlColor="var(--blue)" />}
             {
-                isButton && <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300} >{liked ? 'Remove from likes' : 'Add to likes'}</Typography>
+                showLabel && <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300} >{liked ? 'Remove from likes' : 'Add to likes'}</Typography>
             }
         </Stack>
     );

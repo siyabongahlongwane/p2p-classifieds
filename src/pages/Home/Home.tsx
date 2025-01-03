@@ -1,39 +1,35 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Home = () => {
   const {
-    data: shops,
-    loading,
-    error,
-    get,
+    get
   } = useApi(`${import.meta.env.VITE_API_URL}`);
 
   const { showToast } = useToastStore();
-
+  const [shops, setShops] = useState([]);
   useEffect(() => {
-    try {
-      get(`/shop/fetch`); // Fetch items on mount
-    } catch (error) {
-      showToast("Error fetching orders:", 'error')
-      console.error(error);
+    const fetchShops = async () => {
+      try {
+        const shops = await get(`/shop/fetch-shops?mustHaveProducts=true`);
+        setShops(shops);
+      } catch (error) {
+        showToast("Error fetching orders:", 'error')
+        console.error(error);
+      }
     }
+
+    fetchShops();
   }, []);
 
   return (
     <Stack display={"grid"} height={"100%"} rowGap={2}>
-      {error ? (
-        <Typography variant="h6">{error}</Typography>
-      ) : loading ? (
-        <Typography variant="h6">Loading...</Typography>
-      ) : (
-        shops.map((shop, index) => (
-          <ProductItemGroup shop={shop} key={index} />
-        ))
-      )}
+      {shops.map((shop, index) => (
+        <ProductItemGroup shop={shop} key={index} />
+      ))}
     </Stack>
   );
 };

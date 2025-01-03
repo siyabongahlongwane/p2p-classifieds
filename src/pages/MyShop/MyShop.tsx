@@ -23,7 +23,7 @@ const MyShop = () => {
 
   useEffect(() => {
     const fetchShop = async () => {
-      const [shop] = await get(`/shop/fetch?user_id=${user.user_id}`);
+      const [shop] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
       try {
         setField("selectedShop", shop);
       } catch (error) {

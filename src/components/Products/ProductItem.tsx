@@ -10,7 +10,7 @@ import LikeItem from "../LikeItem/LikeItem";
 
 const ProductItem = ({ product }: { product: ICartItem }) => {
   const { price, status, photos, product_id } = product;
-  const [isSold] = useState(false);
+  const [isSold] = useState(status === "Sold");
   const { user } = useContext(UserContext);
 
   const { setField } = useStore();
@@ -25,7 +25,7 @@ const ProductItem = ({ product }: { product: ICartItem }) => {
           position={"absolute"}
           top={0}
           right={0}
-          bgcolor={"#000"}
+          bgcolor={"#1976d2"}
           color={"#fff"}
           fontWeight={"bold"}
           border={".5px solid #fff"}

@@ -115,7 +115,7 @@ const ViewProduct = () => {
             </Stack>
             <Box display={"flex"} gap={4} justifyContent={"space-around"}>
               <Stack alignItems={"center"} gap={1} className="pointer">
-                <LikeItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} />
+                <LikeItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} showLabel/>
               </Stack>
               <Stack alignItems={"center"} gap={1} className="pointer">
                 <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} />
