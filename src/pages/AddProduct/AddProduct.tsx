@@ -66,7 +66,7 @@ const AddProduct = () => {
       if (productPhotos.length > 0) {
         if (isEdit) return updateProduct(formData);
 
-        const urls = await uploadFiles(productPhotos, "classfieds");
+        const urls = await uploadFiles(productPhotos, "classifieds");
         console.log("Files uploaded successfully!");
 
         if (urls.length > 0) {
