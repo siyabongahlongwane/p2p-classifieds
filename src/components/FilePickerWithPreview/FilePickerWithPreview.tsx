@@ -12,14 +12,13 @@ const FilePickerWithPreview = ({ position }: { position: number }) => {
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0]; // Get the first selected file
         if (selectedFile) {
-            console.log('FILE SIZE', selectedFile.size)
             if (selectedFile.size > 3 * 1024 * 1024) { // 2MB limit
                 alert("File size should not exceed 3MB");
                 return;
             }
             setFile(selectedFile);
             productPhotos[position] = selectedFile;
-            console.log('SELECTED FILE', productPhotos)
+
             setField('productPhotos', productPhotos);
             setPreview(URL.createObjectURL(selectedFile)); // Create a preview URL
         }

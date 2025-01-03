@@ -1,50 +1,22 @@
 import { Box, Paper, Stack, Typography } from "@mui/material";
-import {
-  Favorite,
-  FavoriteBorderOutlined,
-} from "@mui/icons-material";
 import { useContext, useState } from "react";
 import "./Product.css";
-import useApi from "../../hooks/useApi";
 import { UserContext } from "../../context/User/UserContext";
 import { useStore } from "../../stores/store";
 import { useNavigate } from "react-router-dom";
 import CartItem from "../CartItem/CartItem";
-import { CartItem as ICartItem, LikeItem } from "../../typings";
+import { CartItem as ICartItem } from "../../typings";
+import LikeItem from "../LikeItem/LikeItem";
 
 const ProductItem = ({ product }: { product: ICartItem }) => {
   const { price, status, photos, product_id } = product;
-  const [liked, setLiked] = useState(false);
   const [isSold] = useState(false);
   const { user } = useContext(UserContext);
 
-  const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
-
-  const { setLikes, likes, setField } = useStore();
+  const { setField } = useStore();
 
   const navigate = useNavigate();
 
-  const handleAddLike = async () => {
-    const endpoint = `/likes/add-like`;
-    const newLikes = await post(endpoint, {
-      product_id,
-      user_id: user.user_id,
-    });
-    setLikes([...newLikes]);
-    setLiked(true);
-  };
-
-  const handleRemoveLike = () => {
-    const likeToRemove = likes.find((p: LikeItem) => p.product_id === product_id)
-      ?.like_item.like_id;
-    const newLikes = likes.filter((p: LikeItem) => p.product_id !== product_id);
-    remove(`/likes/remove-like/${likeToRemove}?user_id=${user.user_id}`).then(
-      () => {
-        setLikes([...newLikes]);
-        setLiked(false);
-      }
-    );
-  };
 
   return (
     <Stack width={180} className="product" position={"relative"}>
@@ -87,19 +59,9 @@ const ProductItem = ({ product }: { product: ICartItem }) => {
             <Typography fontSize={16} fontWeight={500}>
               R{price}
             </Typography>
-            {liked ? (
-              <Favorite
-                htmlColor="var(--brown)"
-                onClick={() => handleRemoveLike()}
-                className="pointer like"
-              />
-            ) : (
-              <FavoriteBorderOutlined
-                htmlColor="var(--brown)"
-                onClick={() => handleAddLike()}
-                className="pointer like"
-              />
-            )}
+            <Box display={"flex"} justifyContent={"center"}>
+              <LikeItem user_id={user?.user_id} product_id={product?.product_id} />
+            </Box>
           </Box>
           <Stack display={"flex"} gap={0.5}>
             <Box display={"flex"} justifyContent={"center"}>

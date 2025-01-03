@@ -18,6 +18,7 @@ import useApi from "../../hooks/useApi";
 import { OrderWithItems } from "../../typings/Order.int";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import { UserContext } from "../../context/User/UserContext";
+import useToastStore from "../../stores/useToastStore";
 
 const ViewOrder = () => {
   const { get, loading, post } = useApi(`${import.meta.env.VITE_API_URL}`);
@@ -29,6 +30,8 @@ const ViewOrder = () => {
   const { order_id } = useParams();
   const { user } = useContext(UserContext);
   const [isOwner, setIsOwner] = useState(false);
+  const { showToast } = useToastStore();
+
   const handleConfirmReceipt = async () => {
     setIsConfirmed(true);
 
@@ -37,7 +40,10 @@ const ViewOrder = () => {
       const { first_name: updatedBy } = order.user;
       const updatedOrder = await post(`/orders/update-seller-order-status`, { order_id, updatedBy, shop_id });
       setOrder(updatedOrder);
+      showToast('Receipt confirmed successfully', 'success');
+
     } catch (error) {
+      showToast('Error confirming receipt', 'error');
       console.error("Error confirming order receipt:", error);
     }
   };
@@ -51,7 +57,10 @@ const ViewOrder = () => {
       const updatedOrder = await post(`/orders/update-customer-order-status`, { order_id, updatedBy, status: 'Cancelled' });
       setOrder(updatedOrder);
       setIsCancelled(updatedOrder.status === 'Cancelled')
+      showToast('Order cancelled successfully', 'success');
+
     } catch (error) {
+      showToast('Error cancelling order', 'error');
       console.error("Error confirming order receipt:", error);
     }
   };
@@ -70,6 +79,7 @@ const ViewOrder = () => {
         setOrder(order);
         setIsCancelled(order.status === 'Cancelled')
       } catch (error) {
+        showToast('Error fetching order', 'error');
         console.error("Error fetching orders:", error);
       }
     };

@@ -5,16 +5,19 @@ import { useStore } from "../../stores/store";
 import { isLiked } from "../../utils/product.util";
 import useApi from "../../hooks/useApi";
 import { ProductWithLike } from "../../typings";
+import useToastStore from "../../stores/useToastStore";
 
 interface LikeItemProps {
-    user_id: string;
+    user_id: number;
     product_id: number;
+    isButton?: boolean;
 }
 
-const LikeItem = ({ user_id, product_id }: LikeItemProps) => {
+const LikeItem = ({ user_id, product_id, isButton }: LikeItemProps) => {
     const { likes, setLikes } = useStore();
     const [liked, setIsLiked] = useState(false);
     const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
+    const { showToast } = useToastStore();
 
     useEffect(() => {
         setIsLiked(
@@ -31,13 +34,12 @@ const LikeItem = ({ user_id, product_id }: LikeItemProps) => {
                 const likeToRemove = likes.find((p: ProductWithLike) => p.product_id === product_id)
                     ?.like_item?.like_id;
                 const newLikes = likes.filter((p: ProductWithLike) => p.product_id !== product_id);
-                remove(`/likes/remove-like/${likeToRemove}?user_id=${user_id}`).then(
-                    () => {
-                        setLikes([...newLikes]);
-                        setIsLiked(false);
-                    }
-                );
+                await remove(`/likes/remove-like/${likeToRemove}?user_id=${user_id}`);
+                showToast('Item removed from likes', 'success');
+                setLikes([...newLikes]);
+                setIsLiked(false);
             } catch (error) {
+                showToast('Error removing item from likes', 'error');
                 console.error(error);
             }
         } else {
@@ -47,9 +49,11 @@ const LikeItem = ({ user_id, product_id }: LikeItemProps) => {
                     product_id,
                     user_id: user_id,
                 });
+                showToast('Item added to likes', 'success');
                 setLikes([...newLikes]);
                 setIsLiked(true);
             } catch (error) {
+                showToast('Error adding item to likes', 'error');
                 console.error(error);
             }
         }
@@ -57,9 +61,11 @@ const LikeItem = ({ user_id, product_id }: LikeItemProps) => {
 
 
     return (
-        <Stack direction="column" spacing={1} alignItems="center" onClick={handleLike}>
+        <Stack direction="column" spacing={1} alignItems="center" onClick={handleLike} className="pointer">
             {liked ? <Favorite htmlColor="var(--blue)" /> : <FavoriteBorderOutlined htmlColor="var(--blue)" />}
-            <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300} >{liked ? 'Remove from likes' : 'Add to likes'}</Typography>
+            {
+                isButton && <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300} >{liked ? 'Remove from likes' : 'Add to likes'}</Typography>
+            }
         </Stack>
     );
 };

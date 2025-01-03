@@ -6,6 +6,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import useApi from "../../hooks/useApi";
 import MyShopItem from "./MyShopItem";
 import { useStore } from "../../stores/store";
+import useToastStore from "../../stores/useToastStore";
 
 const MyShop = () => {
   const { user } = useContext(UserContext);
@@ -14,10 +15,11 @@ const MyShop = () => {
   );
   const navigate = useNavigate();
 
-  const { loading, error, get, post, put, remove } = useApi(
+  const { loading, get } = useApi(
     `${import.meta.env.VITE_API_URL}`
   );
   const { selectedShop, setField } = useStore();
+  const {showToast} = useToastStore();
 
   useEffect(() => {
     const fetchShop = async () => {
@@ -25,6 +27,7 @@ const MyShop = () => {
       try {
         setField("selectedShop", shop);
       } catch (error) {
+        showToast('Error fetching shop', 'error');
         console.error(error);
       }
     };

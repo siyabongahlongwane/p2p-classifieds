@@ -5,6 +5,7 @@ import useApi from "../../hooks/useApi";
 import { existsInCart } from "../../utils/product.util";
 import { CartItem as ICartItem } from "../../typings";
 import { AddShoppingCart, Delete, ShoppingCart } from "@mui/icons-material";
+import useToastStore from "../../stores/useToastStore";
 
 export interface CartItemProps {
     product_id: number;
@@ -19,7 +20,7 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
     );
 
     const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
-
+    const { showToast } = useToastStore();
 
     useEffect(() => {
         setIsInCart(
@@ -36,15 +37,15 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
             try {
                 const likeToRemove = cart.find((p: ICartItem) => p.product_id === product_id)
                     ?.cart_item.cart_item_id;
-                const newCart = cart.filter((p: ICartItem) => p.product_id !== product_id);
-                remove(`/cart/remove-cart-item/${likeToRemove}?user_id=${user_id}`).then(
-                    () => {
-                        setCart([...newCart]);
-                        setIsInCart(false);
-                    }
-                );
+                const filteredCart = cart.filter((p: ICartItem) => p.product_id !== product_id);
+                await remove(`/cart/remove-cart-item/${likeToRemove}?user_id=${user_id}`);
+
+                showToast('Item removed from cart', 'success');
+                setCart([...filteredCart]);
+                setIsInCart(false);
             } catch (error) {
                 console.error(error);
+                showToast('Error removing item from cart', 'error');
             }
         } else {
             try {
@@ -53,9 +54,12 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
                     product_id,
                     user_id: user_id,
                 });
+
+                showToast('Item added to cart', 'success');
                 setCart([...newCart]);
                 setIsInCart(true);
             } catch (error) {
+                showToast('Error adding item to cart', 'error');
                 console.error(error);
             }
         }

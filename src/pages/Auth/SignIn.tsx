@@ -21,10 +21,10 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { showLoader, hideLoader } = useLoaderStore();
+  const { showLoader } = useLoaderStore();
   const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    signIn(email, password, selectedLoginMethod, setUser, showLoader, hideLoader);
+    signIn(email, password, selectedLoginMethod, setUser, showLoader);
   };
 
   useEffect(() => {

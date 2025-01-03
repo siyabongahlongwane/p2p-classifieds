@@ -12,13 +12,14 @@ import LikeItem from "../../components/LikeItem/LikeItem";
 import CartItem from "../../components/CartItem/CartItem";
 import { Photo } from "../../typings";
 import StartChat from "../../components/StartChat/StartChat";
+import useToastStore from "../../stores/useToastStore";
 
 const ViewProduct = () => {
   const { selectedProduct, setField, categories } = useStore();
   const { product_id } = useParams();
   const { get, loading, error } = useApi(import.meta.env.VITE_API_URL);
   const [images, setImages] = useState<Array<{ original: string, thumbnail: string }>>([]);
-
+  const { showToast } = useToastStore();
 
   const fetchCategories = async () => {
     const categories = await get("/categories/fetch");
@@ -37,16 +38,27 @@ const ViewProduct = () => {
   }
 
   useEffect(() => {
-    if (!selectedProduct) {
-      get("/product/fetch?product_id=" + product_id).then(([product]) => {
-        setField("selectedProduct", product);
-        setImages(transformPhotos(product.photos));
-      });
-    }
-    else setImages(transformPhotos(selectedProduct.photos));
+    const fetchProduct = async () => {
+      if (!selectedProduct) {
+        try {
+          get("/product/fetch?product_id=" + product_id).then(([product]) => {
+            setField("selectedProduct", product);
+            setImages(transformPhotos(product.photos));
+          });
 
+        }
+        catch (error) {
+          showToast('Error fetching product', 'error');
+          console.error(error);
+        }
+      }
+      else setImages(transformPhotos(selectedProduct.photos));
+
+    }
+    fetchProduct();
     fetchCategories();
   }, [product_id, selectedProduct]);
+
 
   return (
     <Stack>

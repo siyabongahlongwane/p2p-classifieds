@@ -27,6 +27,7 @@ const OrderOutcome = () => {
     const orderId = params.get('Optional1');
     const orderStatus = params.get('Status');
     const navigate = useNavigate();
+    const { showToast } = useToastStore();
 
     useEffect(() => {
         if (!orderId) navigate('/home');
@@ -34,7 +35,6 @@ const OrderOutcome = () => {
 
             const order = await get(`/orders/fetch-orders?order_id=${orderId}`);
             try {
-                console.log({ order })
                 if (!order) throw new Error('Order not found');
 
                 const [orderObject] = order;
@@ -47,6 +47,7 @@ const OrderOutcome = () => {
                 }
                 setOrderDetails(data);
             } catch (error) {
+                showToast('Error retrieving order', 'error');
                 console.error(error);
             }
         };

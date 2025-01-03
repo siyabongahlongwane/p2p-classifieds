@@ -18,13 +18,19 @@ import CustomerOrders from "./pages/Orders/CustomerOrders";
 import ViewOrder from "./pages/Orders/ViewOrder";
 import Loader from "./components/Loader/Loader";
 import useLoaderStore from "./stores/useLoaderStore";
+import useToastStore from "./stores/useToastStore";
+import Toast from "./components/Toast/Toast";
 
 function App() {
   const { loading } = useLoaderStore();
+  const { isOpen } = useToastStore();
   return (
     <>
       {
         loading && <Loader />
+      }
+      {
+        isOpen && <Toast />
       }
       <BrowserRouter>
         <Routes>

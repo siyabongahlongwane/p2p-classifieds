@@ -1,11 +1,10 @@
 import { Stack, Typography } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
-import { useContext, useEffect } from "react";
-import { UserContext } from "../../context/User/UserContext";
+import useToastStore from "../../stores/useToastStore";
+import { useEffect } from "react";
 
 const Home = () => {
-  const { user } = useContext(UserContext);
   const {
     data: shops,
     loading,
@@ -13,8 +12,15 @@ const Home = () => {
     get,
   } = useApi(`${import.meta.env.VITE_API_URL}`);
 
+  const { showToast } = useToastStore();
+
   useEffect(() => {
-    get(`/shop/fetch`); // Fetch items on mount
+    try {
+      get(`/shop/fetch`); // Fetch items on mount
+    } catch (error) {
+      showToast("Error fetching orders:", 'error')
+      console.error(error);
+    }
   }, []);
 
   return (

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const MyShopItem = ({ product }: { product: any }) => {
     const { title, photos, price, product_id } = product;
-    console.log('PRODUCT', product)
+
     return (
         <Card sx={{ marginTop: 2, position: "relative" }}>
             <CardMedia

@@ -3,6 +3,7 @@ import { useStore } from "../../stores/store";
 import { useEffect } from "react";
 import useApi from "../../hooks/useApi";
 import { User } from "../../typings";
+import useToastStore from "../../stores/useToastStore";
 
 const OrderSummary = ({ user }: { user: User }) => {
     const { cart, orderObject, setField } = useStore();
@@ -17,15 +18,18 @@ const OrderSummary = ({ user }: { user: User }) => {
     }, [cart, orderObject.deliveryCost])
 
     const { total, shippingMethod, deliveryCost, cartTotal, paymentOption } = orderObject;
+    const { showToast } = useToastStore();
 
     const payNow = async () => {
         try {
             setField('orderObject', { ...orderObject, user_id: user.user_id });
             const customerDetails = { firstName: user.first_name, lastName: user.last_name };
             const res = await post('/orders/create-order', { ...orderObject, user_id: user.user_id, customerDetails });
-            if(!res?.url) throw new Error(`Error creating order: ${res?.errorMessage || 'Could not open payment gateway'}`);
+            if (!res?.url) throw new Error(`Error creating order: ${res?.errorMessage || 'Could not open payment gateway'}`);
             window.open(res.url, '_self');
-        } catch (error) {
+        } catch (error: unknown) {
+            if (error instanceof Error) showToast(error.message || 'Error creating order', 'error');
+            showToast('Error creating order', 'error');
             console.error(error);
         }
     }

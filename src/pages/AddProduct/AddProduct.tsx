@@ -9,12 +9,13 @@ import { newProduct } from "../../typings/Product.type";
 import { NewProduct } from "../../typings";
 import { UserContext } from "../../context/User/UserContext";
 import { useParams } from "react-router-dom";
+import useToastStore from "../../stores/useToastStore";
 const AddProduct = () => {
   const { user } = useContext(UserContext);
   const { user_id, shop_id } = user;
   const { categories, provinces, productConditions, productPhotos, productStatuses, setField } = useStore();
   const { get, post, put } = useApi(import.meta.env.VITE_API_URL);
-  const { uploadFiles, isLoading, error } = useFirebaseStorage();
+  const { uploadFiles, error } = useFirebaseStorage();
   const [fileUrls, setFileUrls] = useState([]);
   const { product_id } = useParams();
   const [isEdit] = useState(!!product_id);
@@ -25,6 +26,7 @@ const AddProduct = () => {
 
   const { register, handleSubmit, control, formState } = form;
   const { errors } = formState;
+  const { showToast } = useToastStore();
 
   const fetchCategories = async () => {
     const categories = await get("/categories/fetch");
@@ -54,7 +56,7 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    if(isEdit) fetchProduct();
+    if (isEdit) fetchProduct();
   }, []);
 
 
@@ -62,9 +64,8 @@ const AddProduct = () => {
   const onSubmit = async (formData: NewProduct) => {
     try {
       if (productPhotos.length > 0) {
-        if (isEdit) {
-          return updateProduct(formData);
-        }
+        if (isEdit) return updateProduct(formData);
+
         const urls = await uploadFiles(productPhotos, "classfieds");
         console.log("Files uploaded successfully!");
 
@@ -75,27 +76,32 @@ const AddProduct = () => {
         setFileUrls((prevUrls: any) => [...prevUrls, ...urls]);
 
       } else {
-        alert("No photos selected!");
+        showToast("No photos selected!", "error");
       }
     } catch (err) {
+      showToast("Photo upload failed", "error");
       console.error("Photo upload failed:", err);
     }
   }
 
   const addNewProduct = async (product: NewProduct) => {
     try {
-      const res = await post("/product/add-new-product", { ...product, user_id, shop_id });
-      console.log(res)
+      await post("/product/add-new-product", { ...product, user_id, shop_id });
+      showToast("Product added successfully!", "success");
+
     } catch (error) {
+      showToast("Product upload failed", "error");
       console.error(error);
     }
   }
 
   const updateProduct = async (updatedProduct: NewProduct) => {
     try {
-      const res = await put(`/product/update-product/${product_id}`, { ...updatedProduct, user_id, shop_id });
-      console.log(res)
+      await put(`/product/update-product/${product_id}`, { ...updatedProduct, user_id, shop_id });
+      showToast("Product updated successfully!", "success");
+
     } catch (error) {
+      showToast("Product update failed", "error");
       console.error(error);
     }
   }

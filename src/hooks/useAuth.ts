@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../typings/User.type';
+import useToastStore from '../stores/useToastStore';
 
 const useAuth = () => {
     const [error, setError] = useState('');
@@ -8,6 +9,7 @@ const useAuth = () => {
     const navigate = useNavigate();
 
     const serverURL = import.meta.env.VITE_API_URL;
+    const { showToast } = useToastStore();
 
     // Register function, setContextUser: () => void)
     const signUp = async (first_name: string, last_name: string, email: string, phone: string, password: string, showLoader: () => void, hideLoader: () => void) => {
@@ -31,28 +33,26 @@ const useAuth = () => {
             }
 
             setTimeout(() => {
+                showToast(result.msg, 'success');
                 navigate('/sign-in');
                 hideLoader();
             }, 1500);
             setError('');
         } catch (err: unknown) {
             if (err instanceof Error) {
+                showToast(err.message);
                 setError(err.message);
             }
         } finally {
             setLoading(false);
-            setTimeout(() => {
-                setLoading(false);
-                hideLoader();
-            }, 1500);
+            setLoading(false);
         }
     };
 
     // Sign In function
-    const signIn = async (email: string, password: string, selectedLoginMethod: string, setContextUser: Dispatch<SetStateAction<User>>, showLoader: () => void, hideLoader: () => void) => {
+    const signIn = async (email: string, password: string, selectedLoginMethod: string, setContextUser: Dispatch<SetStateAction<User>>, showLoader: () => void) => {
         setLoading(true);
         if (selectedLoginMethod !== 'pwd') {
-            console.log('GET OTP');
             setLoading(false);
             return
         }
@@ -76,17 +76,16 @@ const useAuth = () => {
             localStorage.setItem('user', JSON.stringify(result.payload || ''));
             setTimeout(() => {
                 navigate('/home');
+                showToast('Logged in successfully', 'success');
             }, 1500);
             setError('');
         } catch (err: unknown) {
             if (err instanceof Error) {
+                showToast(err.message, 'error');
                 setError(err.message);
             }
         } finally {
-            setTimeout(() => {
-                setLoading(false);
-                hideLoader();
-            }, 1500);
+            setLoading(false);
         }
     };
 
