@@ -8,7 +8,7 @@ import useToastStore from "../../stores/useToastStore";
 const OrderSummary = ({ user }: { user: User }) => {
     const { cart, orderObject, setField } = useStore();
     const itemsCount = cart.length > 1 ? `${cart.length} items` : `${cart.length} item`;
-    const { loading, post } = useApi(`${import.meta.env.VITE_API_URL}`);
+    const { post } = useApi(`${import.meta.env.VITE_API_URL}`);
 
     useEffect(() => {
         const cartTotal = +(cart.reduce((acc, curr) => +acc + (+curr.price), 0).toFixed(2));

@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/User/UserContext";
 import { useNavigate } from "react-router-dom";
 import { statusesMessages, Statuses } from "./StaticData";
+import useToastStore from "../../stores/useToastStore";
 interface OrderProps {
     buyerName: string;
     items: Array<{ title: string, description: string, price: string }>;
@@ -53,7 +54,7 @@ const OrderOutcome = () => {
         };
 
         fetchOrderDetails();
-    }, [orderId, user.first_name, user.last_name]);
+    }, [orderId]);
 
 
     return (

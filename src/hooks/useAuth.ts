@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../typings/User.type';
 import useToastStore from '../stores/useToastStore';
+import { useStore } from '../stores/store';
 
 const useAuth = () => {
     const [error, setError] = useState('');
@@ -10,7 +11,7 @@ const useAuth = () => {
 
     const serverURL = import.meta.env.VITE_API_URL;
     const { showToast } = useToastStore();
-
+    const { setField } = useStore();
     // Register function, setContextUser: () => void)
     const signUp = async (first_name: string, last_name: string, email: string, phone: string, password: string, showLoader: () => void, hideLoader: () => void) => {
         setLoading(true);
@@ -95,6 +96,8 @@ const useAuth = () => {
         setTimeout(() => {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+            setField('cart', []);
+            setField('likes', []);
             navigate('/home');
         }, 500);
     };
