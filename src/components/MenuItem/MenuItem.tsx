@@ -15,7 +15,7 @@ const MenuItem = ({
 }: {
   item: MenuItemType;
   activeMenuItem: number;
-  setActiveMenuItem: Dispatch<SetStateAction<number>>;
+  setActiveMenuItem: (key: string, val: number) => void;
   index: number;
 }) => {
   const { setUser } = useContext(UserContext);
@@ -24,7 +24,8 @@ const MenuItem = ({
   const isActive = index === activeMenuItem;
 
   const handleItemClick = (route: string) => {
-    setActiveMenuItem(index);
+    setActiveMenuItem('activeMenuItem', index);
+    localStorage.setItem('activeMenuItem', index.toString());
     navigate(route);
   };
   return (

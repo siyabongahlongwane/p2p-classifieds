@@ -35,7 +35,8 @@ type Store = {
     orderObject: any,
     productPhotos: any[],
     selectedShop: any,
-    productStatuses: string[]
+    productStatuses: string[],
+    activeMenuItem: number
 }
 
 type StoreActions = {
@@ -92,6 +93,7 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
     productPhotos: [],
     selectedShop: {},
     productStatuses: ['Available', 'Sold', 'Unpublished'],
+    activeMenuItem: 0,
     setLikes: (likes) => set({ likes }),
     setCart: (cart) => set({ cart }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
