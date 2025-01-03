@@ -75,7 +75,7 @@ const ViewOrder = () => {
     const fetchOrder = async () => {
       try {
         const [order] = await get(`/orders/fetch-orders?order_id=${order_id}`);
-        setIsOwner(user.user_id == order.user_id);
+        setIsOwner(user?.user_id == order.user_id);
         setOrder(order);
         setIsCancelled(order.status === 'Cancelled')
       } catch (error) {
@@ -104,7 +104,7 @@ const ViewOrder = () => {
                 {(!loading && (!isOwner) ? <Typography variant="h6" color="primary"><b>Customer</b>  - {order.user?.first_name} {order.user?.last_name}</Typography> : <span></span>)
                 }
                 {
-                  !isOwner && order.status !== "Received By Buyer"
+                  user && !isOwner && order.status !== "Received By Buyer"
                     ?
                     <Button variant="contained" size="small" color="error" onClick={handleCancelOrder} disabled={isCancelled}>Cancel Order</Button>
                     :
