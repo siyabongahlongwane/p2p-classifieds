@@ -79,6 +79,11 @@ const ViewOrder = () => {
         setOrder(order);
         setIsCancelled(order.status === 'Cancelled')
       } catch (error) {
+        if (!order_id) {
+          showToast('Error fetching order: No order id provided', 'error');
+          navigate('../');
+          return;
+        }
         showToast('Error fetching order', 'error');
         console.error("Error fetching orders:", error);
       }

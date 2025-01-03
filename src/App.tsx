@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
@@ -20,6 +20,7 @@ import Loader from "./components/Loader/Loader";
 import useLoaderStore from "./stores/useLoaderStore";
 import useToastStore from "./stores/useToastStore";
 import Toast from "./components/Toast/Toast";
+import NotFound from "./components/NotFound/NotFound";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -35,13 +36,18 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AppWrapper />}>
+            <Route path="" element={<Navigate to="home" />}></Route>
             <Route path="home" element={<Home />}></Route>
             <Route path="cart" element={<Cart />}></Route>
             <Route path="likes" element={<Likes />}></Route>
             <Route path="orders" element={<Orders />}>
+              <Route path="" element={<Navigate to="./my-orders" />}></Route>
               <Route path="my-orders" element={<MyOrders />}></Route>
               <Route path="customer-orders" element={<CustomerOrders />}></Route>
-              <Route path="view-order/:order_id" element={<ViewOrder />}></Route>
+              <Route path="view-order" element={<ViewOrder />}>
+                <Route path="" element={<Navigate to="./orders" />}></Route>
+                <Route path=":order_id" element={<ViewOrder />}></Route>
+              </Route>
               <Route path="thank-you" element={<OrderOutcome />}></Route>
               <Route path="failed-order" element={<OrderOutcome />}></Route>
               <Route path="canceled-order" element={<OrderOutcome />}></Route>
@@ -58,9 +64,11 @@ function App() {
             ></Route>
             <Route path="shipping-details" element={<ShippingDetails />}></Route>
             <Route path="payment" element={<Payment />}></Route>
+            <Route path="*" element={<Navigate to="/not-found" />} /> {/* Redirect to NotFound */}
           </Route>
           <Route path="/sign-in" element={<SignIn />}></Route>
           <Route path="/sign-up" element={<SignUp />}></Route>
+          <Route path="/not-found" element={<NotFound />} /> {/* NotFound route */}
         </Routes>
       </BrowserRouter>
     </>
