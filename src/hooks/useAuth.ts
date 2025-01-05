@@ -1,14 +1,15 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../typings/User.type';
 import useToastStore from '../stores/useToastStore';
 import { useStore } from '../stores/store';
+import { UserContext } from '../context/User/UserContext';
 
 const useAuth = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
+    const { setUser } = useContext(UserContext);
     const serverURL = import.meta.env.VITE_API_URL;
     const { showToast } = useToastStore();
     const { setField } = useStore();
@@ -33,10 +34,12 @@ const useAuth = () => {
                 throw new Error(result.err || 'Registration failed');
             }
 
+            setUser(result.payload);
+            localStorage.setItem('token', result.token || '');
+            localStorage.setItem('user', JSON.stringify(result.payload || ''));
             setTimeout(() => {
+                navigate('/home');
                 showToast(result.msg, 'success');
-                navigate('/sign-in');
-                hideLoader();
             }, 1500);
             setError('');
         } catch (err: unknown) {
