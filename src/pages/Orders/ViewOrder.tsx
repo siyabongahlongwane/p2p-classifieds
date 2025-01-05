@@ -37,8 +37,7 @@ const ViewOrder = () => {
 
     try {
       const { order_id, shop_id } = order;
-      const { first_name: updatedBy } = order.user;
-      const updatedOrder = await post(`/orders/update-seller-order-status`, { order_id, updatedBy, shop_id });
+      const updatedOrder = await post(`/orders/update-seller-order-status`, { order_id, shop_id });
       setOrder(updatedOrder);
       showToast('Receipt confirmed successfully', 'success');
 

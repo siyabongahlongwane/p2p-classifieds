@@ -41,9 +41,10 @@ const useAuth = () => {
             setError('');
         } catch (err: unknown) {
             if (err instanceof Error) {
-                showToast(err.message);
+                showToast(err.message, 'error');
                 setError(err.message);
             }
+            hideLoader();
         } finally {
             setLoading(false);
             setLoading(false);
