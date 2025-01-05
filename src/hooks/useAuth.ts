@@ -4,6 +4,7 @@ import { User } from '../typings/User.type';
 import useToastStore from '../stores/useToastStore';
 import { useStore } from '../stores/store';
 import { UserContext } from '../context/User/UserContext';
+import useLoaderStore from '../stores/useLoaderStore';
 
 const useAuth = () => {
     const [error, setError] = useState('');
@@ -13,8 +14,11 @@ const useAuth = () => {
     const serverURL = import.meta.env.VITE_API_URL;
     const { showToast } = useToastStore();
     const { setField } = useStore();
+    const { showLoader, hideLoader } = useLoaderStore();
+
     // Register function, setContextUser: () => void)
-    const signUp = async (first_name: string, last_name: string, email: string, phone: string, password: string, showLoader: () => void, hideLoader: () => void) => {
+
+    const signUp = async (first_name: string, last_name: string, email: string, phone: string, password: string) => {
         setLoading(true);
         try {
             showLoader();
@@ -55,7 +59,7 @@ const useAuth = () => {
     };
 
     // Sign In function
-    const signIn = async (email: string, password: string, selectedLoginMethod: string, setContextUser: Dispatch<SetStateAction<User>>, showLoader: () => void) => {
+    const signIn = async (email: string, password: string, selectedLoginMethod: string) => {
         setLoading(true);
         if (selectedLoginMethod !== 'pwd') {
             setLoading(false);
@@ -76,7 +80,7 @@ const useAuth = () => {
                 throw new Error(result.err || 'Login failed');
             }
 
-            setContextUser(result.payload);
+            setUser(result.payload);
             localStorage.setItem('token', result.token || '');
             localStorage.setItem('user', JSON.stringify(result.payload || ''));
             setTimeout(() => {
@@ -88,7 +92,10 @@ const useAuth = () => {
             if (err instanceof Error) {
                 showToast(err.message, 'error');
                 setError(err.message);
+            } else if (typeof err == 'string') {
+                showToast(err, 'error');
             }
+            hideLoader();
         } finally {
             setLoading(false);
         }

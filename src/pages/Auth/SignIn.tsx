@@ -6,25 +6,22 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { UserContext } from "../../context/User/UserContext";
-import useLoaderStore from "../../stores/useLoaderStore";
 
 const SignIn = () => {
   const [selectedLoginMethod, setSelectedLoginMethod] = useState("pwd");
-  const { signIn, loading, error } = useAuth();
-  const { setUser } = useContext(UserContext);
+  const { signIn, loading } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { showLoader } = useLoaderStore();
+
   const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    signIn(email, password, selectedLoginMethod, setUser, showLoader);
+    signIn(email, password, selectedLoginMethod);
   };
 
   useEffect(() => {
@@ -45,14 +42,6 @@ const SignIn = () => {
             <Typography variant="h5">Welcome back!</Typography>
             <Typography fontWeight={400} variant="body2" color="gray">
               Select Sign In method below
-            </Typography>
-            <Typography
-              fontWeight={400}
-              variant="body2"
-              color="red"
-              fontSize={18}
-            >
-              {error || ""}
             </Typography>
           </Stack>
           <Box

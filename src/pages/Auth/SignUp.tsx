@@ -10,10 +10,9 @@ import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useState } from "react";
-import useLoaderStore from "../../stores/useLoaderStore";
 
 const SignUp = () => {
-  const { error, loading, signUp } = useAuth();
+  const { loading, signUp } = useAuth();
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -22,7 +21,7 @@ const SignUp = () => {
     password: "",
   });
 
-  const { showLoader, hideLoader } = useLoaderStore();
+
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -33,7 +32,7 @@ const SignUp = () => {
     const password = formData.get("password") as string;
 
     
-    signUp(first_name, last_name, email, phone, password, showLoader, hideLoader);
+    signUp(first_name, last_name, email, phone, password);
   };
 
   const handleInputChange = (e: {
@@ -59,14 +58,6 @@ const SignUp = () => {
             <Typography variant="h5">Hello and Welcome!</Typography>
             <Typography fontWeight={400} variant="body2" color="gray">
               Register your account below
-            </Typography>
-            <Typography
-              fontWeight={400}
-              variant="body2"
-              color="red"
-              fontSize={18}
-            >
-              {error || ""}
             </Typography>
           </Stack>
 
