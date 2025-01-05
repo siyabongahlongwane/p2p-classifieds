@@ -74,7 +74,8 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
                         display={"flex"}
                         gap={0.5}
                         alignItems={"center"}
-                        bgcolor={!isInCart ? "#c2b280" : "#d32f2f"}
+                        bgcolor={!isInCart ? "#016ec0" : "#d4d4e0"}
+                        color={isInCart ? "#fff" : "#fff"}
                         borderRadius={2}
                         p={0.5}
                         className="pointer"
@@ -86,7 +87,7 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
                         )}
                         <Typography
                             fontSize={11}
-                            color={!isInCart ? "#000" : "#fff"}
+                            color={isInCart ? "#000" : "#fff"}
                             fontWeight={"400"}
                         >
                             {isInCart ? "Remove from cart" : " Add to cart"}

@@ -22,7 +22,7 @@ const ProductItemGroup = ({ shop }: any) => {
           </Typography>
           <Link
             style={{ color: "#d32f2f", fontWeight: "400" }}
-            color="#c2b280"
+            color="#016ec0"
             to={"/shop/" + shop.link}
           >
             @{shop.link}

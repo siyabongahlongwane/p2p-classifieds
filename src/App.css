@@ -12,11 +12,14 @@ body {
 .primary-bg,
 .primary-btn,
 .selected-method {
-  background-color: #c2b280 !important;
+  background-color: #016ec0 !important;
 }
 
+.selected-method {
+  color: #fff;
+}
 .primary-btn {
-  color: #000 !important;
+  color: #fff !important;
 }
 
 .primary-btn,
