@@ -1,7 +1,7 @@
 import "./Menu.css";
 import MenuItem from "../MenuItem/MenuItem";
 import { useEffect } from 'react';
-import { HomeOutlined, LocalShippingOutlined, LogoutOutlined, MarkChatUnreadOutlined, SettingsOutlined, ShoppingBagOutlined } from "@mui/icons-material";
+import { HomeOutlined, LocalShippingOutlined, LogoutOutlined, MarkChatUnreadOutlined, SettingsOutlined, ShoppingBagOutlined, WalletOutlined } from "@mui/icons-material";
 import useAuth from "../../hooks/useAuth";
 import { MenuItem as MenuItemType } from "../../typings/MenuItem.type";
 import { useStore } from "../../stores/store";
@@ -29,6 +29,11 @@ const Menu = () => {
             Icon: MarkChatUnreadOutlined,
             route: 'messages',
             label: 'Messages',
+        },
+        {
+            Icon: WalletOutlined,
+            route: 'my-wallet',
+            label: 'My Wallet',
         },
         {
             Icon: SettingsOutlined,

@@ -21,6 +21,7 @@ import useLoaderStore from "./stores/useLoaderStore";
 import useToastStore from "./stores/useToastStore";
 import Toast from "./components/Toast/Toast";
 import NotFound from "./components/NotFound/NotFound";
+import Wallet from "./components/Wallet/Wallet";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -57,6 +58,7 @@ function App() {
               <Route path="edit-product/:product_id" element={<AddProduct />}></Route>
             </Route>
             <Route path="messages" element={<Home />}></Route>
+            <Route path="my-wallet" element={<Wallet />}></Route>
             <Route path="settings" element={<Home />}></Route>
             <Route
               path="/view-product/:product_id"
