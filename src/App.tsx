@@ -22,6 +22,7 @@ import useToastStore from "./stores/useToastStore";
 import Toast from "./components/Toast/Toast";
 import NotFound from "./components/NotFound/NotFound";
 import Wallet from "./components/Wallet/Wallet";
+import UserShop from "./components/UserShop/UserShop";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -39,6 +40,7 @@ function App() {
           <Route path="/" element={<AppWrapper />}>
             <Route path="" element={<Navigate to="home" />}></Route>
             <Route path="home" element={<Home />}></Route>
+            <Route path="shops/:shop_link" element={<UserShop />}></Route>
             <Route path="cart" element={<Cart />}></Route>
             <Route path="likes" element={<Likes />}></Route>
             <Route path="orders" element={<Orders />}>

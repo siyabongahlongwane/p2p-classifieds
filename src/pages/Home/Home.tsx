@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Divider, Stack } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
@@ -17,7 +17,7 @@ const Home = () => {
         const shops = await get(`/shop/fetch-shops?mustHaveProducts=true`);
         setShops(shops);
       } catch (error) {
-        showToast("Error fetching orders:", 'error')
+        showToast("Error fetching shops:", 'error')
         console.error(error);
       }
     }
@@ -28,7 +28,10 @@ const Home = () => {
   return (
     <Stack display={"grid"} height={"100%"} rowGap={2}>
       {shops.map((shop, index) => (
-        <ProductItemGroup shop={shop} key={index} />
+        <>
+          <ProductItemGroup shop={shop} key={index} productsToShow={3} />
+          <Divider />
+        </>
       ))}
     </Stack>
   );

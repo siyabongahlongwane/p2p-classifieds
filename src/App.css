@@ -48,3 +48,10 @@ label[data-shrink=false]+.MuiInputBase-formControl .css-w76bbz-MuiSelect-select-
 .MuiFormHelperText-root {
   color: red !important;
 }
+
+.product-img {
+  size: cover !important;
+  width: 200px;
+  height: 200px;
+  background-position: center center;
+}

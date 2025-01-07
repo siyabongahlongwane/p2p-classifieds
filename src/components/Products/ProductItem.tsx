@@ -5,10 +5,10 @@ import { UserContext } from "../../context/User/UserContext";
 import { useStore } from "../../stores/store";
 import { useNavigate } from "react-router-dom";
 import CartItem from "../CartItem/CartItem";
-import { CartItem as ICartItem } from "../../typings";
+import { PlainProduct } from "../../typings";
 import LikeItem from "../LikeItem/LikeItem";
 
-const ProductItem = ({ product }: { product: ICartItem }) => {
+const ProductItem = ({ product }: { product: PlainProduct }) => {
   const { price, status, photos, product_id } = product;
   const [isSold] = useState(status === "Sold");
   const { user } = useContext(UserContext);
@@ -19,7 +19,7 @@ const ProductItem = ({ product }: { product: ICartItem }) => {
 
 
   return (
-    <Stack width={180} className="product" position={"relative"}>
+    <Stack width={'inherit'} className="product" position={"relative"}>
       {isSold && (
         <Box
           position={"absolute"}
@@ -38,39 +38,40 @@ const ProductItem = ({ product }: { product: ICartItem }) => {
         </Box>
       )}
       <Paper>
-        <Box>
-          <img
+        <Box className='product-img'>
+        <img
             src={photos[0]?.photo_url}
             alt="Image"
             width={"100%"}
+            height={'100%'}
             className="pointer"
             onClick={() => {
               setField("selectedProduct", product);
               navigate(`/view-product/${product_id}`);
             }}
           />
-        </Box>
-        <Stack p={1} gap={0.5}>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography fontSize={16} fontWeight={500}>
-              R{price}
-            </Typography>
-            <Box display={"flex"} justifyContent={"center"}>
-              <LikeItem user_id={user?.user_id} product_id={product?.product_id} />
-            </Box>
+      </Box>
+      <Stack p={1} gap={0.5}>
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <Typography fontSize={16} fontWeight={500}>
+            R{price}
+          </Typography>
+          <Box display={"flex"} justifyContent={"center"}>
+            <LikeItem user_id={user?.user_id} product_id={product?.product_id} />
           </Box>
-          <Stack display={"flex"} gap={0.5}>
-            <Box display={"flex"} justifyContent={"center"}>
-              <CartItem user_id={user?.user_id} product_id={product?.product_id} isButton />
-            </Box>
-          </Stack>
+        </Box>
+        <Stack display={"flex"} gap={0.5}>
+          <Box display={"flex"} justifyContent={"center"}>
+            <CartItem user_id={user?.user_id} product_id={product?.product_id} isButton />
+          </Box>
         </Stack>
-      </Paper>
-    </Stack>
+      </Stack>
+    </Paper>
+    </Stack >
   );
 };
 
