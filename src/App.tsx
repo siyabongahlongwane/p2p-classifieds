@@ -23,6 +23,7 @@ import Toast from "./components/Toast/Toast";
 import NotFound from "./components/NotFound/NotFound";
 import Wallet from "./components/Wallet/Wallet";
 import UserShop from "./components/UserShop/UserShop";
+import Settings from "./pages/Settings/Settings";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -61,7 +62,7 @@ function App() {
             </Route>
             <Route path="messages" element={<Home />}></Route>
             <Route path="my-wallet" element={<Wallet />}></Route>
-            <Route path="settings" element={<Home />}></Route>
+            <Route path="settings" element={<Settings />}></Route>
             <Route
               path="/view-product/:product_id"
               element={<ViewProduct />}

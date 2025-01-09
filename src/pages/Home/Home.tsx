@@ -29,7 +29,7 @@ const Home = () => {
     <Stack display={"grid"} height={"100%"} rowGap={2}>
       {shops.map((shop, index) => (
         <>
-          <ProductItemGroup shop={shop} key={index} productsToShow={3} />
+          <ProductItemGroup shop={shop} key={shop.id} productsToShow={3} />
           <Divider />
         </>
       ))}

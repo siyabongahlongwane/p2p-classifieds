@@ -63,13 +63,25 @@ const useApi = (baseUrl: string) => {
     };
 
     const put = async (endpoint: string, payload: any) => {
-        await fetchData(`${baseUrl}${endpoint}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
+        try {
+            const response = await fetchData(`${baseUrl}${endpoint}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            return response;
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+                hideLoader();
+            }, 1500);
+        }
     };
 
     const remove = async (endpoint: string) => {
