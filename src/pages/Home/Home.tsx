@@ -3,6 +3,7 @@ import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
 import { useEffect, useState } from "react";
+import PageHeader from "../../components/PageHeader/PageHeader";
 
 const Home = () => {
   const {
@@ -27,12 +28,15 @@ const Home = () => {
 
   return (
     <Stack display={"grid"} height={"100%"} rowGap={2}>
-      {shops.map((shop, index) => (
+      {shops?.length ? shops.map((shop, index) => (
         <>
           <ProductItemGroup shop={shop} key={shop.id} productsToShow={3} />
           <Divider />
         </>
-      ))}
+      ))
+        :
+        <PageHeader header="No Shops Found" />
+      }
     </Stack>
   );
 };
