@@ -102,7 +102,10 @@ const AddProduct = () => {
       if (!newProduct) throw new Error('Error adding new product');
 
       showToast("Product added successfully!", "success");
-      navigate('/my-shop')
+      navigate('/my-shop');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
       showToast(_error as string, 'error');
@@ -115,9 +118,12 @@ const AddProduct = () => {
     try {
       const updatedproduct = await put(`/product/update-product/${product_id}`, { ...updatedProduct, user_id, shop_id });
       if (!updatedproduct) throw new Error('Error updating product');
+      showToast("Product updated successfully!", "success");
 
       navigate('/my-shop');
-      showToast("Product updated successfully!", "success");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
       showToast(_error as string, 'error');

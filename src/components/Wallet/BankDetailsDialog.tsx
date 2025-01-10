@@ -1,75 +1,134 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControl,
+    FormHelperText,
+    InputLabel,
+    MenuItem,
+    Select,
+    Stack,
     TextField,
     Typography,
 } from "@mui/material";
-import useToastStore from "../../stores/useToastStore";
 
-export type BankingDetails = { bank_name: string; account_number: string; account_holder: string; }
-const BankDetailsDialog = ({ setDialogOpen, handleRequestPayout, dialogOpen }: { setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>, handleRequestPayout: (formState: BankingDetails) => Promise<void>, dialogOpen: boolean }) => {
-    const [formState, setFormState] = useState({
-        bank_name: "",
-        account_number: "",
-        account_holder: "",
+import { Controller, useForm } from "react-hook-form";
+import { IBankingDetails } from "../../typings/Banking.int";
+import useToastStore from "../../stores/useToastStore";
+import useApi from "../../hooks/useApi";
+
+
+const BankDetailsDialog = ({ setDialogOpen, handleRequestPayout, dialogOpen, user_id }: { setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>, handleRequestPayout: (formState: IBankingDetails) => Promise<void>, dialogOpen: boolean, user_id: number }) => {
+    const { register, handleSubmit, formState: { errors, }, reset, control } = useForm({
+        defaultValues: {
+            name: "",
+            account_number: "",
+            account_holder: "",
+            account_type: "",
+        },
     });
 
+    const { get } = useApi(import.meta.env.VITE_API_URL);
     const { showToast } = useToastStore();
-
-    // Handle form input changes
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormState({
-            ...formState,
-            [name]: value,
-        });
-    };
+    const accountTypes: string[] = ['Current / Cheque', 'Savings', 'Business', 'Other'];
 
     // Handle form submission
-    const handleSubmit = () => {
-        if (Object.values(formState).filter(Boolean).length < 3) {
-            showToast('Please fill in all fields', 'warning');
-            return;
-        }
-        handleRequestPayout(formState);
+    const onSubmit = (data: IBankingDetails) => {
+        handleRequestPayout(data);
     };
 
+    useEffect(() => {
+        const fetchBankingDetails = async () => {
+            try {
+                const bankingDetails = await get(`/banking/fetch-banking-details?user_id=${user_id}`);
+                if (!bankingDetails) throw new Error('Error fetching Banking Details');
+
+                const { name, account_number, account_holder, account_type } = bankingDetails;
+
+                reset({ name: name ?? '', account_number: account_number ?? '', account_holder, account_type: account_type ?? '' });
+            } catch (error) {
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
+                return;
+            }
+        }
+
+        fetchBankingDetails();
+    }, [])
     return (
         <div>
             {/* Dialog */}
             <Dialog open={dialogOpen} fullWidth maxWidth="sm">
                 <DialogTitle>Enter Bank Details</DialogTitle>
                 <DialogContent>
-                <Typography component={'small'} fontSize={14} color="red">Kindly ensure these details are correct. This action is irreversible.</Typography>
                     {/* Form Fields */}
-                    <TextField
-                        label="Bank Name"
-                        name="bank_name"
-                        value={formState.bank_name}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Account Number"
-                        name="account_number"
-                        value={formState.account_number}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Account Holder"
-                        name="account_holder"
-                        value={formState.account_holder}
-                        onChange={handleChange}
-                        fullWidth
-                        margin="normal"
-                    />
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <Stack spacing={3}>
+                            <Typography component={'small'} fontSize={14} color="red">Kindly ensure these details are correct for payment.</Typography>
+                            {/* Form Fields */}
+                            <TextField
+                                label="Bank Name"
+                                fullWidth
+                                {...register("name", {
+                                    required: "Bank Name is required"
+                                })}
+                                error={!!errors.name}
+                                helperText={errors.name?.message}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            <TextField
+                                label="Account Number"
+                                fullWidth
+                                {...register("account_number", {
+                                    required: "Account Numbe is required"
+                                })}
+                                error={!!errors.account_number}
+                                helperText={errors.account_number?.message}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            <TextField
+                                label="Account Holder"
+                                fullWidth
+                                {...register("account_holder", {
+                                    required: "Account Holder is required"
+                                })}
+                                error={!!errors.account_holder}
+                                helperText={errors.account_holder?.message}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                            <FormControl fullWidth margin="normal">
+                                <InputLabel id="account-type">Account Type</InputLabel>
+                                <Controller
+                                    name="account_type"
+                                    control={control}
+                                    rules={{ required: 'Account Type is required' }}
+                                    render={({ field }) => (
+                                        <Select
+                                            {...field}
+                                            labelId="account-type-label"
+                                            label="Account Type"
+                                            error={!!errors.account_type}
+                                        >
+                                            {
+                                                accountTypes.map((accountType, index) => <MenuItem key={index} value={accountType}>{accountType}</MenuItem>)
+                                            }
+                                        </Select>
+                                    )}
+                                />
+                                <FormHelperText>{errors.account_type?.message}</FormHelperText>
+                            </FormControl>
+                        </Stack>
+                    </form>
                 </DialogContent>
                 <DialogActions sx={{ mr: 2, pb: 2 }}>
                     {/* Cancel Button */}
@@ -77,7 +136,7 @@ const BankDetailsDialog = ({ setDialogOpen, handleRequestPayout, dialogOpen }: {
                         Cancel
                     </Button>
                     {/* Submit Button */}
-                    <Button onClick={handleSubmit} color="primary" variant="contained">
+                    <Button onClick={handleSubmit(onSubmit)} color="primary" variant="contained">
                         Submit
                     </Button>
                 </DialogActions>

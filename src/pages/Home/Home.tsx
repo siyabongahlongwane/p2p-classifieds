@@ -1,4 +1,4 @@
-import { Divider, Stack } from "@mui/material";
+import { Box, Divider, Stack } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
@@ -13,11 +13,11 @@ const Home = () => {
 
   const { showToast } = useToastStore();
   const [shops, setShops] = useState([]);
-    const { setField } = useStore();
+  const { setField } = useStore();
 
   useEffect(() => {
     setField('activeMenuItem', 0);
-    
+
     const fetchShops = async () => {
       try {
         const shops = await get(`/shop/fetch-shops?mustHaveProducts=true`);
@@ -37,11 +37,11 @@ const Home = () => {
 
   return (
     <Stack display={"grid"} height={"100%"} rowGap={2}>
-      {shops?.length ? shops.map((shop, index) => (
-        <>
-          <ProductItemGroup shop={shop} key={shop.id} productsToShow={3} />
+      {shops?.length ? shops.map((shop) => (
+        <Box key={Math.random()} >
+          <ProductItemGroup shop={shop} productsToShow={3} />
           <Divider />
-        </>
+        </Box>
       ))
         :
         <PageHeader header="No Shops Found" />

@@ -16,14 +16,14 @@ const PastPayouts = ({ user_id }: { user_id: number }) => {
     const columns: GridColDef[] = [
         { field: "payout_id", headerName: "ID", width: 90 },
         {
-            field: "createdAt", headerName: "Date Created", width: 200, valueGetter: (params: any) =>
+            field: "createdAt", headerName: "Date Created", width: 200, valueGetter: (params: string) =>
                 params.split('T')[0]
         },
         {
             field: "datePaid",
             headerName: "Date Paid",
             width: 180,
-            valueGetter: (params: any) =>
+            valueGetter: (params: { row: Payout }) =>
                 params?.row?.datePaid || "Not Paid Yet",
         },
         { field: "amount", headerName: "Amount (R)", width: 180 },
@@ -38,7 +38,7 @@ const PastPayouts = ({ user_id }: { user_id: number }) => {
                 const payouts = await post(`/payouts/fetch-payouts`, { user_id });
                 if (!payouts) throw new Error('Error fetching payouts');
 
-                setPayouts(payouts.map((payout: any) => ({
+                setPayouts(payouts.map((payout: Payout) => ({
                     id: payout.payout_id,
                     ...payout
                 })))
@@ -60,7 +60,14 @@ const PastPayouts = ({ user_id }: { user_id: number }) => {
             <Typography variant="body1" fontSize={18} fontWeight={500} gutterBottom>
                 Past Payouts
             </Typography>
-            <DataGrid rows={payouts} columns={columns} pagination pageSizeOptions={[5]} />
+            <DataGrid rows={payouts} columns={columns}
+                initialState={{
+                    pagination: {
+                        paginationModel: { pageSize: 50 }
+                    }
+                }}
+                pageSizeOptions={[10, 20, 50, 100]}
+                pagination />
         </Box>
     )
 }

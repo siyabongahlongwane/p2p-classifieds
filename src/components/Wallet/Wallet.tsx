@@ -4,8 +4,9 @@ import useApi from "../../hooks/useApi";
 import { UserContext } from "../../context/User/UserContext";
 import { Box, Grid, Button, Typography } from "@mui/material";
 import PageHeader from "../PageHeader/PageHeader";
-import BankDetailsDialog, { BankingDetails } from "./BankDetailsDialog";
+import BankDetailsDialog from "./BankDetailsDialog";
 import PastPayouts from "./PastPayouts";
+import { IBankingDetails } from "../../typings/Banking.int";
 
 const Wallet = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -14,14 +15,15 @@ const Wallet = () => {
   const { post, get } = useApi(`${import.meta.env.VITE_API_URL}`);
   const { user } = useContext(UserContext);
 
-  const handleRequestPayout = async (bankingDetails: BankingDetails) => {
+  const handleRequestPayout = async (bankingDetails: IBankingDetails) => {
     setDialogOpen(false);
 
     try {
       const payout = await post(`/payouts/create-payout`, { user_id: user?.user_id, ...bankingDetails });
-      if(!payout) throw new Error('Error requesting payout');
+      if (!payout) throw new Error('Error requesting payout');
 
       setAmount(payout.amount);
+      showToast('Payout requested successfully', 'success');
 
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
@@ -39,7 +41,7 @@ const Wallet = () => {
       try {
         const wallet = await get(`/wallet/fetch-wallet?user_id=${user?.user_id}`);
         if (!wallet) throw new Error('Error fetching wallet');
-        
+
         setAmount(wallet.amount)
 
       } catch (error) {
@@ -75,13 +77,14 @@ const Wallet = () => {
                   variant="contained"
                   color="primary"
                   onClick={() => setDialogOpen(true)}
+                  disabled={+amount == 0}
                 >
                   Request Payout
                 </Button>
               </Grid>
             </Grid>
 
-            <BankDetailsDialog setDialogOpen={setDialogOpen} handleRequestPayout={handleRequestPayout} dialogOpen={dialogOpen} />
+            <BankDetailsDialog setDialogOpen={setDialogOpen} handleRequestPayout={handleRequestPayout} dialogOpen={dialogOpen} user_id={user?.user_id} />
             <PastPayouts user_id={user?.user_id} />
           </>
       }

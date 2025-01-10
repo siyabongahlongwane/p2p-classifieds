@@ -55,7 +55,7 @@ const BankingDetailsSettings = () => {
                 if (!bankingDetails) throw new Error('Error fetching Banking Details');
 
                 const { name, account_number, account_holder, account_type } = bankingDetails;
-                reset({ name, account_number, account_holder, account_type });
+                reset({ name: name ?? '', account_number: account_number ?? '', account_holder, account_type: account_type ?? '' });
             } catch (error) {
                 const _error = error instanceof Error ? error.message : error;
                 showToast(_error as string, 'error');

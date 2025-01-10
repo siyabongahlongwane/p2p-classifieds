@@ -38,7 +38,7 @@ const MyShop = () => {
     };
 
     fetchShop();
-  }, [selectedShop.shop_id]);
+  }, []);
 
   useEffect(() => {
     setIsAddNewProduct(window.location.pathname.includes("add-product") || window.location.pathname.includes("edit-product"));
@@ -80,7 +80,7 @@ const MyShop = () => {
         </Typography>
       )
         : (
-          !selectedShop.products.length
+          !selectedShop?.products?.length && !isAddNewProduct
             ?
             <>
               <Typography fontSize={16} fontWeight={300}>
