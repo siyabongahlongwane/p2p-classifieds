@@ -110,6 +110,8 @@ const useAuth = () => {
             setField('cart', []);
             setField('likes', []);
             navigate('/home');
+            setField('activeMenuItem', 0);
+            showToast('Logged out successfully', 'success');
         }, 500);
     };
 

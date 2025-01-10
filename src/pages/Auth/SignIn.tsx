@@ -10,11 +10,12 @@ import { useEffect, useState } from "react";
 import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { useStore } from "../../stores/store";
 
 const SignIn = () => {
   const [selectedLoginMethod, setSelectedLoginMethod] = useState("pwd");
   const { signIn, loading } = useAuth();
-
+  const { setField } = useStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,6 +26,7 @@ const SignIn = () => {
   };
 
   useEffect(() => {
+    setField('activeMenuItem', 0);
     if (selectedLoginMethod != "pwd") {
       setPassword("");
     }

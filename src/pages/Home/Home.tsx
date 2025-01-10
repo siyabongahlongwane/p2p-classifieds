@@ -4,6 +4,7 @@ import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
 import { useEffect, useState } from "react";
 import PageHeader from "../../components/PageHeader/PageHeader";
+import { useStore } from "../../stores/store";
 
 const Home = () => {
   const {
@@ -12,7 +13,11 @@ const Home = () => {
 
   const { showToast } = useToastStore();
   const [shops, setShops] = useState([]);
+    const { setField } = useStore();
+
   useEffect(() => {
+    setField('activeMenuItem', 0);
+    
     const fetchShops = async () => {
       try {
         const shops = await get(`/shop/fetch-shops?mustHaveProducts=true`);

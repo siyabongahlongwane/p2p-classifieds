@@ -9,7 +9,8 @@ import {
 import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useStore } from "../../stores/store";
 
 const SignUp = () => {
   const { loading, signUp } = useAuth();
@@ -21,6 +22,11 @@ const SignUp = () => {
     password: "",
   });
 
+  const { setField } = useStore();
+
+  useEffect(() => {
+    setField('activeMenuItem', 0);
+  }, []);
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,7 +37,7 @@ const SignUp = () => {
     const phone = formData.get("phone") as string;
     const password = formData.get("password") as string;
 
-    
+
     signUp(first_name, last_name, email, phone, password);
   };
 

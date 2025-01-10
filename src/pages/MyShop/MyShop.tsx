@@ -7,6 +7,7 @@ import useApi from "../../hooks/useApi";
 import MyShopItem from "./MyShopItem";
 import { useStore } from "../../stores/store";
 import useToastStore from "../../stores/useToastStore";
+import { PlainProduct } from "../../typings";
 
 const MyShop = () => {
   const { user } = useContext(UserContext);
@@ -78,22 +79,24 @@ const MyShop = () => {
           Loading...
         </Typography>
       )
-        // : 
-        // !loading && !!selectedShop?.products?.length ? (
-        //   <Typography fontSize={16} fontWeight={300}>
-        //     No shop items found, click on the button to add some
-        //   </Typography>
-        // )
         : (
-          <Grid2 container gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={3}>
-            {!isAddNewProduct && selectedShop?.products ? (
-              selectedShop && selectedShop.products.map((product, index) => (
-                <MyShopItem key={index} product={product} />
-              ))
-            ) : (
-              <Outlet />
-            )}
-          </Grid2>
+          !selectedShop.products.length
+            ?
+            <>
+              <Typography fontSize={16} fontWeight={300}>
+                No shop items found, click on the button to add some
+              </Typography>
+            </>
+            :
+            <Grid2 container gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={3}>
+              {!isAddNewProduct && selectedShop?.products ? (
+                selectedShop && selectedShop.products.map((product: PlainProduct, index: number) => (
+                  <MyShopItem key={index} product={product} />
+                ))
+              ) : (
+                <Outlet />
+              )}
+            </Grid2>
         )}
     </Stack>
   );
