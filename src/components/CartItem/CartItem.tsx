@@ -38,14 +38,17 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
                 const likeToRemove = cart.find((p: ICartItem) => p.product_id === product_id)
                     ?.cart_item.cart_item_id;
                 const filteredCart = cart.filter((p: ICartItem) => p.product_id !== product_id);
-                await remove(`/cart/remove-cart-item/${likeToRemove}?user_id=${user_id}`);
+                const removedFromCart = await remove(`/cart/remove-cart-item/${likeToRemove}?user_id=${user_id}`);
 
+                if (!removedFromCart) throw new Error('Error removing liked item from cart');
                 showToast('Item removed from cart', 'success');
                 setCart([...filteredCart]);
                 setIsInCart(false);
             } catch (error) {
-                console.error(error);
-                showToast('Error removing item from cart', 'error');
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
+                return;
             }
         } else {
             try {
@@ -55,12 +58,15 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
                     user_id: user_id,
                 });
 
+                if(!newCart) throw new Error('Error adding item to cart');
                 showToast('Item added to cart', 'success');
                 setCart([...newCart]);
                 setIsInCart(true);
             } catch (error) {
-                showToast('Error adding item to cart', 'error');
-                console.error(error);
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
+                return;
             }
         }
     };

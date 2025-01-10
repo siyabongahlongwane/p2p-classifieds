@@ -15,8 +15,9 @@ const PastPayouts = ({ user_id }: { user_id: number }) => {
     const [payouts, setPayouts] = useState<Payout[]>([]);
     const columns: GridColDef[] = [
         { field: "payout_id", headerName: "ID", width: 90 },
-        { field: "createdAt", headerName: "Date Created", width: 200, valueGetter: (params: any) =>
-            params.split('T')[0]
+        {
+            field: "createdAt", headerName: "Date Created", width: 200, valueGetter: (params: any) =>
+                params.split('T')[0]
         },
         {
             field: "datePaid",
@@ -35,14 +36,17 @@ const PastPayouts = ({ user_id }: { user_id: number }) => {
         const fetchWallet = async () => {
             try {
                 const payouts = await post(`/payouts/fetch-payouts`, { user_id });
+                if (!payouts) throw new Error('Error fetching payouts');
+
                 setPayouts(payouts.map((payout: any) => ({
                     id: payout.payout_id,
                     ...payout
                 })))
 
             } catch (error) {
-                showToast('Error fetching payouts', 'error');
-                console.error("Error fetching payouts:", error);
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
                 return;
             }
         }

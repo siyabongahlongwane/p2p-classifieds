@@ -19,11 +19,14 @@ const Wallet = () => {
 
     try {
       const payout = await post(`/payouts/create-payout`, { user_id: user?.user_id, ...bankingDetails });
+      if(!payout) throw new Error('Error requesting payout');
+
       setAmount(payout.amount);
 
     } catch (error) {
-      showToast('Error creating payout', 'error');
-      console.error("Error creating payout:", error);
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
       return;
     }
   };
@@ -35,16 +38,19 @@ const Wallet = () => {
     const fetchWallet = async () => {
       try {
         const wallet = await get(`/wallet/fetch-wallet?user_id=${user?.user_id}`);
+        if (!wallet) throw new Error('Error fetching wallet');
+        
         setAmount(wallet.amount)
 
       } catch (error) {
-        showToast('Error fetching wallet', 'error');
-        console.error("Error fetching wallet:", error);
+        const _error = error instanceof Error ? error.message : error;
+        showToast(_error as string, 'error');
+        console.error('error', _error);
         return;
       }
     }
 
-    if(user?.user_id) fetchWallet();
+    if (user?.user_id) fetchWallet();
   }, [user?.user_id]);
 
   return (

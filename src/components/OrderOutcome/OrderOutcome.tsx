@@ -48,8 +48,10 @@ const OrderOutcome = () => {
                 }
                 setOrderDetails(data);
             } catch (error) {
-                showToast('Error retrieving order', 'error');
-                console.error(error);
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
+                return;
             }
         };
 

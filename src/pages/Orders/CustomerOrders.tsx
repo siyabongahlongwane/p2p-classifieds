@@ -13,11 +13,13 @@ const CustomerOrders = () => {
   const { get } = useApi(`${import.meta.env.VITE_API_URL}`);
   const [orders, setOrders] = useState<OrderPreview[]>([]);
   const navigate = useNavigate();
-  const {showToast} = useToastStore();
+  const { showToast } = useToastStore();
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         let orders = await get(`/orders/fetch-orders?shop_id=${user.shop_id}`);
+        if (!orders) throw new Error('Error fetching orders');
+
         orders = orders.map((order: OrderWithItems) => {
           return {
             order_id: order.order_id,
@@ -30,8 +32,10 @@ const CustomerOrders = () => {
 
         setOrders(orders);
       } catch (error) {
-        showToast('Error fetching orders', 'error');
-        console.error("Error fetching orders:", error);
+        const _error = error instanceof Error ? error.message : error;
+        showToast(_error as string, 'error');
+        console.error('error', _error);
+        return;
       }
     };
     fetchOrders();

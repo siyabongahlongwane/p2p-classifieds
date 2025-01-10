@@ -85,9 +85,20 @@ const useApi = (baseUrl: string) => {
     };
 
     const remove = async (endpoint: string) => {
-        await fetchData(`${baseUrl}${endpoint}`, {
-            method: 'DELETE',
-        });
+        try {
+            const response = await fetchData(`${baseUrl}${endpoint}`, {
+                method: 'DELETE',
+            });
+            return response;
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+                hideLoader();
+            }, 1500);
+        }
     };
 
     return { data, loading, error, get, post, put, remove };

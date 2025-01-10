@@ -45,13 +45,16 @@ const ShopSettings = () => {
         const fetchShopDetails = async () => {
             try {
                 const [shopDetails] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
-                if (shopDetails) {
-                    const { name, link, location } = shopDetails;
+                if (!shopDetails) throw new Error('Error fetching Shop Details');
 
-                    reset({ name, link, location });
-                }
+                const { name, link, location } = shopDetails;
+
+                reset({ name, link, location });
             } catch (error) {
-                console.error(error);
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
+                return;
             }
         }
 

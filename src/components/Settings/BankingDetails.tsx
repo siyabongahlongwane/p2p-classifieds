@@ -52,14 +52,15 @@ const BankingDetailsSettings = () => {
         const fetchBankingDetails = async () => {
             try {
                 const bankingDetails = await get(`/banking/fetch-banking-details?user_id=${user.user_id}`);
-                if (bankingDetails) {
-                    const { name, account_number, account_holder, account_type } = bankingDetails;
+                if (!bankingDetails) throw new Error('Error fetching Banking Details');
 
-
-                    reset({ name, account_number, account_holder, account_type });
-                }
+                const { name, account_number, account_holder, account_type } = bankingDetails;
+                reset({ name, account_number, account_holder, account_type });
             } catch (error) {
-                console.error(error);
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
+                return;
             }
         }
 

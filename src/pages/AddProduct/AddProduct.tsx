@@ -8,7 +8,7 @@ import useFirebaseStorage from "../../hooks/useFirebaseStorage";
 import { newProduct } from "../../typings/Product.type";
 import { NewProduct } from "../../typings";
 import { UserContext } from "../../context/User/UserContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useToastStore from "../../stores/useToastStore";
 const AddProduct = () => {
   const { user } = useContext(UserContext);
@@ -22,6 +22,7 @@ const AddProduct = () => {
   const form = useForm<NewProduct>({
     defaultValues: { ...newProduct }
   })
+  const navigate = useNavigate();
 
 
   const { register, handleSubmit, control, formState } = form;
@@ -29,11 +30,16 @@ const AddProduct = () => {
   const { showToast } = useToastStore();
 
   const fetchCategories = async () => {
-    const categories = await get("/categories/fetch");
     try {
+      const categories = await get("/categories/fetch");
+      if (!categories) throw new Error('Error fetching categories');
+
       setField("categories", categories);
     } catch (error) {
-      console.error(error);
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
+      return;
     }
   };
 
@@ -42,16 +48,21 @@ const AddProduct = () => {
   }, []);
 
   const fetchProduct = async () => {
-    const [product] = await get(`/product/fetch?user_id=${user_id}&product_id=${product_id}`);
-    setField("productPhotos", product["photos"]);
-    Object.keys(newProduct).forEach(key => {
-      form.setValue(key as keyof NewProduct, product[key]);
-    })
     try {
+      const [product] = await get(`/product/fetch?user_id=${user_id}&product_id=${product_id}`);
+      if (!product) throw new Error('Error fetching product');
+
+      setField("productPhotos", product["photos"]);
+      Object.keys(newProduct).forEach(key => {
+        form.setValue(key as keyof NewProduct, product[key]);
+      })
       // setField("categories", categories);
 
     } catch (error) {
-      console.error(error);
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
+      return;
     }
   };
 
@@ -86,23 +97,31 @@ const AddProduct = () => {
 
   const addNewProduct = async (product: NewProduct) => {
     try {
-      await post("/product/add-new-product", { ...product, user_id, shop_id });
-      showToast("Product added successfully!", "success");
+      const newProduct = await post("/product/add-new-product", { ...product, user_id, shop_id });
+      if (!newProduct) throw new Error('Error adding new product');
 
+      showToast("Product added successfully!", "success");
+      navigate('/my-shop')
     } catch (error) {
-      showToast("Product upload failed", "error");
-      console.error(error);
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
+      return;
     }
   }
 
   const updateProduct = async (updatedProduct: NewProduct) => {
     try {
-      await put(`/product/update-product/${product_id}`, { ...updatedProduct, user_id, shop_id });
+      const updatedproduct = await put(`/product/update-product/${product_id}`, { ...updatedProduct, user_id, shop_id });
+      if (!updatedproduct) throw new Error('Error updating product');
+
       showToast("Product updated successfully!", "success");
 
     } catch (error) {
-      showToast("Product update failed", "error");
-      console.error(error);
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
+      return;
     }
   }
   return (

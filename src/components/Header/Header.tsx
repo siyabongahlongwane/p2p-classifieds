@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/User/UserContext";
 import useApi from "../../hooks/useApi";
 import { useStore } from "../../stores/store";
+import useToastStore from "../../stores/useToastStore";
 // import Drawer from '../Drawer/Drawer';
 
 const Header = () => {
@@ -21,17 +22,23 @@ const Header = () => {
   const { loading, get } = useApi(`${import.meta.env.VITE_API_URL}`);
 
   const { setLikes, likes = [], setCart, cart = [], setField, orderObject } = useStore();
+  const { showToast } = useToastStore();
+  
   const fetchLikes = async () => {
     if (user) {
-      const likes = await get(`/likes/fetch-likes?user_id=${user.user_id}`);
-      const cart = await get(`/cart/fetch-cart?user_id=${user.user_id}`);
       try {
+        const likes = await get(`/likes/fetch-likes?user_id=${user.user_id}`);
+        const cart = await get(`/cart/fetch-cart?user_id=${user.user_id}`);
+        if (!likes) throw new Error('Error fetching likes');
+        if (!cart) throw new Error('Error fetching cart items');
+
         setLikes(likes);
         setCart(cart);
-      } catch (err) {
-        setLikes([]);
-        setCart([]);
-        console.error(err);
+      } catch (error) {
+        const _error = error instanceof Error ? error.message : error;
+        showToast(_error as string, 'error');
+        console.error('error', _error);
+        return;
       }
     }
   };
@@ -40,7 +47,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    setField('orderObject', {...orderObject, cart})
+    setField('orderObject', { ...orderObject, cart })
   }, [cart]);
 
   return (

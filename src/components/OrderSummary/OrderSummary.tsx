@@ -27,10 +27,11 @@ const OrderSummary = ({ user }: { user: User }) => {
             const res = await post('/orders/create-order', { ...orderObject, user_id: user.user_id, customerDetails });
             if (!res?.url) throw new Error(`Error creating order: ${res?.errorMessage || 'Could not open payment gateway'}`);
             window.open(res.url, '_self');
-        } catch (error: unknown) {
-            if (error instanceof Error) showToast(error.message || 'Error creating order', 'error');
-            showToast('Error creating order', 'error');
-            console.error(error);
+        } catch (error) {
+            const _error = error instanceof Error ? error.message : error;
+            showToast(_error as string, 'error');
+            console.error('error', _error);
+            return;
         }
     }
 

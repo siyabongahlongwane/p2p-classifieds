@@ -18,10 +18,14 @@ const UserShop = () => {
         const fetchShop = async () => {
             try {
                 const shop = await get(`/shop/fetch-shops?link=${shop_link}&mustHaveProducts=true`);
+                if (!shop) throw new Error('Error fetching Shop');
+
                 setShop(shop);
             } catch (error) {
-                showToast("Error fetching shop:", 'error')
-                console.error(error);
+                const _error = error instanceof Error ? error.message : error;
+                showToast(_error as string, 'error');
+                console.error('error', _error);
+                return;
             }
         }
 

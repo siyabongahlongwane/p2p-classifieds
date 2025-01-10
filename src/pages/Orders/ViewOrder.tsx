@@ -38,12 +38,16 @@ const ViewOrder = () => {
     try {
       const { order_id, shop_id } = order;
       const updatedOrder = await post(`/orders/update-seller-order-status`, { order_id, shop_id });
+      if (!updatedOrder) throw new Error('Error confirming receipt');
+
       setOrder(updatedOrder);
       showToast('Receipt confirmed successfully', 'success');
 
     } catch (error) {
-      showToast('Error confirming receipt', 'error');
-      console.error("Error confirming order receipt:", error);
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
+      return;
     }
   };
 

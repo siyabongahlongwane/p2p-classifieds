@@ -34,7 +34,10 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
                 const likeToRemove = likes.find((p: ProductWithLike) => p.product_id === product_id)
                     ?.like_item?.like_id;
                 const newLikes = likes.filter((p: ProductWithLike) => p.product_id !== product_id);
-                await remove(`/likes/remove-like/${likeToRemove}?user_id=${user_id}`);
+                const likeRemoved = await remove(`/likes/remove-like/${likeToRemove}?user_id=${user_id}`);
+
+                if(!likeRemoved) throw new Error('Error removing liked item from likes');
+
                 showToast('Item removed from likes', 'success');
                 setLikes([...newLikes]);
                 setIsLiked(false);
@@ -49,6 +52,8 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
                     product_id,
                     user_id: user_id,
                 });
+
+                if(!newLikes) throw new Error('Error adding item to likes');
                 showToast('Item added to likes', 'success');
                 setLikes([...newLikes]);
                 setIsLiked(true);

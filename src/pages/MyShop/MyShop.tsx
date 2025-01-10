@@ -19,16 +19,20 @@ const MyShop = () => {
     `${import.meta.env.VITE_API_URL}`
   );
   const { selectedShop, setField } = useStore();
-  const {showToast} = useToastStore();
+  const { showToast } = useToastStore();
 
   useEffect(() => {
     const fetchShop = async () => {
-      const [shop] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
       try {
+        const [shop] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
+        if (!shop) throw new Error('Error fetching shop');
+
         setField("selectedShop", shop);
       } catch (error) {
-        showToast('Error fetching shop', 'error');
-        console.error(error);
+        const _error = error instanceof Error ? error.message : error;
+        showToast(_error as string, 'error');
+        console.error('error', _error);
+        return;
       }
     };
 
@@ -56,7 +60,7 @@ const MyShop = () => {
             sx={{ ":hover": { opacity: 0.75 } }}
             onClick={() => {
               setIsAddNewProduct(true);
-              setField( "productPhotos", []);
+              setField("productPhotos", []);
               navigate("add-product");
             }}
           >
@@ -73,24 +77,24 @@ const MyShop = () => {
         <Typography fontSize={16} fontWeight={300}>
           Loading...
         </Typography>
-      ) 
-      // : 
-      // !loading && !!selectedShop?.products?.length ? (
-      //   <Typography fontSize={16} fontWeight={300}>
-      //     No shop items found, click on the button to add some
-      //   </Typography>
-      // )
-       : (
-        <Grid2 container gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={3}>
-          {!isAddNewProduct && selectedShop?.products ? (
-            selectedShop && selectedShop.products.map((product, index) => (
-              <MyShopItem key={index} product={product} />
-            ))
-          ) : (
-            <Outlet />
-          )}
-        </Grid2>
-      )}
+      )
+        // : 
+        // !loading && !!selectedShop?.products?.length ? (
+        //   <Typography fontSize={16} fontWeight={300}>
+        //     No shop items found, click on the button to add some
+        //   </Typography>
+        // )
+        : (
+          <Grid2 container gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={3}>
+            {!isAddNewProduct && selectedShop?.products ? (
+              selectedShop && selectedShop.products.map((product, index) => (
+                <MyShopItem key={index} product={product} />
+              ))
+            ) : (
+              <Outlet />
+            )}
+          </Grid2>
+        )}
     </Stack>
   );
 };

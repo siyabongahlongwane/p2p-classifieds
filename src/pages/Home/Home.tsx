@@ -16,10 +16,14 @@ const Home = () => {
     const fetchShops = async () => {
       try {
         const shops = await get(`/shop/fetch-shops?mustHaveProducts=true`);
+        if (!shops) throw new Error('Error fetching shops');
+
         setShops(shops);
       } catch (error) {
-        showToast("Error fetching shops:", 'error')
-        console.error(error);
+        const _error = error instanceof Error ? error.message : error;
+        showToast(_error as string, 'error');
+        console.error('error', _error);
+        return;
       }
     }
 

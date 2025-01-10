@@ -24,7 +24,7 @@ const ShippingSettings = ({ shopId }) => {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await axios.get(`/api/shipping-settings/${shopId}`);
+                // const response = await axios.get(`/api/shipping-settings/${shopId}`);
                 const { pickUp, pudo, aramex } = response.data;
                 setValue("pickUp", pickUp);
                 setValue("pudo", pudo);
