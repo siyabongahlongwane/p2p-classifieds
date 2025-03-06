@@ -2,9 +2,10 @@ import { Box, Divider, Stack } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import { useStore } from "../../stores/store";
+import { UserContext } from "../../context/User/UserContext";
 
 const Home = () => {
   const {
@@ -14,13 +15,14 @@ const Home = () => {
   const { showToast } = useToastStore();
   const [shops, setShops] = useState([]);
   const { setField } = useStore();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     setField('activeMenuItem', 0);
 
     const fetchShops = async () => {
       try {
-        const shops = await get(`/shop/fetch-shops?mustHaveProducts=true`);
+        const shops = user ? (await get(`/shop/fetch-shops?mustHaveProducts=true`)).filter((shop: any) => shop.shop_id != user.shop_id) : await get(`/shop/fetch-shops?mustHaveProducts=true`);
         if (!shops) throw new Error('Error fetching shops');
 
         setShops(shops);

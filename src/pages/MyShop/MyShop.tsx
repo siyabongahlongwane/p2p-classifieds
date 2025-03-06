@@ -88,7 +88,7 @@ const MyShop = () => {
               </Typography>
             </>
             :
-            <Grid2 container display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr 1fr'} gap={3}>
+            <Grid2 container display={'grid'} gridTemplateColumns={isAddNewProduct ? '1fr' : '1fr 1fr 1fr 1fr 1fr'} gap={3}>
               {!isAddNewProduct && selectedShop?.products ? (
                 selectedShop && selectedShop.products.map((product: PlainProduct, index: number) => (
                   <MyShopItem key={index} product={product} />

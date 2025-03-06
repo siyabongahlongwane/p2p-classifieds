@@ -104,7 +104,7 @@ const ViewOrder = () => {
             <PageHeader header={"Order Details"} />
             {
               <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} mb={2}>
-                {(!loading && (!isOwner) ? <Typography variant="h6" color="primary"><b>Customer</b>  - {order.user?.first_name} {order.user?.last_name}</Typography> : <span></span>)
+                {(!loading && (!isOwner) ? <Typography variant="h6" color="primary"><b>Buyer</b>  - {order.user?.first_name} {order.user?.last_name}</Typography> : <span></span>)
                 }
                 {
                   user && !isOwner && order.status !== "Received By Buyer"
@@ -117,7 +117,7 @@ const ViewOrder = () => {
                         color="primary"
                         size="small"
                         onClick={handleConfirmReceipt}
-                        disabled={order.status == "Received By Buyer" || isConfirmed}
+                        disabled={order.status == "Received By Buyer" || isConfirmed || isCancelled}
                       >
                         {order.status == "Received By Buyer" ? "Receipt Confirmed" : "Confirm Receipt"}
                       </Button>

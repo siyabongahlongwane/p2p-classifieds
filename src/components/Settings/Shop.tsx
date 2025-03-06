@@ -5,7 +5,7 @@ import {
     Button,
     Stack,
 } from "@mui/material";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
 import { UserContext } from "../../context/User/UserContext";
@@ -41,25 +41,25 @@ const ShopSettings = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchShopDetails = async () => {
-            try {
-                const [shopDetails] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
-                if (!shopDetails) throw new Error('Error fetching Shop Details');
+    const fetchShopDetails = useCallback(async () => {
+        try {
+            const [shopDetails] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
+            if (!shopDetails) throw new Error('Error fetching Shop Details');
 
-                const { name, link, location } = shopDetails;
+            const { name, link, location } = shopDetails;
 
-                reset({ name, link, location });
-            } catch (error) {
-                const _error = error instanceof Error ? error.message : error;
-                showToast(_error as string, 'error');
-                console.error('error', _error);
-                return;
-            }
+            reset({ name, link, location });
+        } catch (error) {
+            const _error = error instanceof Error ? error.message : error;
+            showToast(_error as string, 'error');
+            console.error('error', _error);
+            return;
         }
+    }, [get, reset, showToast, user.user_id]);
 
+    useEffect(() => {
         fetchShopDetails();
-    }, [user]);
+    }, [fetchShopDetails]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} >
