@@ -6,31 +6,40 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { useStore } from "../../stores/store";
+import { useForm } from "react-hook-form";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { IconButton, InputAdornment } from '@mui/material';
+
+interface SignInForm {
+  email: string;
+  password: string;
+}
 
 const SignIn = () => {
   const [selectedLoginMethod, setSelectedLoginMethod] = useState("pwd");
   const { signIn, loading } = useAuth();
-  const { setField } = useStore();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<SignInForm>({
+    defaultValues: {
+      email: "",
+      password: ""
+    }
+  });
 
 
-  const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    signIn(email, password, selectedLoginMethod);
+  const onSubmit = (data: SignInForm) => {
+    signIn(data.email, data.password, selectedLoginMethod);
   };
 
-  useEffect(() => {
-    setField('activeMenuItem', 0);
-    if (selectedLoginMethod != "pwd") {
-      setPassword("");
-    }
-  }, [selectedLoginMethod]);
   return (
     <Grid2
       display={"grid"}
@@ -80,24 +89,36 @@ const SignIn = () => {
             </Box>
           </Box>
           <Box
-            component={"form"}
-            display={"flex"}
-            flexDirection={"column"}
-            gap={2}
-            onSubmit={handleSignIn}
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            className="auth-form"
           >
+
             <Stack gap={1}>
-              <Typography variant="subtitle2">Email</Typography>
+              <Box
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
+                <Typography variant="subtitle2">Email</Typography>
+              </Box>
               <TextField
-                error={false}
+                error={!!errors.email}
+                type="email"
                 placeholder="Enter Email"
-                helperText=""
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                helperText={errors.email?.message}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
               />
             </Stack>
+
             {selectedLoginMethod == "pwd" && (
-              <Stack gap={1}>
+              <Stack gap={1} mt={1}>
                 <Box
                   display={"flex"}
                   justifyContent={"space-between"}
@@ -114,20 +135,39 @@ const SignIn = () => {
                   </Typography>
                 </Box>
                 <TextField
-                  error={false}
-                  type="password"
+                  error={!!errors.password}
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter Password"
-                  helperText=""
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  helperText={errors.password?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters"
+                    }
+                  })}
                 />
               </Stack>
             )}
             <Button
               variant="contained"
               className="primary-btn"
-              style={{ pointerEvents: loading ? "none" : "auto" }}
+              style={{ pointerEvents: loading ? "none" : "auto", marginTop: 16 }}
               type="submit"
+              fullWidth
             >
               {loading ? "Loading..." : "Sign In"}
             </Button>

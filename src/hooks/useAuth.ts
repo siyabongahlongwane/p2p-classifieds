@@ -5,6 +5,7 @@ import useToastStore from '../stores/useToastStore';
 import { useStore } from '../stores/store';
 import { UserContext } from '../context/User/UserContext';
 import useLoaderStore from '../stores/useLoaderStore';
+import { SignUpForm } from '../pages/Auth/SignUp';
 
 const useAuth = () => {
     const [error, setError] = useState('');
@@ -18,7 +19,7 @@ const useAuth = () => {
 
     // Register function, setContextUser: () => void)
 
-    const signUp = async (first_name: string, last_name: string, email: string, phone: string, password: string) => {
+    const signUp = async (body: SignUpForm) => {
         setLoading(true);
         try {
             showLoader();
@@ -28,7 +29,7 @@ const useAuth = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    first_name, last_name, email, phone, password
+                    ...body
                 }),
             });
 

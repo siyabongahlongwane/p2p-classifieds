@@ -9,47 +9,41 @@ import {
 import "./Auth.css";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { useEffect, useState } from "react";
-import { useStore } from "../../stores/store";
+import { useForm } from "react-hook-form";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { IconButton, InputAdornment } from '@mui/material';
+import { useState } from "react";
+
+export interface SignUpForm {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  phone: string;
+}
 
 const SignUp = () => {
   const { loading, signUp } = useAuth();
-  const [form, setForm] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    password: "",
+  const [showPassword, setShowPassword] = useState(false);
+
+
+  const onSubmit = (data: SignUpForm) => {
+    signUp(data);
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<SignUpForm>({
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      password: "",
+      phone: ""
+    }
   });
-
-  const { setField } = useStore();
-
-  useEffect(() => {
-    setField('activeMenuItem', 0);
-  }, []);
-
-  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const first_name = formData.get("first_name") as string;
-    const last_name = formData.get("last_name") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const password = formData.get("password") as string;
-
-
-    signUp(first_name, last_name, email, phone, password);
-  };
-
-  const handleInputChange = (e: {
-    target: { name: string; value: string };
-  }) => {
-    const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: value,
-    });
-  };
 
   return (
     <Grid2
@@ -58,7 +52,7 @@ const SignUp = () => {
       gridTemplateColumns={"1fr 1fr"}
       height={"inherit"}
     >
-      <Stack display={"flex"} alignItems={"center"}>
+      <Stack display={"flex"} alignItems={"center"} justifyContent={"center"}>
         <Stack width={"60%"} gap={2} mt={"5%"}>
           <Stack display={"flex"} gap={0.5}>
             <Typography variant="h5">Hello and Welcome!</Typography>
@@ -69,7 +63,7 @@ const SignUp = () => {
 
           <Box
             component={"form"}
-            onSubmit={handleSignUp}
+            onSubmit={handleSubmit(onSubmit)}
             display={"flex"}
             flexDirection={"column"}
             gap={2}
@@ -77,57 +71,87 @@ const SignUp = () => {
             <Stack gap={1}>
               <Typography variant="subtitle2">First Name</Typography>
               <TextField
-                error={false}
-                placeholder="Enter Frist Name"
-                helperText=""
-                value={form.first_name}
-                name="first_name"
-                onChange={handleInputChange}
+                error={!!errors.first_name}
+                placeholder="Enter First Name"
+                helperText={errors.first_name?.message}
+                {...register("first_name", {
+                  required: "First name is required"
+                })}
               />
             </Stack>
+
             <Stack gap={1}>
               <Typography variant="subtitle2">Last Name</Typography>
               <TextField
-                error={false}
+                error={!!errors.last_name}
                 placeholder="Enter Last Name"
-                helperText=""
-                value={form.last_name}
-                name="last_name"
-                onChange={handleInputChange}
+                helperText={errors.last_name?.message}
+                {...register("last_name", {
+                  required: "Last name is required"
+                })}
               />
             </Stack>
+
             <Stack gap={1}>
               <Typography variant="subtitle2">Email</Typography>
               <TextField
-                error={false}
+                error={!!errors.email}
+                type="email"
                 placeholder="Enter Email"
-                helperText=""
-                value={form.email}
-                name="email"
-                onChange={handleInputChange}
+                helperText={errors.email?.message}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
               />
             </Stack>
+
             <Stack gap={1}>
-              <Typography variant="subtitle2">Phone</Typography>
+              <Typography variant="subtitle2">Phone Number</Typography>
               <TextField
-                error={false}
-                placeholder="Enter Phone"
-                helperText=""
-                value={form.phone}
-                name="phone"
-                onChange={handleInputChange}
+                error={!!errors.phone}
+                placeholder="Enter Phone Number"
+                helperText={errors.phone?.message}
+                {...register("phone", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "Invalid phone number"
+                  }
+                })}
               />
             </Stack>
+
             <Stack gap={1}>
               <Typography variant="subtitle2">Password</Typography>
               <TextField
-                error={false}
-                type="password"
+                error={!!errors.password}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter Password"
-                helperText=""
-                value={form.password}
-                name="password"
-                onChange={handleInputChange}
+                helperText={errors.password?.message}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters"
+                  }
+                })}
               />
             </Stack>
             <Button

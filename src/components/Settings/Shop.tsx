@@ -59,7 +59,7 @@ const ShopSettings = () => {
 
     useEffect(() => {
         fetchShopDetails();
-    }, [fetchShopDetails]);
+    }, []);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} >
