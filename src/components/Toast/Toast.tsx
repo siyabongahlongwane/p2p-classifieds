@@ -4,17 +4,24 @@ import useToastStore from '../../stores/useToastStore';
 import { SyntheticEvent } from 'react';
 
 const Toast = () => {
-    const { isOpen, message, severity, hideToast } = useToastStore();
+    const { isOpen, message, severity, hideToast, duration } = useToastStore();
 
     const handleClose = (_event: SyntheticEvent | Event, reason: SnackbarCloseReason) => {
         if (reason === 'clickaway') return;
+        if (duration) {
+            setTimeout(() => {
+                hideToast();
+            }
+                , duration);
+            return;
+        }
         hideToast();
     };
 
     return (
         <Snackbar
             open={isOpen}
-            autoHideDuration={4000}
+            autoHideDuration={duration || 4000}
             onClose={(e) => handleClose(e, 'timeout')}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >

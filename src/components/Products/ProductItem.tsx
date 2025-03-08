@@ -66,7 +66,7 @@ const ProductItem = ({ product }: { product: PlainProduct }) => {
         </Box>
         <Stack display={"flex"} gap={0.5}>
           <Box display={"flex"} justifyContent={"center"}>
-            <CartItem user_id={user?.user_id} product_id={product?.product_id} isButton />
+            <CartItem user_id={user?.user_id} product_id={product?.product_id} shop_id={product?.shop_id} isButton />
           </Box>
         </Stack>
       </Stack>

@@ -4,7 +4,8 @@ interface IToastStore {
     isOpen: boolean;
     message: string;
     severity: 'info' | 'success' | 'error' | 'warning';
-    showToast: (message: string, severity?: 'info' | 'success' | 'error' | 'warning') => void;
+    duration?: number;
+    showToast: (message: string, severity?: 'info' | 'success' | 'error' | 'warning', duration?: number) => void;
     hideToast: () => void;
 }
 
@@ -12,8 +13,8 @@ const useToastStore = create<IToastStore>((set) => ({
     isOpen: false,
     message: '',
     severity: 'info', // 'info', 'success', 'error', 'warning'
-    showToast: (message, severity = 'info') =>
-        set({ isOpen: true, message, severity }),
+    showToast: (message, severity = 'info', duration) =>
+        set({ isOpen: true, message, severity, duration }),
     hideToast: () => set({ isOpen: false, message: '', severity: 'info' }),
 }));
 

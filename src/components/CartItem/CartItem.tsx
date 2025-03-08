@@ -11,9 +11,10 @@ export interface CartItemProps {
     product_id: number;
     user_id: number;
     isButton?: boolean;
+    shop_id: number;
 }
 
-const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
+const CartItem = ({ product_id, user_id, isButton = false, shop_id }: CartItemProps) => {
     const { cart, setCart } = useStore();
     const [isInCart, setIsInCart] = useState(
         existsInCart(product_id, cart.map((p: ICartItem) => p.product_id))
@@ -52,13 +53,18 @@ const CartItem = ({ product_id, user_id, isButton = false }: CartItemProps) => {
             }
         } else {
             try {
+                console.log(cart, shop_id);
+                if (cart.some((product => product.shop_id != shop_id))) {
+                    showToast('You can only add items from one shop at a time, clear cart to add new shop items', 'warning', 8000);
+                    return;
+                }
                 const endpoint = `/cart/add-cart-item`;
                 const newCart = await post(endpoint, {
                     product_id,
                     user_id: user_id,
                 });
 
-                if(!newCart) throw new Error('Error adding item to cart');
+                if (!newCart) throw new Error('Error adding item to cart');
                 showToast('Item added to cart', 'success');
                 setCart([...newCart]);
                 setIsInCart(true);

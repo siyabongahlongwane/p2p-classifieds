@@ -21,6 +21,7 @@ const ViewProduct = () => {
   const [images, setImages] = useState<Array<{ original: string, thumbnail: string }>>([]);
   const { showToast } = useToastStore();
 
+
   const fetchCategories = async () => {
     try {
       const categories = await get("/categories/fetch");
@@ -120,7 +121,7 @@ const ViewProduct = () => {
                 <LikeItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} showLabel />
               </Stack>
               <Stack alignItems={"center"} gap={1} className="pointer">
-                <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} />
+                <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} shop_id={selectedProduct?.shop_id} />
               </Stack>
               <Stack alignItems={"center"} gap={1} className="pointer">
                 <StartChat text="Seller" />
