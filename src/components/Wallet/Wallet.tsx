@@ -14,6 +14,7 @@ const Wallet = () => {
   const { showToast } = useToastStore();
   const { post, get } = useApi(`${import.meta.env.VITE_API_URL}`);
   const { user } = useContext(UserContext);
+  const [fetchPayouts, setFetchPayouts] = useState(false);
 
   const handleRequestPayout = async (bankingDetails: IBankingDetails) => {
     setDialogOpen(false);
@@ -24,6 +25,7 @@ const Wallet = () => {
 
       setAmount(payout.amount);
       showToast('Payout requested successfully', 'success');
+      setFetchPayouts(true);
 
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
@@ -85,7 +87,7 @@ const Wallet = () => {
             </Grid>
 
             <BankDetailsDialog setDialogOpen={setDialogOpen} handleRequestPayout={handleRequestPayout} dialogOpen={dialogOpen} user_id={user?.user_id} />
-            <PastPayouts user_id={user?.user_id} />
+            <PastPayouts user_id={user?.user_id} fetchPayouts={fetchPayouts} />
           </>
       }
 

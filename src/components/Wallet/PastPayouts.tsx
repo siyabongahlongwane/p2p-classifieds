@@ -11,7 +11,7 @@ interface Payout {
     amount: string;
     status: "Pending" | "Paid";
 }
-const PastPayouts = ({ user_id }: { user_id: number }) => {
+const PastPayouts = ({ user_id, fetchPayouts }: { user_id: number, fetchPayouts: boolean }) => {
     const [payouts, setPayouts] = useState<Payout[]>([]);
     const columns: GridColDef[] = [
         { field: "payout_id", headerName: "ID", width: 90 },
@@ -33,7 +33,7 @@ const PastPayouts = ({ user_id }: { user_id: number }) => {
     const { post } = useApi(`${import.meta.env.VITE_API_URL}`);
 
     useEffect(() => {
-        const fetchWallet = async () => {
+        const fetchPayouts = async () => {
             try {
                 const payouts = await post(`/payouts/fetch-payouts`, { user_id });
                 if (!payouts) throw new Error('Error fetching payouts');
@@ -51,8 +51,8 @@ const PastPayouts = ({ user_id }: { user_id: number }) => {
             }
         }
 
-        fetchWallet();
-    }, [user_id]);
+        fetchPayouts();
+    }, [user_id, fetchPayouts]);
 
     return (
 
