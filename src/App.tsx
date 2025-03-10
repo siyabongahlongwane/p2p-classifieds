@@ -24,6 +24,7 @@ import NotFound from "./components/NotFound/NotFound";
 import Wallet from "./components/Wallet/Wallet";
 import UserShop from "./components/UserShop/UserShop";
 import Settings from "./pages/Settings/Settings";
+import ChatApp from "./pages/Messages/Messages";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -60,7 +61,7 @@ function App() {
               <Route path="add-product" element={<AddProduct />}></Route>
               <Route path="edit-product/:product_id" element={<AddProduct />}></Route>
             </Route>
-            <Route path="messages" element={<Home />}></Route>
+            <Route path="messages" element={<ChatApp />}></Route>
             <Route path="my-wallet" element={<Wallet />}></Route>
             <Route path="settings" element={<Settings />}></Route>
             <Route
