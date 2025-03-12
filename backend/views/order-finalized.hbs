@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Finalized!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #016ec0;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        .content {
+            padding: 20px;
+        }
+
+        .content h2 {
+            color: #333;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            padding: 10px 0;
+            border-top: 1px solid #eaeaea;
+        }
+        .status {
+            font-weight: bold;
+            color: #016ec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+                <img src="https://firebasestorage.googleapis.com/v0/b/samukele-8fd68.appspot.com/o/classifieds%2FST%20LOGO%20HORIZONTAL%20BLACK%20NO%20BG.png?alt=media&token=ffeb3078-55d2-4359-8a45-bb7ce27fe794" alt="Logo" style="display: block; margin: 0 auto; padding: 20px 0;" width="200">
+        <div class="header">
+            <h1>Your funds are now available in your wallet!</h1>
+        </div>
+        <div class="content">
+            <h2>Hello {{recipientName}},</h2>
+            <p>This transaction has been finalized. Your funds are now available in your Schoolthrifties wallet. Simply visit your account and <strong>request these funds be paid into your bank account</strong>, or you can use this towards any future purchases on <a href="https://classifieds.schoolthrifties.co.za">Schoolthrifties Classifieds</a>,  if you find this is not the case within the next 24 hours, please kindly let us know. </p>
+
+            <p>If you have any questions, feel free to contact us at <a href="mailto:support@schoolthrifties.co.za">support@schoolthrifties.co.za</a> </p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; {{year}} School Thrifties. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Payout Request Confirmation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header {
+      background-color: #016ec0;
+      color: #ffffff;
+      padding: 10px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .content {
+      padding: 20px;
+      text-align: left;
+    }
+
+    .footer {
+      font-size: 12px;
+      color: #777777;
+      margin-top: 20px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #016ec0;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img src="https://firebasestorage.googleapis.com/v0/b/samukele-8fd68.appspot.com/o/classifieds%2FST%20LOGO%20HORIZONTAL%20BLACK%20NO%20BG.png?alt=media&token=ffeb3078-55d2-4359-8a45-bb7ce27fe794" alt="Logo" style="display: block; margin: 0 auto; padding: 20px 0;" width="200">
+
+    <div class="header">
+      <h1>Payout Request Received</h1>
+    </div>
+    <div class="content">
+      <p>Hi {{seller_name}},</p>
+      <p>We've received your payout request of <strong>R{{amount}}</strong>.</p>
+      <p>Your funds will be deposited into your account within the next <strong>3 business days</strong>.</p>
+      <p>If you have any questions, feel free to contact us at <a
+          href="mailto:support@schoolthrifties.co.za">support@schoolthrifties.co.za</a>.</p>
+          <div style="text-align: center;">
+      <a href="{{website_url}}" class="button">View Your Payouts</a>
+          </div>
+      <br>
+      <br>
+      <small>Questions or suggestions? Please feel free to reply to this email and we will get back to you as soon as possible. 😊</small>
+    </div>
+    <div class="footer">
+      <p>&copy; {{year}} School Thrifties. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+
+</html>

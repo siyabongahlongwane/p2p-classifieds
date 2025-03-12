@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #016ec0;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .content h2 {
+            color: #333;
+        }
+
+        .order-details {
+            margin: 20px 0;
+        }
+
+        .order-details th,
+        .order-details td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .order-details th {
+            background-color: #f1f1f1;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            padding: 20px;
+            background-color: #f1f1f1;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: #016ec0;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+.button-container {
+  text-align: center;
+}
+
+.view-orders-button {
+  background-color: #1976d2;
+  color: white !important;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.view-orders-button:hover {
+  background-color: #1565c0;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.view-orders-button:active {
+  background-color: #0d47a1;
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <img src="https://firebasestorage.googleapis.com/v0/b/samukele-8fd68.appspot.com/o/classifieds%2FST%20LOGO%20HORIZONTAL%20BLACK%20NO%20BG.png?alt=media&token=ffeb3078-55d2-4359-8a45-bb7ce27fe794" alt="Logo" style="display: block; margin: 0 auto; padding: 20px 0;" width="200">
+        <div class="header">
+            <h1>Order Confirmation</h1>
+        </div>
+        <div class="content">
+            <h2>Thank you for your purchase, {{buyerName}}!</h2>
+            <p>Your order has been successfully placed. Below are the details:</p>
+
+            <table class="order-details" width="100%" border="1" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td>{{this.title}}</td>
+                        <td>{{this.description}}</td>
+                        <td>R{{this.price}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+
+            <p><strong>Total Amount:</strong> {{totalAmount}}</p>
+
+            <p>The seller, {{sellerName}}, will be in touch with you soon regarding delivery/pickup details via the messaging feature on our site.</p>
+              <div class="button-container">
+                        <a href="{{url}}" class="view-orders-button">View My Order</a>
+             </div>
+        </div>
+        <div class="footer">
+            <p>&copy; {{year}} School Thrifties. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>
