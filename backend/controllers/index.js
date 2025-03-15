@@ -12,5 +12,6 @@ controllers.payout = require('./payoutsController');
 controllers.bankingDetail = require('./bankingDetailController');
 controllers.shopShipping = require('./shopShippingController');
 controllers.globalShipping = require('./globalShippingController');
+controllers.chat = require('./chatController');
 
 module.exports = controllers;

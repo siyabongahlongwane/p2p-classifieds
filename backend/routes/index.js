@@ -11,6 +11,7 @@ const walletRoutes = require('./wallet');
 const payoutsRoutes = require('./payout');
 const bankingRoutes = require('./banking');
 const shopShippingRoutes = require('./shopShippingConfig');
+const chatsRoutes = require('./message');
 
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.use('/wallet', walletRoutes);
 router.use('/payouts', payoutsRoutes);
 router.use('/banking', bankingRoutes);
 router.use('/shop-shipping', shopShippingRoutes);
+router.use('/chats', chatsRoutes);
 
 module.exports = router;

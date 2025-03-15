@@ -177,10 +177,14 @@ db.models.Chat.belongsTo(db.models.User, { foreignKey: 'user1_id', as: 'user1' }
 db.models.Chat.belongsTo(db.models.User, { foreignKey: 'user2_id', as: 'user2' });
 
 db.models.Chat.hasMany(Message, { foreignKey: 'chat_id', as: 'messages' });
+Chat.belongsTo(Message, { foreignKey: 'last_message_id', as: 'lastMessage' });
+
 db.models.Message.belongsTo(db.models.Chat, { foreignKey: 'chat_id' });
 db.models.Message.belongsTo(db.models.User, { foreignKey: 'sender_id', as: 'sender' });
 
 db.models.Chat.belongsToMany(db.models.User, { through: ChatParticipant, foreignKey: 'chat_id', as: 'participants' });
 db.models.User.belongsToMany(db.models.Chat, { through: ChatParticipant, foreignKey: 'user_id', as: 'user_chats' });
+
+
 
 module.exports = db;

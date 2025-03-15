@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const { STRING, INTEGER, BOOLEAN, JSON } = DataTypes;
+    const { STRING, INTEGER, BOOLEAN } = DataTypes;
     const User = sequelize.define('user', {
         user_id: {
             type: INTEGER,
@@ -37,9 +37,9 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: false
         },
         roles: {
-            type: JSON,
+            type: STRING,
             allowNull: false,
-            defaultValue: [3]
+            defaultValue: '[3]'
         }
     });
 
