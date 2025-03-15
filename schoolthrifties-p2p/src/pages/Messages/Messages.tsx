@@ -27,7 +27,7 @@ const ChatApp: React.FC = () => {
               <Typography color="gray" fontSize={18} variant={'body1'}>Select a chat / user to start messaging</Typography>
             </Stack>
             :
-            <ActiveChat chat_id={activeChat} user_id={user_id} />
+            <ActiveChat chat_id={activeChat} currentUserId={user_id} />
         }
       </Stack>
     </Stack>

@@ -1,12 +1,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import io from 'socket.io-client';
 
-const socket = io(`http://localhost:5001`, {
-    // transports: ['websocket', 'polling'],
-    //   auth: { token: access_token },
-    //   query: { documentId }
-});
+import socket from '../utils/socket';
+
 type MessageType = 'TEXT' | 'IMAGE';
 
 interface ChatMessage {
@@ -27,7 +23,7 @@ interface Chat {
     chat_id: number;
     user1_id: number;
     user2_id: number;
-    lastMessage: ChatMessage;
+    lastMessage: ChatMessage | null;
 }
 
 interface ChatStore {
@@ -36,12 +32,13 @@ interface ChatStore {
     activeChat: number | null;
     startChat: (user1_id: number, user2_id: number) => Promise<Chat>;
     addChat: (chat: Chat) => void;
-    addMessage: (message: ChatMessage) => void;
+    addMessage: (message: any) => void;
     setChats: (chats: Chat[]) => void;
     setMessages: (chatId: number, messages: ChatMessage[]) => void;
     setActiveChat: (chatId: number) => void;
     activeChatUsers: { user_id: number; first_name: string; last_name: string; email: string }[] | null;
     setActiveChatUsers: (users: { user_id: number; first_name: string; last_name: string; email: string }[]) => void;
+    clearActiveChat: () => void;
 }
 
 export const useChatStore = create<ChatStore>()(
@@ -60,7 +57,7 @@ export const useChatStore = create<ChatStore>()(
             return new Promise((resolve) => {
                 socket.emit('startChat', { user1_id, user2_id }, (chat: Chat) => {
                     set((state) => ({
-                        chats: [...state.chats, chat],
+                        chats: [...state.chats || [], chat],
                         activeChat: chat.chat_id,
                     }), false, "startChat");
 
@@ -72,21 +69,24 @@ export const useChatStore = create<ChatStore>()(
         // Add a new chat
         addChat: (chat) =>
             set((state) => ({
-                chats: [...state.chats, chat],
+                chats: [...state.chats || [], chat],
             }), false, "addChat"),
 
-        // Add a message and update the last message in chat
+        //  Fix: Add a message and update the last message in chat
         addMessage: (message) =>
             set((state) => {
-                const updatedChats = state.chats.map((chat) =>
+                const updatedChats = state.chats?.map((chat) =>
                     chat.chat_id === message.chat_id ? { ...chat, lastMessage: message } : chat
-                );
+                ) || [];
 
                 return {
                     chats: updatedChats,
                     messages: {
                         ...state.messages,
-                        [message.chat_id]: [...(state.messages[message.chat_id] || []), message],
+                        [message.chat_id]: [
+                            ...(state.messages[message.chat_id] || []),
+                            message,
+                        ],
                     },
                 };
             }, false, "addMessage"),
@@ -99,5 +99,14 @@ export const useChatStore = create<ChatStore>()(
             set((state) => ({
                 messages: { ...state.messages, [chatId]: messages },
             }), false, "setMessages"),
+
+        // Clear active chat when navigating away
+        clearActiveChat: () =>
+            set({ activeChat: null, activeChatUsers: null, messages: {} }, false, "clearActiveChat"),
     }), { name: "ChatStore" })
 );
+
+// Listen for `newMessage` globally and update Zustand state
+socket.on("newMessage", (message: ChatMessage) => {
+    useChatStore.getState().addMessage(message);
+});

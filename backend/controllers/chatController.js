@@ -125,7 +125,7 @@ module.exports = {
 
             return res.status(200).json({
                 payload: {
-                    users: [chat.user1, chat.user2], // ✅ Return both users
+                    users: [chat.user1, chat.user2], //  Return both users
                     messages: chat.messages
                 }
             });

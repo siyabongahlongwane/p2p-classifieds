@@ -17,3 +17,10 @@ export type Chat = {
     user2_id: number;
     lastMessage: ChatMessage;
 };
+
+export type NewMessage = {
+    chat_id: number;
+    sender_id: number;
+    message_type: 'TEXT' | 'IMAGE';
+    content: string;
+}

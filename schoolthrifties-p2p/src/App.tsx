@@ -25,56 +25,71 @@ import Wallet from "./components/Wallet/Wallet";
 import UserShop from "./components/UserShop/UserShop";
 import Settings from "./pages/Settings/Settings";
 import ChatApp from "./pages/Messages/Messages";
+import { useContext, useEffect } from "react";
+import { UserContext } from "./context/User/UserContext";
+import socket from "./utils/socket";
 
 function App() {
   const { loading } = useLoaderStore();
   const { isOpen } = useToastStore();
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user) {
+      //  Ensure socket is connected and mark user as online
+      if (!socket.connected) {
+        socket.connect();
+      }
+      socket.emit('userOnline', user.user_id);
+    }
+
+    return () => {
+      //  Keep socket connection alive unless user logs out
+      if (!user) {
+        socket.disconnect();
+      }
+    };
+  }, [user]);
+
   return (
     <>
-      {
-        loading && <Loader />
-      }
-      {
-        isOpen && <Toast />
-      }
+      {loading && <Loader />}
+      {isOpen && <Toast />}
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AppWrapper />}>
-            <Route path="" element={<Navigate to="home" />}></Route>
-            <Route path="home" element={<Home />}></Route>
-            <Route path="shops/:shop_link" element={<UserShop />}></Route>
-            <Route path="cart" element={<Cart />}></Route>
-            <Route path="likes" element={<Likes />}></Route>
+            <Route path="" element={<Navigate to="home" />} />
+            <Route path="home" element={<Home />} />
+            <Route path="shops/:shop_link" element={<UserShop />} />
+            <Route path="cart" element={<Cart />} />
+            <Route path="likes" element={<Likes />} />
             <Route path="orders" element={<Orders />}>
-              <Route path="" element={<Navigate to="./my-orders" />}></Route>
-              <Route path="my-orders" element={<MyOrders />}></Route>
-              <Route path="customer-orders" element={<CustomerOrders />}></Route>
+              <Route path="" element={<Navigate to="./my-orders" />} />
+              <Route path="my-orders" element={<MyOrders />} />
+              <Route path="customer-orders" element={<CustomerOrders />} />
               <Route path="view-order" element={<ViewOrder />}>
-                <Route path="" element={<Navigate to="./orders" />}></Route>
-                <Route path=":order_id" element={<ViewOrder />}></Route>
+                <Route path="" element={<Navigate to="./orders" />} />
+                <Route path=":order_id" element={<ViewOrder />} />
               </Route>
-              <Route path="thank-you" element={<OrderOutcome />}></Route>
-              <Route path="failed-order" element={<OrderOutcome />}></Route>
-              <Route path="canceled-order" element={<OrderOutcome />}></Route>
+              <Route path="thank-you" element={<OrderOutcome />} />
+              <Route path="failed-order" element={<OrderOutcome />} />
+              <Route path="canceled-order" element={<OrderOutcome />} />
             </Route>
             <Route path="my-shop" element={<MyShop />}>
-              <Route path="add-product" element={<AddProduct />}></Route>
-              <Route path="edit-product/:product_id" element={<AddProduct />}></Route>
+              <Route path="add-product" element={<AddProduct />} />
+              <Route path="edit-product/:product_id" element={<AddProduct />} />
             </Route>
-            <Route path="messages" element={<ChatApp />}></Route>
-            <Route path="my-wallet" element={<Wallet />}></Route>
-            <Route path="settings" element={<Settings />}></Route>
-            <Route
-              path="/view-product/:product_id"
-              element={<ViewProduct />}
-            ></Route>
-            <Route path="shipping-details" element={<ShippingDetails />}></Route>
-            <Route path="payment" element={<Payment />}></Route>
-            <Route path="*" element={<Navigate to="/not-found" />} /> {/* Redirect to NotFound */}
+            <Route path="messages" element={<ChatApp />} />
+            <Route path="my-wallet" element={<Wallet />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="/view-product/:product_id" element={<ViewProduct />} />
+            <Route path="shipping-details" element={<ShippingDetails />} />
+            <Route path="payment" element={<Payment />} />
+            <Route path="*" element={<Navigate to="/not-found" />} />
           </Route>
-          <Route path="/sign-in" element={<SignIn />}></Route>
-          <Route path="/sign-up" element={<SignUp />}></Route>
-          <Route path="/not-found" element={<NotFound />} /> {/* NotFound route */}
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/not-found" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

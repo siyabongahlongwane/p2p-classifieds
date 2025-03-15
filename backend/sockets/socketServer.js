@@ -1,7 +1,6 @@
 require('dotenv').config();
 const { Server } = require('socket.io');
 const http = require('http');
-
 const { app, PORT, db } = require('../app');
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -11,49 +10,50 @@ const io = new Server(server, {
     }
 });
 const { Op } = require('sequelize');
-// Store active users
-const onlineUsers = new Map();
 
-// Socket.io Connection
+const onlineUsers = new Map(); // Store user_id -> socket.id
+const pendingMessages = new Map(); // Store user_id -> array of messages
+
+// Handle User Connection
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
-    // **Handle User Joining (Save Online Status)**
-    socket.on('join', (userId) => {
-        onlineUsers.set(userId, socket.id);
-        io.emit('onlineUsers', Array.from(onlineUsers.keys())); // Broadcast online users
-        console.log(`User ${userId} is online`);
-    });
+    // Handle User Joining the App (Not Just a Chat)
+    socket.on('userOnline', async (user_id) => {
+        onlineUsers.set(user_id, socket.id);
+        console.log(`User ${user_id} is online`);
 
-    // **Start a Chat**
-    socket.on('startChat', async ({ user1_id, user2_id }, callback) => {
-        try {
-            console.log({ user1_id, user2_id })
-            // Check if a chat already exists
-            let chat = await db.models.Chat.findOne({
-                where: {
-                    [Op.or]: [
-                        { user1_id, user2_id },
-                        { user1_id: user2_id, user2_id: user1_id }
-                    ]
-                },
-                include: [{ model: db.models.Message, as: 'lastMessage' }]
+        console.log(onlineUsers)
+        //  Deliver pending messages if they exist
+        if (pendingMessages.has(user_id)) {
+            const messages = pendingMessages.get(user_id);
+            messages.forEach((msg) => {
+                io.to(socket.id).emit('newMessage', msg);
             });
-
-            // If no chat exists, create a new one
-            if (!chat) {
-                chat = await db.models.Chat.create({ user1_id, user2_id });
-            }
-
-            // Send the chat details back to the client
-            callback(chat);
-        } catch (error) {
-            console.error('Error starting chat:', error);
+            pendingMessages.delete(user_id); //  Clear stored messages after sending
         }
     });
 
-    // **Handle Sending a Message**
+    // Handle User Joining a Specific Chat
+    socket.on('joinChat', async ({ user_id, chat_id }) => {
+        console.log(`chat_${chat_id}`)
+        socket.join(`chat_${chat_id}`);
+
+        // Fetch user details
+        const user = await db.models.User.findOne({
+            where: { user_id },
+            attributes: ['user_id', 'first_name', 'last_name']
+        });
+
+        if (user) {
+            console.log(`${user.first_name} joined chat ${chat_id}`);
+            io.to(`chat_${chat_id}`).emit('userJoined', user);
+        }
+    });
+
+    // Handle Sending a Message
     socket.on('sendMessage', async (messageData) => {
+        console.log('messageData', messageData)
         try {
             const { chat_id, sender_id, message_type, content, image_url } = messageData;
 
@@ -72,28 +72,36 @@ io.on('connection', (socket) => {
                 { where: { chat_id } }
             );
 
-            // Fetch complete message with sender details
+            // Fetch message with sender details
             const savedMessage = await db.models.Message.findOne({
                 where: { message_id: newMessage.message_id },
                 include: [{ model: db.models.User, as: 'sender', attributes: ['first_name', 'last_name'] }]
             });
 
-            // Send message to both users in chat
-            io.to(onlineUsers.get(sender_id)).emit('newMessage', savedMessage);
-
-            // Send to the other user
+            // Get recipient ID
             const chat = await db.models.Chat.findOne({ where: { chat_id } });
             const recipientId = chat.user1_id === sender_id ? chat.user2_id : chat.user1_id;
 
+            //  Check if the recipient is online anywhere in the app
             if (onlineUsers.has(recipientId)) {
+                console.log('onlineUsers', recipientId, onlineUsers)
                 io.to(onlineUsers.get(recipientId)).emit('newMessage', savedMessage);
+            } else {
+                //  If recipient is offline, store the message
+                if (!pendingMessages.has(recipientId)) {
+                    pendingMessages.set(recipientId, []);
+                }
+                pendingMessages.get(recipientId).push(savedMessage);
             }
+
+            // Send to the sender (for optimistic update)
+            io.to(onlineUsers.get(sender_id)).emit('newMessage', savedMessage);
         } catch (error) {
             console.error('Error sending message:', error);
         }
     });
 
-    // **Handle User Disconnecting**
+    // Handle User Disconnection
     socket.on('disconnect', () => {
         for (let [userId, socketId] of onlineUsers.entries()) {
             if (socketId === socket.id) {
@@ -101,7 +109,7 @@ io.on('connection', (socket) => {
                 break;
             }
         }
-        io.emit('onlineUsers', Array.from(onlineUsers.keys())); // Broadcast updated list
+        io.emit('onlineUsers', Array.from(onlineUsers.keys()));
         console.log(`User disconnected: ${socket.id}`);
     });
 });
