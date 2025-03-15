@@ -7,7 +7,7 @@ import socket from '../../utils/socket';
 import { NewMessage, User } from '../../typings';
 
 const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId: number }) => {
-    const { messages, setMessages, addMessage } = useChatStore();
+    const { messages, setMessages, addMessage, clearActiveChat } = useChatStore();
     const [message, setMessage] = useState('');
     const chatContainerRef = useRef<HTMLDivElement | null>(null); // Ref for auto-scrolling
     const [otherChatUser, setOtherChatUser] = useState('');
@@ -55,6 +55,14 @@ const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId
             socket.off("newMessage", handleNewMessage);
         };
     }, [chat_id, addMessage]);
+    
+        // Clear chat state when navigating away
+        useEffect(() => {
+            return () => {
+                // clearActiveChat();
+            };
+        }, []);
+    
 
     const sendMessage = () => {
         if (!message.trim()) return;
@@ -73,7 +81,7 @@ const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId
 
     return (
         <Paper elevation={3} sx={{ height: '85vh', display: 'flex', flexDirection: 'column' }}>
-            {/* ✅ Fixed Chat Header */}
+            {/* Fixed Chat Header */}
             <Box sx={{ p: 2, borderBottom: '1px solid #ddd', background: 'white', zIndex: 10, position: 'sticky', top: 0 }}>
                 <Box display="flex" alignItems="center" gap={2}>
                     <Avatar sx={{ width: 40, height: 40 }} />
@@ -84,7 +92,7 @@ const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId
                 <Divider />
             </Box>
 
-            {/* ✅ Scrollable Messages Container */}
+            {/* Scrollable Messages Container */}
             <Box ref={chatContainerRef} sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
                 <Stack spacing={1}>
                     {messages[chat_id]?.map((msg) => (
@@ -99,7 +107,7 @@ const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId
                 </Stack>
             </Box>
 
-            {/* ✅ Fixed Input at Bottom */}
+            {/* Fixed Input at Bottom */}
             <Box display="flex" alignItems="center" p={2} sx={{ borderTop: '1px solid #ddd', position: 'sticky', bottom: 0, background: 'white', zIndex: 10 }}>
                 <TextField
                     fullWidth

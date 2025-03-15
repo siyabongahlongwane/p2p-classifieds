@@ -80,16 +80,18 @@ function App() {
               <Route path="edit-product/:product_id" element={<AddProduct />} />
             </Route>
             <Route path="messages" element={<ChatApp />} />
-            <Route path="my-wallet" element={<Wallet />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="/view-product/:product_id" element={<ViewProduct />} />
-            <Route path="shipping-details" element={<ShippingDetails />} />
-            <Route path="payment" element={<Payment />} />
-            <Route path="*" element={<Navigate to="/not-found" />} />
-          </Route>
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/not-found" element={<NotFound />} />
+            <Route path="messages/:chat_id" element={<ChatApp />} />
+
+              <Route path="my-wallet" element={<Wallet />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="/view-product/:product_id" element={<ViewProduct />} />
+              <Route path="shipping-details" element={<ShippingDetails />} />
+              <Route path="payment" element={<Payment />} />
+              {/* <Route path="*" element={<Navigate to="/not-found" />} /> */}
+            </Route>
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/not-found" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

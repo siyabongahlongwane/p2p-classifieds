@@ -3,6 +3,7 @@ import ChatListItem from "./ChatListItem"
 import { useChatStore } from "../../stores/useChatStore";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../../context/User/UserContext";
+import { ChatMessage } from "../../typings";
 
 
 const ChatList = () => {
@@ -35,14 +36,11 @@ const ChatList = () => {
                 chats && chats?.map((chat, indx) => {
                     return (
                         <ListItem key={indx} onClick={() => setActiveChat(chat.chat_id)}>
-                            <ChatListItem chat_id={chat.chat_id} lastMessage={chat.lastMessage} activeChat={activeChat === chat.chat_id} />
+                            <ChatListItem chat_id={chat.chat_id} lastMessage={chat.lastMessage as ChatMessage} activeChat={activeChat === chat.chat_id} />
                         </ListItem>
                     )
                 })
             }
-            <ListItem>
-
-            </ListItem>
         </Stack>
     )
 }

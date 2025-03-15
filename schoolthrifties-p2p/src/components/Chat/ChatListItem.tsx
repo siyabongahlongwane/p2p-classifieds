@@ -1,6 +1,7 @@
 import { Avatar, Box, Stack, Typography } from "@mui/material"
 import { ChatMessage } from "../../typings";
 import { formatDateTime } from "../../utils/date.util";
+import { useNavigate } from "react-router-dom";
 
 interface ChatProps {
     chat_id: number;
@@ -12,6 +13,8 @@ const ChatListItem: React.FC<ChatProps> = ({
     lastMessage,
     activeChat
 }) => {
+    const navigate = useNavigate();
+
     const hoverStyles = {
         backgroundColor: '#016ec0',
         color: '#fff',
@@ -23,7 +26,7 @@ const ChatListItem: React.FC<ChatProps> = ({
     };
 
     const selectChat = () => {
-        console.log(chat_id)
+        navigate(`/messages/${chat_id}`)
     }
 
 

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Message Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #016ec0;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .content h2 {
+            color: #333;
+        }
+
+        .message-details {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #016ec0;
+            font-style: italic;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            padding: 20px;
+            background-color: #f1f1f1;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .view-message-button {
+            background-color: #1976d2;
+            color: white !important;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view-message-button:hover {
+            background-color: #1565c0;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .view-message-button:active {
+            background-color: #0d47a1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <img src="https://firebasestorage.googleapis.com/v0/b/samukele-8fd68.appspot.com/o/classifieds%2FST%20LOGO%20HORIZONTAL%20BLACK%20NO%20BG.png?alt=media&token=ffeb3078-55d2-4359-8a45-bb7ce27fe794"
+             alt="Logo"
+             style="display: block; margin: 0 auto; padding: 20px 0;"
+             width="200">
+
+        <div class="header">
+            <h1>New Message from {{senderName}}</h1>
+        </div>
+
+        <div class="content">
+            <h2>Hello {{recipientName}},</h2>
+            <p>You have received a new message from <strong>{{senderName}}</strong> while you were offline.</p>
+
+            <div class="message-details">
+                "{{messageContent}}"
+            </div>
+
+            <p>Click the button below to view the full conversation:</p>
+
+            <div class="button-container">
+                <a href="{{chatUrl}}" class="view-message-button">View Message</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; {{year}} School Thrifties. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -10,6 +10,7 @@ const io = new Server(server, {
     }
 });
 const { Op } = require('sequelize');
+const mail = require('../utils/mail');
 
 const onlineUsers = new Map(); // Store user_id -> socket.id
 const pendingMessages = new Map(); // Store user_id -> array of messages
@@ -87,11 +88,22 @@ io.on('connection', (socket) => {
                 console.log('onlineUsers', recipientId, onlineUsers)
                 io.to(onlineUsers.get(recipientId)).emit('newMessage', savedMessage);
             } else {
-                //  If recipient is offline, store the message
-                if (!pendingMessages.has(recipientId)) {
-                    pendingMessages.set(recipientId, []);
-                }
-                pendingMessages.get(recipientId).push(savedMessage);
+                const sender = await db.models.User.findOne({ where: { user_id: sender_id }, attributes: ["first_name", "email"] });
+                const recipient = await db.models.User.findOne({ where: { user_id: recipientId }, attributes: ["first_name", "email"] });
+
+                // User is offline, send an email notification
+                await mail(
+                    recipient.email,
+                    'New Message Notification',
+                    'offline-message',
+                    {
+                        recipientName: recipient.first_name,
+                        senderName: sender.first_name,
+                        messageContent: content,
+                        chatUrl: `${process.env.CLIENT_URL}/messages/${chat_id}`,
+                        year: new Date().getFullYear()
+                    }
+                );
             }
 
             // Send to the sender (for optimistic update)
