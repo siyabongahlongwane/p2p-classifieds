@@ -124,7 +124,7 @@ const ViewProduct = () => {
                 <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} shop_id={selectedProduct?.shop_id} />
               </Stack>
               <Stack alignItems={"center"} gap={1} className="pointer">
-                <StartChat text="Seller" />
+                <StartChat text="Seller" user2_id={selectedProduct?.user_id} />
               </Stack>
             </Box>
           </Grid2>

@@ -1,4 +1,4 @@
-import { ListItem, Stack } from "@mui/material"
+import { ListItem, Stack, Typography } from "@mui/material"
 import ChatListItem from "./ChatListItem"
 import { useChatStore } from "../../stores/useChatStore";
 import { useContext, useEffect } from "react";
@@ -33,13 +33,17 @@ const ChatList = () => {
     return (
         <Stack>
             {
-                chats && chats?.map((chat, indx) => {
-                    return (
-                        <ListItem key={indx} onClick={() => setActiveChat(chat.chat_id)}>
-                            <ChatListItem chat_id={chat.chat_id} lastMessage={chat.lastMessage as ChatMessage} activeChat={activeChat === chat.chat_id} />
-                        </ListItem>
-                    )
-                })
+                chats?.length === 0
+                    ?
+                    <Typography variant="body1" color={"gray"}>No Chats Found</Typography>
+                    :
+                    chats && chats?.map((chat, indx) => {
+                        return (
+                            <ListItem key={indx} onClick={() => setActiveChat(chat.chat_id)}>
+                                <ChatListItem chat_id={chat.chat_id} lastMessage={chat.lastMessage as ChatMessage} activeChat={activeChat === chat.chat_id} currentUser={user_id} users={chat.users} />
+                            </ListItem>
+                        )
+                    })
             }
         </Stack>
     )

@@ -44,17 +44,20 @@ const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId
     // Listen for incoming messages
     useEffect(() => {
         const handleNewMessage = (newMessage: NewMessage) => {
-            if (newMessage.chat_id === chat_id) {
-                // addMessage(newMessage);
-            }
+            console.log("📩 Received new message:", newMessage);
+            addMessage(newMessage);
         };
-
-        socket.on("newMessage", handleNewMessage);
-
+    
+        // ✅ Ensure the event listener only runs once
+        if (!socket.hasListeners("newMessage")) {
+            socket.on("newMessage", handleNewMessage);
+        }
+    
         return () => {
             socket.off("newMessage", handleNewMessage);
         };
-    }, [chat_id, addMessage]);
+    }, [chat_id]);
+    
     
         // Clear chat state when navigating away
         useEffect(() => {
@@ -64,20 +67,29 @@ const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId
         }, []);
     
 
-    const sendMessage = () => {
-        if (!message.trim()) return;
-
-        const newMessage: NewMessage = {
-            chat_id,
-            sender_id: currentUserId,
-            message_type: 'TEXT',
-            content: message,
+        const sendMessage = () => {
+            if (!message.trim()) return;
+        
+            const newMessage: NewMessage = {
+                chat_id,
+                sender_id: currentUserId,
+                message_type: 'TEXT',
+                content: message,
+            };
+        
+            console.log("📨 Sending message:", newMessage);
+            socket.emit('sendMessage', newMessage);
+        
+            // ✅ Enable Optimistic UI Update
+            addMessage({
+                ...newMessage,
+                createdAt: new Date().toISOString(), // Mock timestamp
+                // message_id: Math.random(), // Temporary unique ID
+            });
+        
+            setMessage('');
         };
-
-        socket.emit('sendMessage', newMessage);
-        // addMessage(newMessage);
-        setMessage('');
-    };
+        
 
     return (
         <Paper elevation={3} sx={{ height: '85vh', display: 'flex', flexDirection: 'column' }}>
@@ -95,9 +107,9 @@ const ActiveChat = ({ chat_id, currentUserId }: { chat_id: number; currentUserId
             {/* Scrollable Messages Container */}
             <Box ref={chatContainerRef} sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
                 <Stack spacing={1}>
-                    {messages[chat_id]?.map((msg) => (
+                    {messages[chat_id]?.map((msg, index) => (
                         <ChatBubble
-                            key={msg.message_id}
+                            key={msg.message_id + index}
                             message={msg.content as string}
                             timestamp={msg.createdAt}
                             senderId={msg.sender_id}

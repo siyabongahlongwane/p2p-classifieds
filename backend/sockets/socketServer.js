@@ -19,6 +19,67 @@ const pendingMessages = new Map(); // Store user_id -> array of messages
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    // **Start a Chat**
+    socket.on('startChat', async ({ user1_id, user2_id }, callback) => {
+        try {
+            console.log(`📨 Received startChat request: user1_id=${user1_id}, user2_id=${user2_id}`);
+
+            // Check if chat already exists
+            let chat = await db.models.Chat.findOne({
+                where: {
+                    [Op.or]: [
+                        { user1_id, user2_id },
+                        { user1_id: user2_id, user2_id: user1_id }
+                    ]
+                },
+                include: [
+                    { model: db.models.User, as: 'user1', attributes: ['user_id', 'first_name', 'last_name', 'email'] },
+                    { model: db.models.User, as: 'user2', attributes: ['user_id', 'first_name', 'last_name', 'email'] },
+                    {
+                        model: db.models.Message,
+                        as: 'lastMessage',
+                        attributes: ['message_id', 'sender_id', 'message_type', 'content', 'image_url', 'createdAt'],
+                        include: [{ model: db.models.User, as: 'sender', attributes: ['first_name', 'last_name'] }]
+                    }
+                ],
+                order: [['updatedAt', 'DESC']]
+            });
+
+            if (!chat) {
+                console.log('🆕 No existing chat found. Creating new chat...');
+                chat = await db.models.Chat.create({ user1_id, user2_id });
+
+                // Fetch users after creation
+                chat = await db.models.Chat.findOne({
+                    where: { chat_id: chat.chat_id },
+                    include: [
+                        { model: db.models.User, as: 'user1', attributes: ['user_id', 'first_name', 'last_name', 'email'] },
+                        { model: db.models.User, as: 'user2', attributes: ['user_id', 'first_name', 'last_name', 'email'] },
+                        {
+                            model: db.models.Message,
+                            as: 'lastMessage',
+                            attributes: ['message_id', 'sender_id', 'message_type', 'content', 'image_url', 'createdAt'],
+                            include: [{ model: db.models.User, as: 'sender', attributes: ['first_name', 'last_name'] }]
+                        }
+                    ],
+                    order: [['updatedAt', 'DESC']]
+                });
+            }
+
+            // ✅ Convert user1 & user2 into an array for easier access
+            const users = [chat.user1, chat.user2];
+
+            console.log('✅ Chat response:', chat);
+            callback({ success: true, ...chat.toJSON(), users });
+
+        } catch (error) {
+            console.error('❌ Error creating chat:', error);
+            callback({ success: false, error: 'Database error while creating chat' });
+        }
+    });
+
+
+
     // Handle User Joining the App (Not Just a Chat)
     socket.on('userOnline', async (user_id) => {
         onlineUsers.set(user_id, socket.id);

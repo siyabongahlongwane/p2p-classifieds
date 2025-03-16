@@ -2,29 +2,10 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import socket from '../utils/socket';
+import { Chat, ChatMessage } from '../typings';
 
 type MessageType = 'TEXT' | 'IMAGE';
 
-interface ChatMessage {
-    message_id: number;
-    chat_id: number;
-    sender_id: number;
-    message_type: MessageType;
-    content: string | null;
-    image_url: string | null;
-    createdAt: string;
-    sender: {
-        first_name: string;
-        last_name: string;
-    };
-}
-
-interface Chat {
-    chat_id: number;
-    user1_id: number;
-    user2_id: number;
-    lastMessage: ChatMessage | null;
-}
 
 interface ChatStore {
     chats: Chat[] | null;
@@ -54,12 +35,14 @@ export const useChatStore = create<ChatStore>()(
 
         // Start a chat (creates or fetches an existing chat)
         startChat: async (user1_id, user2_id) => {
+            console.log('chat', user1_id, user2_id);
             return new Promise((resolve) => {
                 socket.emit('startChat', { user1_id, user2_id }, (chat: Chat) => {
                     set((state) => ({
                         chats: [...state.chats || [], chat],
                         activeChat: chat.chat_id,
                     }), false, "startChat");
+
 
                     resolve(chat);
                 });
@@ -75,6 +58,13 @@ export const useChatStore = create<ChatStore>()(
         //  Fix: Add a message and update the last message in chat
         addMessage: (message) =>
             set((state) => {
+                // ✅ Prevent duplicate messages
+                console.log({ message });
+                if (state.messages[message.chat_id]?.some((msg) => msg.message_id === message.message_id)) {
+                    console.warn("⚠️ Duplicate message detected, ignoring:", message);
+                    return state;
+                }
+
                 const updatedChats = state.chats?.map((chat) =>
                     chat.chat_id === message.chat_id ? { ...chat, lastMessage: message } : chat
                 ) || [];
@@ -85,8 +75,8 @@ export const useChatStore = create<ChatStore>()(
                         ...state.messages,
                         [message.chat_id]: [
                             ...(state.messages[message.chat_id] || []),
-                            message,
-                        ],
+                            message?.message_id && message,
+                        ].filter(chat => chat?.message_id),
                     },
                 };
             }, false, "addMessage"),

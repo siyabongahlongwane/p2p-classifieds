@@ -1,19 +1,25 @@
 import { Avatar, Box, Stack, Typography } from "@mui/material"
-import { ChatMessage } from "../../typings";
+import { ChatMessage, User } from "../../typings";
 import { formatDateTime } from "../../utils/date.util";
 import { useNavigate } from "react-router-dom";
+import { useChatStore } from "../../stores/useChatStore";
 
 interface ChatProps {
     chat_id: number;
     lastMessage: ChatMessage;
     activeChat?: boolean;
+    currentUser: number;
+    users: User[];
 }
 const ChatListItem: React.FC<ChatProps> = ({
     chat_id,
     lastMessage,
-    activeChat
+    activeChat,
+    currentUser,
+    users
 }) => {
     const navigate = useNavigate();
+    const {activeChatUsers} = useChatStore();
 
     const hoverStyles = {
         backgroundColor: '#016ec0',
@@ -29,10 +35,13 @@ const ChatListItem: React.FC<ChatProps> = ({
         navigate(`/messages/${chat_id}`)
     }
 
+    const otherUser = users ? users?.find((user) => user.user_id !== currentUser) : activeChatUsers?.find((user) => user.user_id !== currentUser);
+
 
     return (
         <Stack
             direction="row"
+            width={'100%'}
             sx={{
                 '&:hover': hoverStyles,
                 backgroundColor: activeChat ? '#016ec0' : 'transparent',
@@ -55,7 +64,7 @@ const ChatListItem: React.FC<ChatProps> = ({
                             overflow={'hidden'}
                             textOverflow={'ellipsis'}
                             maxWidth={250}
-                        >{lastMessage?.sender?.first_name} {lastMessage?.sender?.last_name}</Typography>
+                        >{otherUser ? `${otherUser.first_name} ${otherUser.last_name}` : "Unknown User"}</Typography>
                         <Typography
                             className="message-text"
                             color="gray"
@@ -65,7 +74,7 @@ const ChatListItem: React.FC<ChatProps> = ({
                             textOverflow={'ellipsis'}
                             maxWidth={250}
                         >
-                            {lastMessage?.content}
+                            {lastMessage?.content || 'Send a message'}
                         </Typography>
                     </Stack>
                     <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
