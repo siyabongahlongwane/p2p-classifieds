@@ -20,6 +20,7 @@ const ViewProduct = () => {
   const { get, loading, error } = useApi(import.meta.env.VITE_API_URL);
   const [images, setImages] = useState<Array<{ original: string, thumbnail: string }>>([]);
   const { showToast } = useToastStore();
+  const [isSold, setIsSold] = useState(false);
 
 
   const fetchCategories = async () => {
@@ -46,16 +47,19 @@ const ViewProduct = () => {
         try {
           get("/product/fetch?product_id=" + product_id).then(([product]) => {
             setField("selectedProduct", product);
+            setIsSold(product?.status == 'Sold')
             setImages(transformPhotos(product.photos));
           });
-
         }
         catch (error) {
           showToast('Error fetching product', 'error');
           console.error(error);
         }
       }
-      else setImages(transformPhotos(selectedProduct.photos));
+      else{
+        setImages(transformPhotos(selectedProduct.photos));
+        setIsSold(selectedProduct?.status == 'Sold')
+      }
 
     }
     fetchProduct();
@@ -116,13 +120,19 @@ const ViewProduct = () => {
               </Typography>
               <Typography variant="body2">+ Buyer Protection fee</Typography>
             </Stack>
-            <Box display={"flex"} gap={4} justifyContent={"space-around"}>
-              <Stack alignItems={"center"} gap={1} className="pointer">
-                <LikeItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} showLabel />
-              </Stack>
-              <Stack alignItems={"center"} gap={1} className="pointer">
-                <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} shop_id={selectedProduct?.shop_id} />
-              </Stack>
+            <Box display={"flex"} gap={4} justifyContent={isSold ? "start" : "space-around"}>
+              {
+                !isSold
+                &&
+                <>
+                  <Stack alignItems={"center"} gap={1} className="pointer">
+                    <LikeItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} showLabel />
+                  </Stack>
+                  <Stack alignItems={"center"} gap={1} className="pointer">
+                    <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} shop_id={selectedProduct?.shop_id} />
+                  </Stack>
+                </>
+              }
               <Stack alignItems={"center"} gap={1} className="pointer">
                 <StartChat text="Seller" user2_id={selectedProduct?.user_id} />
               </Stack>

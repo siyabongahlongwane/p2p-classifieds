@@ -39,7 +39,7 @@ const ProductItem = ({ product }: { product: PlainProduct }) => {
       )}
       <Paper>
         <Box className='product-img'>
-        <img
+          <img
             src={photos[0]?.photo_url}
             alt="Image"
             width={"100%"}
@@ -50,27 +50,33 @@ const ProductItem = ({ product }: { product: PlainProduct }) => {
               navigate(`/view-product/${product_id}`);
             }}
           />
-      </Box>
-      <Stack p={1} gap={0.5}>
-        <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <Typography fontSize={16} fontWeight={500}>
-            R{price}
-          </Typography>
-          <Box display={"flex"} justifyContent={"center"}>
-            <LikeItem user_id={user?.user_id} product_id={product?.product_id} />
-          </Box>
         </Box>
-        <Stack display={"flex"} gap={0.5}>
-          <Box display={"flex"} justifyContent={"center"}>
-            <CartItem user_id={user?.user_id} product_id={product?.product_id} shop_id={product?.shop_id} isButton />
+        <Stack p={1} gap={0.5}>
+          <Box
+            display={"flex"}
+            justifyContent={isSold ? "center" : "space-between"}
+            alignItems={"center"}
+          >
+            <Typography fontSize={16} fontWeight={500}>
+              R{price}
+            </Typography>
+            {
+              !isSold && <Box display={"flex"} justifyContent={"center"}>
+                <LikeItem user_id={user?.user_id} product_id={product?.product_id} />
+              </Box>
+            }
+
           </Box>
+          {
+            !isSold && <Stack display={"flex"} gap={0.5}>
+              <Box display={"flex"} justifyContent={"center"}>
+                <CartItem user_id={user?.user_id} product_id={product?.product_id} shop_id={product?.shop_id} isButton />
+              </Box>
+            </Stack>
+          }
+
         </Stack>
-      </Stack>
-    </Paper>
+      </Paper>
     </Stack >
   );
 };

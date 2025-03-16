@@ -1,13 +1,13 @@
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { CartItem, LikeItem, PlainProduct } from '../typings';
+import { CartItem, LikeItem, ProductWithLike } from '../typings';
 import { ReactNode } from 'react';
 
 type Store = {
     likes: LikeItem[],
     cart: CartItem[],
-    selectedProduct: PlainProduct | null;
+    selectedProduct: any;
     categories: Array<{title: string, category_id: number}>;
     provinces: string[];
     productConditions: string[];
