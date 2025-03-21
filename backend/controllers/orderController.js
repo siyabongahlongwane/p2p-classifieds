@@ -185,6 +185,7 @@ module.exports = {
                         order.order_id.toString()
                     );
 
+                    console.log({ requestBody })
                     await transaction.commit();
                     triggerOzowPayment(requestBody, res);
                     break;

@@ -14,7 +14,6 @@ const customError = (message, status) => {
 
 
 const generateRequestHash = async (order, orderNumber) => {
-    const ozowURLSegment = '/payments';
     const paymentObject = {
         SiteCode: process.env.SITE_CODE,
         CountryCode: 'ZA',
@@ -24,10 +23,10 @@ const generateRequestHash = async (order, orderNumber) => {
         BankReference: `Order ${orderNumber}`,
         Optional1: order?.uid || +orderNumber,
         Customer: `${order?.customerDetails?.firstName} ${order?.customerDetails?.lastName}`,
-        CancelUrl: process.env.CLIENT_URL + `${urlSegment}orders/canceled-order`,
-        ErrorUrl: process.env.CLIENT_URL + `${urlSegment}orders/failed-order`,
-        SuccessUrl: process.env.CLIENT_URL + `${urlSegment}orders/thank-you`,
-        NotifyUrl: process.env.SERVER_URL + `${ozowURLSegment}/ozow/notify`,
+        CancelUrl: process.env.CLIENT_URL + `/orders/canceled-order`,
+        ErrorUrl: process.env.CLIENT_URL + `/orders/failed-order`,
+        SuccessUrl: process.env.CLIENT_URL + `/orders/thank-you`,
+        NotifyUrl: process.env.SERVER_URL + `/classifieds/payments/ozow/notify`,
         IsTest: true
     };
 

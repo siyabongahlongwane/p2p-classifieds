@@ -14,7 +14,7 @@ const app = express();
 const db = require('./db_models');
 
 const corsOptions = {
-  origin: ['https://schoolthrifties.co.za', 'https://schoolthrifties.co.za', 'http://localhost:5173'],
+  origin: ['https://schoolthrifties.co.za', 'https://schoolthrifties.co.za', 'http://localhost:5173', 'https://mmnptfmf-5173.inc1.devtunnels.ms'],
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'DELETE']
 }
 
@@ -34,7 +34,7 @@ app.use(passport.session());
 app.use(passport.initialize());
 
 (async () => {
-  await db.sequelize.sync({ alter: false});
+  await db.sequelize.sync({ alter: false });
   console.log("Database synced successfully");
 })();
 

@@ -103,7 +103,6 @@ const OrderSummary = ({ user }: { user: User }) => {
                 user_id: user.user_id,
                 customerDetails
             }, endpoint);
-            return
 
             const res = await post(endpoint, {
                 ...orderObject,

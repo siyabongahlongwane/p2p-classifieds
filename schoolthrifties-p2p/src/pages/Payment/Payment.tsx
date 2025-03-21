@@ -41,7 +41,6 @@ const Payment = () => {
                     </Grid2>
                 </Grid2>
             )}
-            {!!cart?.length && <FloatingActionButton title="Make Payment" action={() => navigate("/payment")} />}
         </Stack>
     );
 };
