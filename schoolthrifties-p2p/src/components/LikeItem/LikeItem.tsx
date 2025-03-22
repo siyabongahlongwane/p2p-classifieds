@@ -6,6 +6,7 @@ import { isLiked } from "../../utils/product.util";
 import useApi from "../../hooks/useApi";
 import { ProductWithLike } from "../../typings";
 import useToastStore from "../../stores/useToastStore";
+import LoginPromptModal from "../LoginPromptModal/LoginPromptModal";
 
 interface LikeItemProps {
     user_id: number;
@@ -19,6 +20,11 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
     const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
     const { showToast } = useToastStore();
 
+    const [modalOpen, setModalOpen] = useState(false); // Modal visibility state
+    const handleCloseModal = () => {
+        setModalOpen(false); // Close the modal
+    };
+
     useEffect(() => {
         setIsLiked(
             isLiked(
@@ -29,6 +35,10 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
     }, [likes, product_id]);
 
     const handleLike = async () => {
+        if (!user_id) {
+            setModalOpen(true);
+            return;
+        }
         if (liked) {
             try {
                 const likeToRemove = likes.find((p: ProductWithLike) => p.product_id === product_id)
@@ -36,7 +46,7 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
                 const newLikes = likes.filter((p: ProductWithLike) => p.product_id !== product_id);
                 const likeRemoved = await remove(`/likes/remove-like/${likeToRemove}?user_id=${user_id}`);
 
-                if(!likeRemoved) throw new Error('Error removing liked item from likes');
+                if (!likeRemoved) throw new Error('Error removing liked item from likes');
 
                 showToast('Item removed from likes', 'success');
                 setLikes([...newLikes]);
@@ -53,7 +63,7 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
                     user_id: user_id,
                 });
 
-                if(!newLikes) throw new Error('Error adding item to likes');
+                if (!newLikes) throw new Error('Error adding item to likes');
                 showToast('Item added to likes', 'success');
                 setLikes([...newLikes]);
                 setIsLiked(true);
@@ -64,14 +74,16 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
         }
     };
 
-
     return (
-        <Stack direction="column" spacing={1} alignItems="center" onClick={handleLike} className="pointer">
-            {liked ? <Favorite htmlColor="var(--blue)" /> : <FavoriteBorderOutlined htmlColor="var(--blue)" />}
-            {
-                showLabel && <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300} >{liked ? 'Remove from likes' : 'Add to likes'}</Typography>
-            }
-        </Stack>
+        <>
+            <Stack direction="column" spacing={1} alignItems="center" onClick={handleLike} className="pointer">
+                {liked ? <Favorite htmlColor="var(--blue)" /> : <FavoriteBorderOutlined htmlColor="var(--blue)" />}
+                {
+                    showLabel && <Typography variant="subtitle2" component="small" fontSize={12} color="gray" fontWeight={300}>{liked ? 'Remove from likes' : 'Add to likes'}</Typography>
+                }
+            </Stack>
+            <LoginPromptModal open={modalOpen} onClose={handleCloseModal} />
+        </>
     );
 };
 

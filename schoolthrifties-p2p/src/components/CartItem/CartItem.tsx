@@ -6,6 +6,7 @@ import { existsInCart } from "../../utils/product.util";
 import { CartItem as ICartItem } from "../../typings";
 import { AddShoppingCart, Delete, ShoppingCart } from "@mui/icons-material";
 import useToastStore from "../../stores/useToastStore";
+import LoginPromptModal from "../LoginPromptModal/LoginPromptModal";
 
 export interface CartItemProps {
     product_id: number;
@@ -23,6 +24,12 @@ const CartItem = ({ product_id, user_id, isButton = false, shop_id }: CartItemPr
     const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
     const { showToast } = useToastStore();
 
+    const [modalOpen, setModalOpen] = useState(false);
+
+    const handleCloseModal = () => {
+        setModalOpen(false); // Close the modal
+    };
+
     useEffect(() => {
         setIsInCart(
             existsInCart(
@@ -34,6 +41,10 @@ const CartItem = ({ product_id, user_id, isButton = false, shop_id }: CartItemPr
 
 
     const handleCartItem = async () => {
+        if (!user_id) {
+            setModalOpen(true);
+            return;
+        }
         if (isInCart) {
             try {
                 const likeToRemove = cart.find((p: ICartItem) => p.product_id === product_id)
@@ -113,6 +124,8 @@ const CartItem = ({ product_id, user_id, isButton = false, shop_id }: CartItemPr
                     </Stack>
 
             }
+            <LoginPromptModal open={modalOpen} onClose={handleCloseModal}/>
+
         </>
 
     );
