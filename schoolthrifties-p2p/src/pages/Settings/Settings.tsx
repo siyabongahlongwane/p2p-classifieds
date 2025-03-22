@@ -12,12 +12,10 @@ import ShopSettings from "../../components/Settings/Shop";
 import ShippingSettings from "../../components/Settings/Shipping";
 import { UserContext } from "../../context/User/UserContext";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { useStore } from "../../stores/store";
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState(0);
     const { user } = useContext(UserContext);
-    const { setField } = useStore();
 
 
     const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
@@ -25,7 +23,6 @@ const Settings = () => {
     };
 
     useEffect(() => {
-        setField('activeMenuItem', 5);
     }, [])
     return (
         <>

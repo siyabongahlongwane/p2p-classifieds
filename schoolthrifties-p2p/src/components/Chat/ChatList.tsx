@@ -17,7 +17,6 @@ const ChatList = () => {
                 const data = await response.json();
 
                 if (response.ok) {
-                    console.log("Messages:", data.payload);
                     setChats(data.payload);
                 } else {
                     console.error("Error:", data.err);

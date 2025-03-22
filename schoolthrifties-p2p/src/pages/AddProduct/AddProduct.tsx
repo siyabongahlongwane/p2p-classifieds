@@ -65,7 +65,6 @@ const AddProduct = () => {
   }, [product_id, user_id, get, form, setField, showToast]);
 
   useEffect(() => {
-    setField('activeMenuItem', 1);
     if (isEdit) fetchProduct();
   }, [isEdit, setField]);
 

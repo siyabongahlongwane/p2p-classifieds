@@ -14,11 +14,9 @@ const Home = () => {
 
   const { showToast } = useToastStore();
   const [shops, setShops] = useState([]);
-  const { setField } = useStore();
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    setField('activeMenuItem', 0);
 
     const fetchShops = async () => {
       try {
