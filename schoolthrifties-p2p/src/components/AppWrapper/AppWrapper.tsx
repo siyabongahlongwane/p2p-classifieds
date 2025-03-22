@@ -2,6 +2,7 @@ import { Stack } from "@mui/material";
 import Sidenav from "../Sidenav/Sidenav";
 import Header from "../Header/Header";
 import { Outlet } from "react-router-dom";
+import Footer from "../Footer/Footer";
 
 const AppWrapper = () => {
   return (
@@ -11,6 +12,7 @@ const AppWrapper = () => {
         <Header />
         <Stack className="separator" height={"1px"} width={"100%"} bgcolor={'#e4e4e4'} my={2}></Stack>
         <Outlet />
+        <Footer />
       </Stack>
     </Stack>
   );
