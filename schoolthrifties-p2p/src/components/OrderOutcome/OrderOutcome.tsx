@@ -2,7 +2,7 @@ import { Box, Typography, Button, Table, TableBody, TableCell, TableContainer, T
 import useApi from "../../hooks/useApi";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/User/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { statusesMessages, Statuses } from "./StaticData";
 import useToastStore from "../../stores/useToastStore";
 interface OrderProps {
@@ -124,7 +124,11 @@ const OrderOutcome = () => {
                                 color="primary"
                                 sx={{ mt: 3 }}
                             >
-                                View Your Orders
+                                <Link to="/orders"
+                                    style={{ color: "white", textDecoration: "none" }}
+                                >
+                                    View Your Orders
+                                </Link>
                             </Button>
                         </Box>
                     </Box>

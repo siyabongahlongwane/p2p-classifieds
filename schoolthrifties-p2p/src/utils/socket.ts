@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:5001'; //  Your WebSocket server URL
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL; //  Your WebSocket server URL
 
 //  Singleton pattern: Ensures only one WebSocket connection exists
 const socket: Socket = io(SOCKET_URL, {

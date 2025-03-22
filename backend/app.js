@@ -21,8 +21,10 @@ const corsOptions = {
 const PORT = process.env.PORT || 5001;
 
 app.use(express.json({ limit: 10000 }));
+app.use(express.urlencoded({ extended: true }));
 
-app.use(cors(corsOptions));
+
+app.use(cors({origin: '*'}));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,

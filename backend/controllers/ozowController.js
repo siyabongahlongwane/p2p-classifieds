@@ -36,7 +36,7 @@ const sendEmailsToBuyerAndSeller = async (order) => {
 module.exports = {
     notify: async (req, res) => {
         const data = req.body;
-        logger.info('Post Pay Screen', data);
+        logger.info('Post Pay Screen', { data });
         if (data?.['Status'] == 'Complete') {
             logger.info('Complete Screen');
             try {
@@ -66,7 +66,7 @@ module.exports = {
 
                 logger.info('Order updated successfully', order);
                 res.status(200).send({ msg: 'Order paid successfully' });
-
+                return;
             } catch (error) {
                 logger.error('Error updating order', error);
                 return res.status(500).send('Error updating order');
@@ -95,14 +95,16 @@ module.exports = {
                     logger.info('Wallet refunded successfully', order);
                     res.status(200).send({ msg: 'Wallet refunded successfully' });
                 }
-
+                return;
             } catch (error) {
                 logger.error('Error updating order', error);
                 return res.status(500).send('Error updating order');
             }
 
         }
-
+        else {
+            res.status(500).send({ error: 'Error updating order' });
+        }
     },
     sendEmailsToBuyerAndSeller
 }
