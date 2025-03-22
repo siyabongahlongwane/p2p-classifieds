@@ -1,7 +1,7 @@
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import { Controller, useForm } from "react-hook-form";
 import { useStore } from "../../stores/store";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import useApi from "../../hooks/useApi";
 import FilePickerWithPreview from "../../components/FilePickerWithPreview/FilePickerWithPreview";
 import useFirebaseStorage from "../../hooks/useFirebaseStorage";
@@ -16,7 +16,6 @@ const AddProduct = () => {
   const { categories, provinces, productConditions, productPhotos, productStatuses, setField } = useStore();
   const { get, post, put } = useApi(import.meta.env.VITE_API_URL);
   const { uploadFiles, error } = useFirebaseStorage();
-  const [fileUrls, setFileUrls] = useState([]);
   const { product_id } = useParams();
   const [isEdit] = useState(!!product_id);
   const form = useForm<NewProduct>({
@@ -47,7 +46,7 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const [product] = await get(`/product/fetch?user_id=${user_id}&product_id=${product_id}`);
       if (!product) throw new Error('Error fetching product');
@@ -56,7 +55,6 @@ const AddProduct = () => {
       Object.keys(newProduct).forEach(key => {
         form.setValue(key as keyof NewProduct, product[key]);
       })
-      // setField("categories", categories);
 
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
@@ -64,17 +62,18 @@ const AddProduct = () => {
       console.error('error', _error);
       return;
     }
-  };
+  }, [product_id, user_id, get, form, setField, showToast]);
 
   useEffect(() => {
     setField('activeMenuItem', 1);
     if (isEdit) fetchProduct();
-  }, []);
+  }, [isEdit, setField]);
 
 
 
   const onSubmit = async (formData: NewProduct) => {
     try {
+      console.log({ productPhotos })
       if (productPhotos.length > 0) {
         if (isEdit) return updateProduct(formData);
 
@@ -85,8 +84,6 @@ const AddProduct = () => {
           formData.productPhotos = urls.map(url => ({ photo_url: url }));
           addNewProduct(formData);
         }
-        setFileUrls((prevUrls: any) => [...prevUrls, ...urls]);
-
       } else {
         showToast("No photos selected!", "error");
       }
@@ -115,8 +112,26 @@ const AddProduct = () => {
   }
 
   const updateProduct = async (updatedProduct: NewProduct) => {
+    const isFile = (element: object | File) => element instanceof File;
+
     try {
-      const updatedproduct = await put(`/product/update-product/${product_id}`, { ...updatedProduct, user_id, shop_id });
+      let urls = [];
+      const nonLinkIndices: number[] = [];
+
+      if (productPhotos.some(photo => isFile(photo))) {
+        urls = await uploadFiles([...productPhotos].filter((photo, i) => {
+          nonLinkIndices.push(i);
+
+          return isFile(photo);
+        }), "classifieds");
+      }
+
+      const imagesToUpload = [...productPhotos].filter(photo => !isFile(photo));
+      urls.forEach((url, indx) => {
+        imagesToUpload.splice(nonLinkIndices[indx], 0, { photo_url: url });
+      });
+
+      const updatedproduct = await put(`/product/update-product/${product_id}`, { ...updatedProduct, productPhotos: imagesToUpload, user_id, shop_id });
       if (!updatedproduct) throw new Error('Error updating product');
       showToast("Product updated successfully!", "success");
 

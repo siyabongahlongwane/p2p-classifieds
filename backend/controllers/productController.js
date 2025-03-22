@@ -47,6 +47,15 @@ module.exports = {
             const { product_id } = req.params;
 
             if (!Number.isInteger(+product_id)) return res.status(400).json({ err: `Invalid product id: '${product_id}'` });
+
+
+            let { productPhotos } = req.body;
+            productPhotos = productPhotos
+                ?.filter(photo => !photo?.photo_id)
+                ?.map(photo => ({ ...photo, product_id: +product_id }));
+
+            await ProductPhoto.bulkCreate(productPhotos);
+
             const [updatedproduct] = await Product.update({ ...req.body }, { where: { product_id: +product_id } });
 
             if (!updatedproduct) return res.status(400).json({ err: `Failed to update product with id '${product_id}'` });

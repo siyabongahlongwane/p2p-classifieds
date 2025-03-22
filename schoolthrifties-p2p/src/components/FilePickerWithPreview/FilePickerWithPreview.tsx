@@ -6,7 +6,7 @@ import { useStore } from "../../stores/store";
 
 const FilePickerWithPreview = ({ position }: { position: number }) => {
     const { productPhotos, setField } = useStore();
-    const [file, setFile] = useState(null); // Stores the file object
+    const [file, setFile] = useState<any>(null); // Stores the file object
     const [preview, setPreview] = useState(''); // Stores the file preview URL
 
     const handleFileChange = (event) => {
@@ -28,13 +28,14 @@ const FilePickerWithPreview = ({ position }: { position: number }) => {
         setFile(null);
         setPreview('');
         URL.revokeObjectURL(preview); // Free up memory
+        setField('productPhotos', productPhotos.filter((_product, i) => i !== position));
     };
 
     useEffect(() => {
         if (productPhotos[position]) {
             setPreview(productPhotos[position]['photo_url'])
         }
-    }, [productPhotos])
+    }, [productPhotos, position]);
     return (
         <Box sx={{ pb: 3 }}>
             <Button
