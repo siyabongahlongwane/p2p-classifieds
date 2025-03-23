@@ -104,16 +104,16 @@ const useAuth = () => {
 
     // Logout function
     const logout = (setContextUser: Dispatch<SetStateAction<User | null>>) => {
-        setContextUser(null);
+        setField('cart', []);
+        setField('likes', []);
+        navigate('/home');
+        setField('activeMenuItem', 0);
+        showToast('Logged out successfully', 'success');
         setTimeout(() => {
+            setContextUser(null);
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            setField('cart', []);
-            setField('likes', []);
-            navigate('/home');
-            setField('activeMenuItem', 0);
-            showToast('Logged out successfully', 'success');
-        }, 500);
+        }, 0);
     };
 
     return {

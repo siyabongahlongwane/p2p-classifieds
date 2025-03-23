@@ -9,7 +9,7 @@ export type User = {
     location: string | null;
     phone: string;
     completed_registration: boolean;
-    roles: number[];
+    roles: string;
     createdAt: string;
     updatedAt: string;
 };

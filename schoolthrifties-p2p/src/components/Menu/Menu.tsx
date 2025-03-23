@@ -1,15 +1,25 @@
 import "./Menu.css";
 import MenuItem from "../MenuItem/MenuItem";
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation, useMatch } from 'react-router-dom';
-import { HomeOutlined, LocalShippingOutlined, LogoutOutlined, MarkChatUnreadOutlined, SettingsOutlined, ShoppingBagOutlined, WalletOutlined } from "@mui/icons-material";
+import { Dashboard, HomeOutlined, LocalShippingOutlined, Lock, LogoutOutlined, MarkChatUnreadOutlined, Money, SettingsOutlined, ShoppingBagOutlined, WalletOutlined } from "@mui/icons-material";
 import useAuth from "../../hooks/useAuth";
 import { MenuItem as MenuItemType } from "../../typings/MenuItem.type";
 import { useStore } from "../../stores/store";
+import { UserContext } from "../../context/User/UserContext";
 
 const Menu = () => {
-    const { setField, activeMenuItem } = useStore();
+    const { setField, activeMenuItem, filteredMenuItems } = useStore();
     const location = useLocation();
+    const { user } = useContext(UserContext);
+    const roles = {
+        1: 'Admin',
+        2: 'Shop Manager',
+        3: 'Parent',
+    }
+
+    const isLoggedIn = user !== null;
+    const isParent = isLoggedIn && JSON.parse(user.roles).includes(3);
 
     // Routes
     const [menuItems] = useState<MenuItemType[]>([
@@ -97,10 +107,49 @@ const Menu = () => {
         }
     }, [location, menuItems, setField]);
 
+
+    useEffect(() => {
+        if (user && isParent) {
+            console.log('Is Parent');
+            setField('filteredMenuItems', [...menuItems]);
+        } else if (user && JSON.parse(user.roles).includes(1)) {
+            console.log('Is Admin');
+            const filteredItems = [
+                {
+                    Icon: Dashboard,
+                    route: 'home',
+                    label: 'Dashboard',
+                },
+                {
+                    Icon: Money,
+                    route: 'sign-in',
+                    label: 'Payouts',
+                },
+                {
+                    ...menuItems.slice().pop()
+                }
+            ]
+            setField('filteredMenuItems', filteredItems);
+        } else {
+            console.log('Not logged in');
+            const filteredItems = [
+                {
+                    ...menuItems.slice().shift()
+                },
+                {
+                    Icon: Lock,
+                    route: 'sign-in',
+                    label: 'Sign In',
+                }
+            ]
+            setField('filteredMenuItems', filteredItems);
+        }
+    }, [user]);
+
     return (
         <div className='menu'>
             {
-                menuItems.map((item, index) => <MenuItem key={index} item={item} index={index} activeMenuItem={activeMenuItem} setActiveMenuItem={setField} />)
+                filteredMenuItems.map((item, index) => <MenuItem key={index} item={item} index={index} activeMenuItem={activeMenuItem} setActiveMenuItem={setField} />)
             }
         </div>
     );
