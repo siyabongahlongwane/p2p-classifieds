@@ -3,19 +3,19 @@ import { useEffect, useState } from "react";
 import { useStore } from "../../stores/store";
 import useApi from "../../hooks/useApi";
 import { existsInCart } from "../../utils/product.util";
-import { CartItem as ICartItem } from "../../typings";
+import { CartItem as ICartItem, User } from "../../typings";
 import { AddShoppingCart, Delete, ShoppingCart } from "@mui/icons-material";
 import useToastStore from "../../stores/useToastStore";
 import LoginPromptModal from "../LoginPromptModal/LoginPromptModal";
 
 export interface CartItemProps {
     product_id: number;
-    user_id: number;
     isButton?: boolean;
     shop_id: number;
+    user: User
 }
 
-const CartItem = ({ product_id, user_id, isButton = false, shop_id }: CartItemProps) => {
+const CartItem = ({ product_id, user, isButton = false, shop_id }: CartItemProps) => {
     const { cart, setCart } = useStore();
     const [isInCart, setIsInCart] = useState(
         existsInCart(product_id, cart.map((p: ICartItem) => p.product_id))
@@ -29,6 +29,8 @@ const CartItem = ({ product_id, user_id, isButton = false, shop_id }: CartItemPr
     const handleCloseModal = () => {
         setModalOpen(false); // Close the modal
     };
+
+    const { user_id = null } = user || {};
 
     useEffect(() => {
         setIsInCart(
@@ -124,7 +126,7 @@ const CartItem = ({ product_id, user_id, isButton = false, shop_id }: CartItemPr
                     </Stack>
 
             }
-            <LoginPromptModal open={modalOpen} onClose={handleCloseModal}/>
+            <LoginPromptModal open={modalOpen} onClose={handleCloseModal} />
 
         </>
 

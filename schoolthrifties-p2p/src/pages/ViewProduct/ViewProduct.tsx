@@ -1,5 +1,5 @@
 import { Box, Chip, Grid2, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useStore } from "../../stores/store";
 import { useParams } from "react-router-dom";
 import useApi from "../../hooks/useApi";
@@ -13,6 +13,7 @@ import CartItem from "../../components/CartItem/CartItem";
 import { Photo } from "../../typings";
 import StartChat from "../../components/StartChat/StartChat";
 import useToastStore from "../../stores/useToastStore";
+import { UserContext } from "../../context/User/UserContext";
 
 const ViewProduct = () => {
   const { selectedProduct, setField, categories } = useStore();
@@ -21,7 +22,7 @@ const ViewProduct = () => {
   const [images, setImages] = useState<Array<{ original: string, thumbnail: string }>>([]);
   const { showToast } = useToastStore();
   const [isSold, setIsSold] = useState(false);
-
+  const { user } = useContext(UserContext);
 
   const fetchCategories = async () => {
     try {
@@ -56,7 +57,7 @@ const ViewProduct = () => {
           console.error(error);
         }
       }
-      else{
+      else {
         setImages(transformPhotos(selectedProduct.photos));
         setIsSold(selectedProduct?.status == 'Sold')
       }
@@ -126,15 +127,15 @@ const ViewProduct = () => {
                 &&
                 <>
                   <Stack alignItems={"center"} gap={1} className="pointer">
-                    <LikeItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} showLabel />
+                    <LikeItem product_id={selectedProduct?.product_id} showLabel user={user} />
                   </Stack>
                   <Stack alignItems={"center"} gap={1} className="pointer">
-                    <CartItem user_id={selectedProduct?.user_id} product_id={selectedProduct?.product_id} shop_id={selectedProduct?.shop_id} />
+                    <CartItem product_id={selectedProduct?.product_id} shop_id={selectedProduct?.shop_id} user={user} />
                   </Stack>
                 </>
               }
               <Stack alignItems={"center"} gap={1} className="pointer">
-                <StartChat text="Seller" user2_id={selectedProduct?.user_id} />
+                {user && <StartChat text="Seller" user2_id={selectedProduct?.user_id} />}
               </Stack>
             </Box>
           </Grid2>

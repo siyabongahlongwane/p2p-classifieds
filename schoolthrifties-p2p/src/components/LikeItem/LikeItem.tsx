@@ -4,17 +4,17 @@ import { Stack, Typography } from "@mui/material";
 import { useStore } from "../../stores/store";
 import { isLiked } from "../../utils/product.util";
 import useApi from "../../hooks/useApi";
-import { ProductWithLike } from "../../typings";
+import { ProductWithLike, User } from "../../typings";
 import useToastStore from "../../stores/useToastStore";
 import LoginPromptModal from "../LoginPromptModal/LoginPromptModal";
 
 interface LikeItemProps {
-    user_id: number;
     product_id: number;
     showLabel?: boolean;
+    user: User
 }
 
-const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
+const LikeItem = ({ product_id, showLabel, user }: LikeItemProps) => {
     const { likes, setLikes } = useStore();
     const [liked, setIsLiked] = useState(false);
     const { post, remove } = useApi(`${import.meta.env.VITE_API_URL}`);
@@ -24,6 +24,8 @@ const LikeItem = ({ user_id, product_id, showLabel }: LikeItemProps) => {
     const handleCloseModal = () => {
         setModalOpen(false); // Close the modal
     };
+
+    const { user_id = null } = user || {};
 
     useEffect(() => {
         setIsLiked(
