@@ -28,6 +28,7 @@ import ChatApp from "./pages/Messages/Messages";
 import { useContext, useEffect } from "react";
 import { UserContext } from "./context/User/UserContext";
 import socket from "./utils/socket";
+import GlobalSearch from "./components/GlobalSearch/GlobalSearch";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -63,6 +64,7 @@ function App() {
             <Route path="shops/:shop_link" element={<UserShop />} />
             <Route path="cart" element={<Cart />} />
             <Route path="likes" element={<Likes />} />
+            <Route path="/search" element={<GlobalSearch />} />
             <Route path="orders" element={<Orders />}>
               <Route path="" element={<Navigate to="./my-orders" />} />
               <Route path="my-orders" element={<MyOrders />} />
@@ -82,16 +84,16 @@ function App() {
             <Route path="messages" element={<ChatApp />} />
             <Route path="messages/:chat_id" element={<ChatApp />} />
 
-              <Route path="my-wallet" element={<Wallet />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="/view-product/:product_id" element={<ViewProduct />} />
-              <Route path="shipping-details" element={<ShippingDetails />} />
-              <Route path="payment" element={<Payment />} />
-              {/* <Route path="*" element={<Navigate to="/not-found" />} /> */}
-            </Route>
-            <Route path="/sign-in" element={<SignIn />} />
-            <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/not-found" element={<NotFound />} />
+            <Route path="my-wallet" element={<Wallet />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="/view-product/:product_id" element={<ViewProduct />} />
+            <Route path="shipping-details" element={<ShippingDetails />} />
+            <Route path="payment" element={<Payment />} />
+            {/* <Route path="*" element={<Navigate to="/not-found" />} /> */}
+          </Route>
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/not-found" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>
