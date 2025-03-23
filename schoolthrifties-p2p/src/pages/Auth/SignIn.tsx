@@ -6,13 +6,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./Auth.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, InputAdornment } from '@mui/material';
+import { UserContext } from "../../context/User/UserContext";
+import useToastStore from "../../stores/useToastStore";
 
 interface SignInForm {
   email: string;
@@ -39,6 +41,44 @@ const SignIn = () => {
   const onSubmit = (data: SignInForm) => {
     signIn(data.email, data.password, selectedLoginMethod);
   };
+
+  const googleLogin = (): void => {
+    window.open(`${import.meta.env.VITE_API_URL}/auth/google`, "_self");
+  }
+
+  const { setUser } = useContext(UserContext);
+
+  const userHash = new URLSearchParams(location.search)?.get('hash');
+  const error = new URLSearchParams(location.search)?.get('error');
+
+  const navigate = useNavigate();
+  const { showToast } = useToastStore();
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, 'error');
+      return;
+    }
+
+    if (userHash) {
+      const result = JSON.parse(userHash);
+      const roles = result.user.roles;
+
+      localStorage.setItem('token', result.token || '');
+      localStorage.setItem('user', JSON.stringify(result.user || ''));
+      setUser(result.user);
+
+      setTimeout(() => {
+        if (roles.includes(3)) {
+          navigate('/home');
+        }
+        else if (roles.includes(1)) {
+          navigate('/admin');
+        }
+        showToast('Logged in successfully', 'success');
+      }, 1500);
+    }
+  }, [userHash, error])
 
   return (
     <Grid2
@@ -178,6 +218,7 @@ const SignIn = () => {
             OR
           </Typography>
           <img
+            onClick={googleLogin}
             className="pointer"
             src="google-sign-in.svg"
             alt="Google Sign In"

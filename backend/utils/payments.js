@@ -26,7 +26,7 @@ const generateRequestHash = async (order, orderNumber) => {
         CancelUrl: process.env.CLIENT_URL + `/orders/canceled-order`,
         ErrorUrl: process.env.CLIENT_URL + `/orders/failed-order`,
         SuccessUrl: process.env.CLIENT_URL + `/orders/thank-you`,
-        NotifyUrl: process.env.SERVER_URL + `/classifieds/payments/ozow/notify`,
+        NotifyUrl: process.env.SERVER_URL + `/payments/ozow/notify`,
         IsTest: true
     };
 
