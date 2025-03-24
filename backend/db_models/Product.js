@@ -58,7 +58,20 @@ module.exports = (sequelize, DataTypes) => {
             type: ENUM('Available', 'Sold', 'Unpublished'),
             allowNull: false,
             defaultValue: 'Available',
+        },
+        shoe_size: {
+            type: INTEGER,
+            allowNull: true,
+        },
+        child_age: {
+            type: INTEGER,
+            allowNull: true,
+        },
+        gender: {
+            type: ENUM('Female', 'Male', 'Unisex'),
+            allowNull: false,
         }
+
     });
 
     return Product;

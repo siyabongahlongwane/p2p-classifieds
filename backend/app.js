@@ -40,7 +40,7 @@ app.use(passport.session());
 app.use(passport.initialize());
 
 (async () => {
-  await db.sequelize.sync({ alter: false });
+  await db.sequelize.sync({ alter: true });
   console.log("Database synced successfully");
 })();
 
