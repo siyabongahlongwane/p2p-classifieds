@@ -10,8 +10,8 @@
     "logs": "firebase functions:log",
     "lint-fix": "eslint src/**/*.js --fix",
     "functions": "firebase emulators:start --only functions",
-    "start:dev": "NODE_ENV=development firebase emulators:start --only functions",
-    "start:prod": "NODE_ENV=production firebase emulators:start --only functions"
+    "start:dev": "NODE_ENV=development nodemon server",
+    "start:prod": "NODE_ENV=production node server"
   },
   "engines": {
     "node": "18"

@@ -1,8 +1,10 @@
 const dotenv = require('dotenv');
 
-// Determine the environment and load the corresponding .env file
-const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
-dotenv.config({ path: envFile });
+// Determine the environment (default to 'development')
+const env = process.env.NODE_ENV || 'development';
+
+// Load corresponding .env file
+dotenv.config({ path: `.env.${env}` });
 
 const express = require("express");
 const cors = require("cors");
@@ -72,7 +74,7 @@ app.get('/api/classifieds/search', async (req, res) => {
         model: db.models.ProductPhoto,
         as: 'photos',
         attributes: ['photo_id', 'photo_url']
-    }]
+      }]
     });
 
     const shops = await db.models.Shop.findAll({

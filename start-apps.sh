@@ -4,7 +4,7 @@
 cd ./backend
 
 # Start the Node.js server
-nodemon server &
+NODE_ENV=development nodemon server &
 
 # Start the React server
 cd ../schoolthrifties-p2p
