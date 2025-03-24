@@ -15,6 +15,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, InputAdornment } from '@mui/material';
 import { UserContext } from "../../context/User/UserContext";
 import useToastStore from "../../stores/useToastStore";
+import ForgotPasswordDialog from "../../components/ForgotPasswordDialog/ForgotPasswordDialog";
 
 interface SignInForm {
   email: string;
@@ -25,6 +26,7 @@ const SignIn = () => {
   const [selectedLoginMethod, setSelectedLoginMethod] = useState("pwd");
   const { signIn, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotDialog, setShowForgotDialog] = useState(false);
 
   const {
     register,
@@ -88,6 +90,7 @@ const SignIn = () => {
       height={"inherit"}
     >
       <Stack display={"flex"} alignItems={"center"}>
+        <ForgotPasswordDialog open={showForgotDialog} onClose={() => setShowForgotDialog(false)} />
         <Stack width={"60%"} gap={2} mt={"25%"}>
           <Stack display={"flex"} gap={0.5}>
             <Typography variant="h5">Welcome back!</Typography>
@@ -170,6 +173,7 @@ const SignIn = () => {
                     color="gray"
                     fontSize={12}
                     className="pointer"
+                    onClick={() => setShowForgotDialog(true)}
                   >
                     Forgot Password?
                   </Typography>

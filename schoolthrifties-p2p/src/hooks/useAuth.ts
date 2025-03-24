@@ -116,12 +116,69 @@ const useAuth = () => {
         }, 0);
     };
 
+    const forgotPassword = async (email: string) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Failed to send reset link');
+            }
+
+            return result;
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                showToast(err.message, 'error');
+                setError(err.message);
+            } else if (typeof err == 'string') {
+                showToast(err, 'error');
+            }
+            hideLoader();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const resetPassword = async (token: string, newPassword: string) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/reset-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, password: newPassword }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message || 'Failed to reset password');
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                showToast(err.message, 'error');
+                setError(err.message);
+            } else if (typeof err == 'string') {
+                showToast(err, 'error');
+            }
+            hideLoader();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
     return {
         error,
         loading,
         signUp,
         signIn,
         logout,
+        forgotPassword,
+        resetPassword
     };
 };
 

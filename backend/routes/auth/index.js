@@ -5,6 +5,8 @@ const passport = require('../../utils/passport');
 
 router.get('/sign-in', user.signWithPassword);
 router.post('/sign-up', user.create);
+router.post('/forgot-password', user.forgotPassword);
+router.post('/reset-password', user.resetPassword);
 router.put('/update-profile/:user_id', user.updateProfile);
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/login/failed', user.failedLogin);

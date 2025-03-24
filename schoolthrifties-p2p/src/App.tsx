@@ -29,6 +29,7 @@ import { useContext, useEffect } from "react";
 import { UserContext } from "./context/User/UserContext";
 import socket from "./utils/socket";
 import GlobalSearch from "./components/GlobalSearch/GlobalSearch";
+import ResetPasswordPage from "./pages/Auth/ResetPassword";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -93,6 +94,7 @@ function App() {
           </Route>
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/not-found" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

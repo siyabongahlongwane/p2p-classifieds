@@ -1,6 +1,6 @@
 const { models: { User } } = require('../db_models');
 const bcrypt = require('bcrypt');
-const { sign } = require('jsonwebtoken');
+const { sign, verify } = require('jsonwebtoken');
 const { createUser, findUser, updateUser } = require('../utils/user');
 const { Op } = require('sequelize');
 
@@ -193,5 +193,65 @@ module.exports = {
             res.redirect(`${process.env.CLIENT_URL}/sign-in?error=Error logging into your Google Profile`);
 
         }
+    },
+    forgotPassword: async (req, res) => {
+        try {
+            const { email } = req.body;
+            const user = await findUser({ email });
+
+            if (!user) {
+                res.status(404).send({ err: 'Email not registered' });
+                return;
+            }
+            const { user_id } = user;
+
+            const token = sign({ user_id, email }, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '5m'
+            });
+
+            const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+
+            return res.status(200).json({ msg: 'Reset link sent', resetLink });
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json(error);
+        }
+    },
+    resetPassword: async (req, res) => {
+        try {
+            const { token, password } = req.body;
+
+            if (!token || !password) {
+                return res.status(400).json({ err: "Token and new password are required" });
+            }
+
+            // Verify token
+            let payload;
+            try {
+                payload = verify(token, process.env.ACCESS_TOKEN_SECRET);
+            } catch (err) {
+                return res.status(401).json({ err: "Invalid or expired token, please go back and try again" });
+            }
+
+            const { user_id } = payload;
+
+            const user = await findUser({ user_id });
+
+            if (!user) {
+                return res.status(404).json({ err: "User not found" });
+            }
+
+            // Hash the new password (assuming you use bcrypt)
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            // Update the user in the DB
+            await updateUser(user_id, { password: hashedPassword });
+
+            return res.status(200).json({ msg: "Password has been reset successfully" });
+        } catch (error) {
+            console.error("Reset password error:", error);
+            return res.status(500).json({ err: "Something went wrong" });
+        }
     }
+
 }
