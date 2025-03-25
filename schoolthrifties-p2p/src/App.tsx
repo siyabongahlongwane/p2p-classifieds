@@ -30,11 +30,16 @@ import { UserContext } from "./context/User/UserContext";
 import socket from "./utils/socket";
 import GlobalSearch from "./components/GlobalSearch/GlobalSearch";
 import ResetPasswordPage from "./pages/Auth/ResetPassword";
+import { useStore } from "./stores/store";
+import useApi from "./hooks/useApi";
 
 function App() {
   const { loading } = useLoaderStore();
   const { isOpen } = useToastStore();
   const { user } = useContext(UserContext);
+  const { showToast } = useToastStore();
+  const { setField } = useStore();
+  const { get } = useApi(`${import.meta.env.VITE_API_URL}`);
 
   useEffect(() => {
     if (user) {
@@ -52,6 +57,24 @@ function App() {
       }
     };
   }, [user]);
+
+  const fetchCategories = async () => {
+    try {
+      const categories = await get("/categories/fetch");
+      if (!categories) throw new Error('Error fetching categories');
+
+      setField("categories", categories);
+    } catch (error) {
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <>
