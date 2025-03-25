@@ -10,10 +10,11 @@ import { NewProduct } from "../../typings";
 import { UserContext } from "../../context/User/UserContext";
 import { useNavigate, useParams } from "react-router-dom";
 import useToastStore from "../../stores/useToastStore";
+
 const AddProduct = () => {
   const { user } = useContext(UserContext);
   const { user_id, shop_id } = user;
-  const { categories, provinces, productConditions, productPhotos, productStatuses, setField } = useStore();
+  const { categories, provinces, productConditions, productPhotos, productStatuses, setField, ageRanges, shoeSizes } = useStore();
   const { get, post, put } = useApi(import.meta.env.VITE_API_URL);
   const { uploadFiles, error } = useFirebaseStorage();
   const { product_id } = useParams();
@@ -27,6 +28,7 @@ const AddProduct = () => {
   const { register, handleSubmit, control, formState } = form;
   const { errors } = formState;
   const { showToast } = useToastStore();
+  const [isShoeCategory, setisShoeCategory] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -51,6 +53,7 @@ const AddProduct = () => {
       const [product] = await get(`/product/fetch?user_id=${user_id}&product_id=${product_id}`);
       if (!product) throw new Error('Error fetching product');
 
+      setisShoeCategory(categories.find(cat => cat.title === 'Shoes')?.category_id === product.category_id);
       setField("productPhotos", product["photos"]);
       Object.keys(newProduct).forEach(key => {
         form.setValue(key as keyof NewProduct, product[key]);
@@ -66,13 +69,12 @@ const AddProduct = () => {
 
   useEffect(() => {
     if (isEdit) fetchProduct();
-  }, [isEdit, setField]);
+  }, [isEdit, setField, categories]);
 
 
 
   const onSubmit = async (formData: NewProduct) => {
     try {
-      console.log({ productPhotos })
       if (productPhotos.length > 0) {
         if (isEdit) return updateProduct(formData);
 
@@ -84,10 +86,10 @@ const AddProduct = () => {
           addNewProduct(formData);
         }
       } else {
-        showToast("No photos selected!", "error");
+        showToast("No images selected!", "error");
       }
     } catch (err) {
-      showToast("Photo upload failed", "error");
+      showToast("Image upload failed", "error");
       console.error("Photo upload failed:", err);
     }
   }
@@ -158,21 +160,42 @@ const AddProduct = () => {
         </Stack>
       </Stack>
       <Box component={'form'} noValidate onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
+        <Stack spacing={.5}>
           <Typography variant="body1">Product Info</Typography>
-          <FormControl fullWidth margin="normal">
-            <TextField
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={!!errors.title} label='Title' type='text' {...register('title', {
-                required: 'Title is required'
-              })} />
-            <FormHelperText>{errors.title?.message}</FormHelperText>
+          <Typography fontSize={12} component={'small'} variant="body1" color="red">Please provide detailed information to improve your product's chances of selling.</Typography>
 
-          </FormControl>
+          <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={!!errors.title} label='Title' type='text' {...register('title', {
+                  required: 'Title is required'
+                })} />
+              <FormHelperText>{errors.title?.message}</FormHelperText>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={!!errors.price} label='Price' type='text' {...register('price', {
+                  required: 'Price is required',
+                  pattern: {
+                    value: /^\d+(\.\d+)?$/,
+                    message: 'Enter a valid price'
+                  }
+                })} />
+              <FormHelperText>{errors.price?.message}</FormHelperText>
+            </FormControl>
+
+          </Box>
           <FormControl fullWidth margin="normal">
             <TextField
+              multiline
+              rows={2}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -182,124 +205,198 @@ const AddProduct = () => {
             <FormHelperText>{errors.description?.message}</FormHelperText>
 
           </FormControl>
+
+          <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="category-label">Category</InputLabel>
+              <Controller
+                name="category_id"
+                control={control}
+                rules={{ required: 'Category is required' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="category-label"
+                    label="Category"
+                    error={!!errors.category_id}
+                    onChange={(e) => {
+                      const selectedValue = +e.target.value;
+
+                      // Call React Hook Form's internal onChange
+                      field.onChange(selectedValue);
+
+                      const isShoe = selectedValue === categories.find(c => c.title === 'Shoes')?.category_id;
+                      setisShoeCategory(isShoe);
+
+                    }}
+                  >
+                    {
+                      categories.map((category) => <MenuItem key={category.category_id} value={category.category_id}>{category.title}</MenuItem>)
+                    }
+                  </Select>
+                )}
+              />
+              <FormHelperText>{errors.category_id?.message}</FormHelperText>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="category-label">Condition</InputLabel>
+              <Controller
+                name="condition"
+                control={control}
+                rules={{ required: 'Condition is required' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="condition-label"
+                    label="Condition"
+                    error={!!errors.condition}
+                  >
+                    {
+                      productConditions.map((condition, index) => <MenuItem key={index} value={condition}>{condition}</MenuItem>)
+                    }
+                  </Select>
+                )}
+              />
+              <FormHelperText>{errors.condition?.message}</FormHelperText>
+            </FormControl>
+          </Box>
+
+          {
+            isShoeCategory
+            &&
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="category-label">Shoe Size</InputLabel>
+              <Controller
+                name="shoe_size"
+                control={control}
+                rules={isShoeCategory ? { required: 'Shoe Size is required' } : {}}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="condition-label"
+                    label="Shoe Size"
+                    error={!!errors.shoe_size}
+                  >
+                    {
+                      shoeSizes.map((shoe_size, index) => <MenuItem key={index} value={shoe_size}>{shoe_size}</MenuItem>)
+                    }
+                  </Select>
+                )}
+              />
+              <FormHelperText>{errors.shoe_size?.message}</FormHelperText>
+            </FormControl>
+
+          }
+
+          <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="category-label">Gender</InputLabel>
+              <Controller
+                name="gender"
+                control={control}
+                rules={{ required: 'Gender is required' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="category-label"
+                    label="gender"
+                    error={!!errors.gender}
+                  >
+                    {
+                      ['Female', 'Male', 'Unisex'].map((gender) => <MenuItem key={gender} value={gender}>{gender}</MenuItem>)
+                    }
+                  </Select>
+                )}
+              />
+              <FormHelperText>{errors.gender?.message}</FormHelperText>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="category-label">Child Age</InputLabel>
+              <Controller
+                name="child_age"
+                control={control}
+                rules={{ required: 'Child Age is required' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="category-label"
+                    label="Age"
+                    error={!!errors.child_age}
+                    defaultValue='Any age'
+                  >
+                    {
+                      ageRanges.map((child_age) => <MenuItem key={child_age} value={child_age}>{child_age}</MenuItem>)
+                    }
+                  </Select>
+                )}
+              />
+              <FormHelperText>{errors.child_age?.message}</FormHelperText>
+            </FormControl>
+          </Box>
+
+          <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="category-label">Province</InputLabel>
+              <Controller
+                name="province"
+                control={control}
+                rules={{ required: 'Province is required' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="category-label"
+                    label="Province"
+                    error={!!errors.province}
+                  >
+                    {
+                      provinces.map((province) => <MenuItem key={province} value={province}>{province}</MenuItem>)
+                    }
+                  </Select>
+                )}
+              />
+              <FormHelperText>{errors.province?.message}</FormHelperText>
+            </FormControl>
+
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="category-label">Status</InputLabel>
+              <Controller
+                name="status"
+                control={control}
+                rules={{ required: 'Status is required' }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="category-label"
+                    label="Status"
+                    error={!!errors.status}
+                  >
+                    {
+                      productStatuses.map((status) => <MenuItem key={status} value={status}>{status}</MenuItem>)
+                    }
+                  </Select>
+                )}
+              />
+              <FormHelperText>{errors.status?.message}</FormHelperText>
+            </FormControl>
+          </Box>
+
           <FormControl fullWidth margin="normal">
             <TextField
               InputLabelProps={{
                 shrink: true,
               }}
-              error={!!errors.price} label='Price' type='text' {...register('price', {
-                required: 'Price is required',
-                pattern: {
-                  value: /^\d+(\.\d+)?$/,
-                  message: 'Enter a valid price'
-                }
-              })} />
-            <FormHelperText>{errors.price?.message}</FormHelperText>
-
-          </FormControl>
-
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="category-label">Category</InputLabel>
-            <Controller
-              name="category_id"
-              control={control}
-              rules={{ required: 'Category is required' }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="category-label"
-                  label="Category"
-                  error={!!errors.category_id}
-                >
-                  {
-                    categories.map((category) => <MenuItem key={category.category_id} value={category.category_id}>{category.title}</MenuItem>)
-                  }
-                </Select>
-              )}
-            />
-            <FormHelperText>{errors.category_id?.message}</FormHelperText>
-          </FormControl>
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="category-label">Condition</InputLabel>
-            <Controller
-              name="condition"
-              control={control}
-              rules={{ required: 'Condition is required' }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="condition-label"
-                  label="Condition"
-                  error={!!errors.condition}
-                >
-                  {
-                    productConditions.map((condition, index) => <MenuItem key={index} value={condition}>{condition}</MenuItem>)
-                  }
-                </Select>
-              )}
-            />
-            <FormHelperText>{errors.condition?.message}</FormHelperText>
-          </FormControl>
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="category-label">Province</InputLabel>
-            <Controller
-              name="province"
-              control={control}
-              rules={{ required: 'Province is required' }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="category-label"
-                  label="Province"
-                  error={!!errors.province}
-                >
-                  {
-                    provinces.map((province) => <MenuItem key={province} value={province}>{province}</MenuItem>)
-                  }
-                </Select>
-              )}
-            />
-            <FormHelperText>{errors.province?.message}</FormHelperText>
-          </FormControl>
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="category-label">Status</InputLabel>
-            <Controller
-              name="status"
-              control={control}
-              rules={{ required: 'Status is required' }}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  labelId="category-label"
-                  label="Status"
-                  error={!!errors.status}
-                >
-                  {
-                    productStatuses.map((status) => <MenuItem key={status} value={status}>{status}</MenuItem>)
-                  }
-                </Select>
-              )}
-            />
-            <FormHelperText>{errors.status?.message}</FormHelperText>
-          </FormControl>
-
-          <FormControl fullWidth margin="normal">
-            <TextField
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={!!errors.location} label='Location' type='text' {...register('location', {
-                required: 'Location is required'
+              error={!!errors.location} label='City' type='text' {...register('location', {
+                required: 'City is required'
               })} />
             <FormHelperText>{errors.location?.message}</FormHelperText>
           </FormControl>
 
         </Stack>
-        <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} >Submit</Button>
+        <Box display={'flex'} justifyContent={'center'}>
+          <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} >Submit</Button>
+        </Box>
       </Box>
     </Stack>
   )

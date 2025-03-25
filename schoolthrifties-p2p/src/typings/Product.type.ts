@@ -8,6 +8,9 @@ export type NewProduct = {
   location: string;
   province: string;
   status?: string;
+  shoe_size: string;
+  child_age: string;
+  gender: string;
   productPhotos: Array<{ photo_url: string, photo_id?: number }>;
 }
 
@@ -20,6 +23,9 @@ class NewProductCls {
   location = '';
   province = '';
   status = 'Available';
+  shoe_size = '';
+  child_age = '';
+  gender = '';
   productPhotos = [];
 }
 

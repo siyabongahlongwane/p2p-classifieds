@@ -60,18 +60,19 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'Available',
         },
         shoe_size: {
-            type: INTEGER,
+            type: STRING(10),
             allowNull: true,
+            defaultValue: null
         },
         child_age: {
-            type: INTEGER,
+            type: STRING(10),
             allowNull: true,
+            defaultValue: null
         },
         gender: {
             type: ENUM('Female', 'Male', 'Unisex'),
             allowNull: false,
-        }
-
+        }   
     });
 
     return Product;

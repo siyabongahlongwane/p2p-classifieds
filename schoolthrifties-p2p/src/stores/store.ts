@@ -8,7 +8,7 @@ type Store = {
     likes: LikeItem[],
     cart: CartItem[],
     selectedProduct: any;
-    categories: Array<{title: string, category_id: number}>;
+    categories: Array<{ title: string, category_id: number }>;
     provinces: string[];
     productConditions: string[];
     isLoading: boolean,
@@ -38,6 +38,8 @@ type Store = {
     productStatuses: string[],
     activeMenuItem: number,
     filteredMenuItems: any[],
+    ageRanges: string[],
+    shoeSizes: string[],
 }
 
 type StoreActions = {
@@ -96,6 +98,9 @@ export const useStore = create<Store & StoreActions>()(devtools(((set) => ({
     productStatuses: ['Available', 'Sold', 'Unpublished'],
     activeMenuItem: 0,
     filteredMenuItems: [],
+    ageRanges: ['Any age', '0 - 3 M', '3 - 6 M', '6 - 12 M', '12 - 18 M', '18 - 24 M', '2 - 3 Y', '3 - 4 Y', '4 - 5 Y', '5 - 6 Y', '6 - 7 Y', '7 - 8 Y', '8 - 9 Y', '9 - 10 Y'
+    ],
+    shoeSizes: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '1', '2', '3'],
     setLikes: (likes) => set({ likes }),
     setCart: (cart) => set({ cart }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
