@@ -14,7 +14,7 @@
     "start:prod": "NODE_ENV=production node server"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "main": "index.js",
   "dependencies": {
