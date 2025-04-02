@@ -56,6 +56,10 @@ const AddProduct = () => {
       setisShoeCategory(categories.find(cat => cat.title === 'Shoes')?.category_id === product.category_id);
       setField("productPhotos", product["photos"]);
       Object.keys(newProduct).forEach(key => {
+        if(key == 'price') {
+          form.setValue(key as keyof NewProduct, product['seller_gain']);
+          return;
+        }
         form.setValue(key as keyof NewProduct, product[key]);
       })
 
@@ -100,10 +104,10 @@ const AddProduct = () => {
       if (!newProduct) throw new Error('Error adding new product');
 
       showToast("Product added successfully!", "success");
-      navigate('/my-shop');
       setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+        // window.location.reload();
+        navigate('/my-shop');
+      }, 2000);
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
       showToast(_error as string, 'error');
@@ -394,6 +398,12 @@ const AddProduct = () => {
           </FormControl>
 
         </Stack>
+        <Box mt={1}>
+          <Typography fontSize={12} color="gray">
+            N.B. A R1.99 service fee is added per product (It does not affect you as the seller), upon clicking 'SUBMIT', you agree to our <a target="_blank" href="#">Terms of Use</a> 
+            // Trigger Modal Open
+          </Typography>
+        </Box>
         <Box display={'flex'} justifyContent={'center'}>
           <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} >Submit</Button>
         </Box>

@@ -8,6 +8,8 @@ const envFile = env === 'production' ? '.env.production' : '.env.local';
 // Load the correct .env file
 dotenv.config({ path: path.resolve(__dirname, `../${envFile}`) });
 
+console.log(`Pulling ${env} config `);
+
 module.exports = {
     development: {
         username: process.env.DB_USERNAME,

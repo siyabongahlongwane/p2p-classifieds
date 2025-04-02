@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DECIMAL(10, 2),
             allowNull: false,
         },
+        seller_gain: {
+            type: DECIMAL(10, 2),
+            allowNull: false,
+        },
         condition: {
             type: ENUM('New', 'Used', 'Good', 'Well Worn', 'Other'),
             allowNull: false,
@@ -72,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
         gender: {
             type: ENUM('Female', 'Male', 'Unisex'),
             allowNull: false,
-        }   
+        }
     });
 
     return Product;

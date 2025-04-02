@@ -3,7 +3,7 @@ import { Card, CardMedia, Box, Typography, IconButton } from '@mui/material'
 import { Link } from 'react-router-dom';
 
 const MyShopItem = ({ product }: { product: any }) => {
-    const { title, photos, price, product_id } = product;
+    const { title, photos, seller_gain, product_id } = product;
 
     return (
         <Card sx={{ marginTop: 2, position: "relative" }}>
@@ -19,7 +19,7 @@ const MyShopItem = ({ product }: { product: any }) => {
                     {title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    R{price}
+                    R{seller_gain}
                 </Typography>
             </Box>
             <Link to={`edit-product/${product_id}`}>

@@ -3,10 +3,13 @@ const { models: { Product, ProductPhoto } } = require('../db_models');
 module.exports = {
     create: async (req, res) => {
         try {
-            let { productPhotos } = req.body;
+            let { productPhotos, price } = req.body;
             delete req.body.photos;
 
-            const newProduct = await Product.create({ ...req.body });
+            const data = { ...req.body, seller_gain: price, price: (+price + +process.env.PRODUCT_SERVICE_FEE).toFixed(2) }
+            console.log('NEW PRODUCT', data);
+
+            const newProduct = await Product.create(data);
 
             if (!newProduct.product_id) return res.status(400).json({ err: 'Failed to create product' });
 
@@ -48,6 +51,14 @@ module.exports = {
 
             if (!Number.isInteger(+product_id)) return res.status(400).json({ err: `Invalid product id: '${product_id}'` });
 
+            const dbProduct = await Product.findByPk(+product_id);
+            if (!dbProduct) return res.status(400).json({ 'err': "Update failed: product not found" })
+            console.log({ dbProduct });
+
+            if (+dbProduct?.dataValues?.seller_gain != +req.body?.price) {
+                req.body.seller_gain = req.body?.price;
+                req.body.price = (+req.body.price + +process.env.PRODUCT_SERVICE_FEE).toFixed(2)
+            }
 
             let { productPhotos } = req.body;
             productPhotos = productPhotos
