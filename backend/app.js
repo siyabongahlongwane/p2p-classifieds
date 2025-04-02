@@ -16,7 +16,7 @@ const app = express();
 const db = require('./db_models');
 
 const corsOptions = {
-  origin: ['https://schoolthrifties.co.za', 'https://schoolthrifties.co.za', 'http://localhost:5173'],
+  origin: ['http://classifieds.schoolthrifties.co.za', 'https://classifieds.schoolthrifties.co.za', 'http://localhost:5173'],
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'DELETE']
 }
 
