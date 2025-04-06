@@ -39,13 +39,26 @@ const OrderOutcome = () => {
                 if (!order) throw new Error('Order not found');
 
                 const [orderObject] = order;
+                const { delivery_cost, total_price, items, shipping_method } = orderObject;
+
                 const data = {
                     buyerName: `${user.first_name} ${user.last_name}`,
-                    items: orderObject.items.map(({ product: { title, price, description } }: OrderItemProps) => {
+                    items: items.map(({ product: { title, price, description } }: OrderItemProps) => {
                         return { title, description, price };
                     }),
-                    totalAmount: orderObject.total_price,
+                    totalAmount: total_price,
                 }
+                data.items.push({
+                    title: 'Shipping Option',
+                    description: shipping_method,
+                    price: delivery_cost
+                });
+
+                data.items.push({
+                    title: 'Fee',
+                    description: 'Transaction fee for this order',
+                    price: (total_price - (total_price/(1 + +import.meta.env.VITE_TRANSACTION_FEE/100))).toFixed(2)
+                });
                 setOrderDetails(data);
             } catch (error) {
                 const _error = error instanceof Error ? error.message : error;
@@ -91,7 +104,7 @@ const OrderOutcome = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell><strong>Item</strong></TableCell>
-                                        <TableCell><strong>Quantity</strong></TableCell>
+                                        <TableCell><strong>Description</strong></TableCell>
                                         <TableCell><strong>Price</strong></TableCell>
                                     </TableRow>
                                 </TableHead>

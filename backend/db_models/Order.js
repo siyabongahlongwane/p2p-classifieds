@@ -75,6 +75,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             defaultValue: null,
         },
+        seller_gain: {
+            type: DECIMAL(10, 2),
+            allowNull: false,
+        },
         created_at: {
             type: DATE,
             allowNull: false,

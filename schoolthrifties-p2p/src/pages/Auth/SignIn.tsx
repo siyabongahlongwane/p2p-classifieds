@@ -99,7 +99,7 @@ const SignIn = () => {
             </Typography>
           </Stack>
           <Box
-            display={"flex"}
+            display={"none"}
             width={"100%"}
             border="1px solid gray"
             borderRadius={"10px"}

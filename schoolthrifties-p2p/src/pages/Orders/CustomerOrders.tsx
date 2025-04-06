@@ -25,7 +25,7 @@ const CustomerOrders = () => {
             order_id: order.order_id,
             buyerName: `${order.user.first_name} ${order.user.last_name}`,
             date: new Date(order.created_at).toLocaleString(),
-            totalAmount: order.total_price,
+            totalAmount: order.seller_gain,
             status: order.status,
           }
         })

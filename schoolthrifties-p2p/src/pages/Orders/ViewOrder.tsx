@@ -136,7 +136,7 @@ const ViewOrder = () => {
                   <Typography><strong>Order #:</strong> {order.order_id}</Typography>
                   <Typography><strong>Payment Status:</strong> {order.isPaid ? 'Paid' : 'Not Paid'}</Typography>
                   <Typography><strong>Order Status:</strong> {order.status}</Typography>
-                  <Typography><strong>Total Price:</strong> R{order.total_price}</Typography>
+                  <Typography><strong>Total Price:</strong> R{isOwner ? order.total_price : order?.seller_gain}</Typography>
                   <Typography><strong>Delivery Cost:</strong> R{order.delivery_cost}</Typography>
                 </Grid2>
 
@@ -176,7 +176,7 @@ const ViewOrder = () => {
                         <Typography><strong>{item.product.title}</strong></Typography>
                         <Typography variant="body2">{item.product.description}</Typography>
                       </TableCell>
-                      <TableCell>R{item.price}</TableCell>
+                      <TableCell>R{isOwner ? item.product.price : item?.product?.seller_gain}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

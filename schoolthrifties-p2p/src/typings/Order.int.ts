@@ -5,6 +5,7 @@ export interface OrderItem {
     order_id: number;
     product_id: number;
     price: string;
+    seller_gain: string;
     product: PlainProduct;
 }
 
@@ -14,6 +15,7 @@ export interface OrderWithItems {
     shop_id: number;
     status: string;
     total_price: string;
+    seller_gain: string;
     delivery_cost: string;
     province: string;
     pudo_locker_location: string;

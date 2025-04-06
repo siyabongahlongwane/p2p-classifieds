@@ -62,7 +62,7 @@ const ProductItem = ({ product }: { product: PlainProduct }) => {
             </Typography>
             {
               !isSold && <Box display={"flex"} justifyContent={"center"}>
-                <LikeItem user_id={user?.user_id} product_id={product?.product_id} />
+                <LikeItem user={user} product_id={product?.product_id} />
               </Box>
             }
 
@@ -70,7 +70,7 @@ const ProductItem = ({ product }: { product: PlainProduct }) => {
           {
             !isSold && <Stack display={"flex"} gap={0.5}>
               <Box display={"flex"} justifyContent={"center"}>
-                <CartItem user_id={user?.user_id} product_id={product?.product_id} shop_id={product?.shop_id} isButton />
+                <CartItem user={user} product_id={product?.product_id} shop_id={product?.shop_id} isButton />
               </Box>
             </Stack>
           }

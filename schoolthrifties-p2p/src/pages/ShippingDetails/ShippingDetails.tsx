@@ -3,13 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "../../stores/store";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import FloatingActionButton from "../../components/FloatingActionButton/FloatingActionButton";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../context/User/UserContext";
 
 const ShippingDetails = () => {
     const { cart, checkoutCrumbs, setField, orderObject } = useStore();
     const navigate = useNavigate();
     const [isDelivery, setIsDelivery] = useState(orderObject.shippingMethod === 'Delivery');
     const [isPickUp, setIsPickUp] = useState(orderObject.shippingMethod === 'Pick Up');
+    const { user } = useContext(UserContext);
+
+    useEffect(() => {
+        setField('orderObject', { ...orderObject, phoneNumber: user?.phone });
+    }, [user]);
 
     return (
         <Stack position={"relative"}>
@@ -119,7 +125,7 @@ const ShippingDetails = () => {
                         </Stack>
                     </Grid2>
                     <Grid2>
-                        
+
                     </Grid2>
                 </Grid2>
             )}

@@ -2,9 +2,8 @@ const { logger } = require("firebase-functions");
 const { models: { Order, User, OrderItem, Product, Cart, Wallet } } = require('../db_models');
 const mail = require("../utils/mail");
 
-
 const sendEmailsToBuyerAndSeller = async (order) => {
-    const { user_id, shop_id, total_price, items, shipping_method, delivery_cost, order_id, non_discounted_price } = order;
+    const { user_id, shop_id, total_price, items, shipping_method, delivery_cost, order_id, seller_gain: seller_order_gain } = order;
 
     const [buyer, seller] = await Promise.all([
         User.findOne({ where: { user_id: user_id } }),
@@ -17,19 +16,20 @@ const sendEmailsToBuyerAndSeller = async (order) => {
     const emailData = {
         buyerName: `${buyer_first_name} ${buyer_last_name}`,
         sellerName: `${seller_first_name} ${seller_last_name}`,
-        items: items.map(({ product: { title, price, description } }) => {
-            return { title, description, price };
-        }),
+        items: [{ title: 'Shipping Option', description: shipping_method, price: delivery_cost }],
         totalAmount: `R${total_price}`,
         year: new Date().getFullYear(),
         url: `${process.env.CLIENT_URL}/orders/view-order/${order_id}`,
+        serviceFee: { title: 'Service Fee', description: 'Transaction Fee for this order', price: (total_price - (total_price/(1 + +process.env.TRANSACTION_FEE/100))).toFixed(2) }
     }
 
-    emailData.items.push({ title: 'Shipping Option', description: shipping_method, price: delivery_cost });
+    emailData.items = [...items.map(({ product: { title, price, description } }) => ({ title, description, price })), ...emailData.items];
 
     await mail(buyer_email, 'Your Order Confirmation', 'order-confirmation', emailData);
 
-    emailData.totalAmount = `R${non_discounted_price}`;
+    emailData.items = [...items.map(({ product: { title, seller_gain, description } }) => ({ title, description, seller_gain })), emailData.items.pop()];
+
+    emailData.totalAmount = `R${(+seller_order_gain + +delivery_cost).toFixed(2)}`;
     await mail(seller_email, `Cha-Ching! Incoming Order from ${emailData.buyerName}`, 'seller-order-notification', emailData);
 };
 
@@ -74,7 +74,7 @@ module.exports = {
 
         }
         if (data?.['Status'] == 'Abandoned' || data?.['Status'] == 'Cancelled') {
-            logger.info('Complete Screen');
+            logger.info('Abandoned or Canceled Order');
             try {
                 const order = await Order.findByPk(+data?.['Optional1'], {
                     include: {

@@ -6,7 +6,6 @@ const db = require('../db_models');
 const { default: axios } = require('axios');
 const mail = require('../utils/mail');
 const { sendEmailsToBuyerAndSeller } = require('./ozowController');
-const { where } = require('sequelize');
 
 const triggerOzowPayment = (requestBody, res) => {
     axios.post("https://api.ozow.com/PostPaymentRequest", requestBody, {
@@ -78,9 +77,8 @@ const returnProductsToStore = async (order, res) => {
 module.exports = {
 
     createOrder: async (req, res) => {
-        const { user_id, cart, cartTotal, total_price, total, deliveryCost, shippingMethod, paymentOption, phoneNumber, province, pudoLockerLocation, customerDetails } = req.body;
+        const { user_id, cart, cartTotal, total, deliveryCost, shippingMethod, paymentOption, phoneNumber, province, pudoLockerLocation, customerDetails } = req.body;
         const { paymentOption: selectedPaymentOption, gateway } = req.query;
-        const nonDiscountedPrice = cartTotal + deliveryCost;
 
         const transaction = await db.sequelize.transaction();
 
@@ -95,8 +93,9 @@ module.exports = {
                 phone_number: phoneNumber,
                 province,
                 pudo_locker_location: pudoLockerLocation,
-                total_price: cartTotal + deliveryCost,
-                non_discounted_price: nonDiscountedPrice.toFixed(2)
+                total_price: total,
+                non_discounted_price: total,
+                seller_gain: cart.reduce((acc, curr) => +acc + +curr.seller_gain, 0).toFixed(2)
             }, { transaction });
 
             // Create order items
@@ -220,7 +219,8 @@ module.exports = {
                     as: 'user',
                     attributes: ['first_name', 'last_name', 'email', 'phone']
                 }
-                ]
+                ],
+                order: [['created_at', 'DESC']]
             });
 
             res.send({ payload: orders });
@@ -322,7 +322,7 @@ module.exports = {
 
             const { dataValues: seller } = await User.findOne({ where: { shop_id } });
             const sellerWallet = await Wallet.findOne({ where: { user_id: seller.user_id } });
-            await sellerWallet.increment('amount', { by: payload.total_price });
+            await sellerWallet.increment('amount', { by: payload.seller_gain });
 
             res.status(200).send({ payload, msg: 'Order status updated successfully' });
         } catch (error) {

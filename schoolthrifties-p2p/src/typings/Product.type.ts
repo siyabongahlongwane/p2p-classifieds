@@ -3,6 +3,7 @@ export type NewProduct = {
   title: string;
   description: string;
   price: string;
+  seller_gain?: string;
   category_id: string;
   condition: string;
   location: string;
@@ -18,6 +19,7 @@ class NewProductCls {
   title = '';
   description = '';
   price = '';
+  seller_gain = '';
   category_id = '';
   condition = '';
   location = '';
@@ -54,6 +56,7 @@ export interface PlainProduct {
   title: string;
   description: string;
   price: string;
+  seller_gain: string;
   condition: string;
   category_id: number;
   location: string;

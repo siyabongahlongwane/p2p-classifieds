@@ -80,7 +80,15 @@
                     <tr>
                         <td>{{this.title}}</td>
                         <td>{{this.description}}</td>
-                        <td>R{{this.price}}</td>
+                        <td>
+                            R
+                            {{#if this.seller_gain}}
+                                {{this.seller_gain}}
+                            {{else}}
+                                {{this.price}}
+                            {{/if}}
+                        </td>
+
                     </tr>
                     {{/each}}
                 </tbody>

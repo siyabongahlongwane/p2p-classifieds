@@ -1,10 +1,12 @@
+const path = require('path');
 const dotenv = require('dotenv');
 
-// Determine the environment (default to 'development')
+// Load .env file based on environment
 const env = process.env.NODE_ENV || 'development';
+const envFile = env === 'production' ? '.env.production' : '.env.local';
 
-// Load corresponding .env file
-dotenv.config({ path: `.env.${env}` });
+// Load the correct .env file
+dotenv.config({ path: path.resolve(__dirname, `./${envFile}`) });
 
 const express = require("express");
 const cors = require("cors");
@@ -28,7 +30,8 @@ app.use(express.json({ limit: 10000 }));
 app.use(express.urlencoded({ extended: true }));
 
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors({origin: '*'}));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
