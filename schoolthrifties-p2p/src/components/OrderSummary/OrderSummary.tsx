@@ -7,7 +7,6 @@ import useApi from "../../hooks/useApi";
 import { User } from "../../typings";
 import useToastStore from "../../stores/useToastStore";
 import PaymentOptions from "./PaymentOptions";
-import TransactionFeeInfo from "./TransactionFeeInfo";
 import OrderRow from "./OrderRow";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +15,6 @@ const OrderSummary = ({ user }: { user: User }) => {
     const { showToast } = useToastStore();
     const [walletBalance, setWalletBalance] = useState(0);
     const [disableWallet, setDisableWallet] = useState(false);
-    const [transactionFee, setTransactionFee] = useState('0.00');
     const [selectedPayment, setSelectedPayment] = useState('');
     const navigate = useNavigate();
 
@@ -60,21 +58,12 @@ const OrderSummary = ({ user }: { user: User }) => {
 
     useEffect(() => {
         const cartTotal = +(cart.reduce((acc, curr) => +acc + (+curr.price), 0).toFixed(2)); // Calculate Cart Total
-        const total = +(cartTotal + +orderObject.deliveryCost + +transactionFee).toFixed(2); // Calculate Total Cost
+        const total = +(cartTotal + +orderObject.deliveryCost).toFixed(2); // Calculate Total Cost
 
         setField('orderObject', { ...orderObject, cart, cartTotal, total });
 
         getWalletBalance();
-        getTransactionFee(cartTotal);
-    }, [cart, orderObject.deliveryCost, transactionFee]);
-
-    const getTransactionFee = (cartTotal: number) => {
-        const total = cartTotal + deliveryCost;
-        if (walletBalance === 0 || walletBalance < total) {
-            const fee = (+import.meta.env.VITE_TRANSACTION_FEE * 0.01 * (total - walletBalance)).toFixed(2);
-            setTransactionFee(fee);
-        }
-    };
+    }, [cart, orderObject.deliveryCost]);
 
     const getEndpoint = (walletBalance: number, total: number): string => {
         if (walletBalance === 0) return '/orders/create-order';
@@ -125,7 +114,7 @@ const OrderSummary = ({ user }: { user: User }) => {
         }
     };
 
-    const payable = Math.max((cartTotal + deliveryCost - walletBalance + +transactionFee), 0);
+    const payable = Math.max((cartTotal + deliveryCost - walletBalance), 0);
 
     return (
         <Paper>
@@ -151,9 +140,9 @@ const OrderSummary = ({ user }: { user: User }) => {
                 <OrderRow label="Shipping Fee" value={`R${deliveryCost ?? '-'}`} />
                 <OrderRow label="Wallet Funds" value={`R${walletBalance}`} />
 
-                {cartTotal > walletBalance && (
+                {/* {cartTotal > walletBalance && (
                     <TransactionFeeInfo fee={transactionFee} />
-                )}
+                )} */}
 
                 <OrderRow label="Total Payable" value={`R${payable.toFixed(2)}`} bold />
 

@@ -53,12 +53,6 @@ const OrderOutcome = () => {
                     description: shipping_method,
                     price: delivery_cost
                 });
-
-                data.items.push({
-                    title: 'Fee',
-                    description: 'Transaction fee for this order',
-                    price: (total_price - (total_price/(1 + +import.meta.env.VITE_TRANSACTION_FEE/100))).toFixed(2)
-                });
                 setOrderDetails(data);
             } catch (error) {
                 const _error = error instanceof Error ? error.message : error;

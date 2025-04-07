@@ -20,7 +20,6 @@ const sendEmailsToBuyerAndSeller = async (order) => {
         totalAmount: `R${total_price}`,
         year: new Date().getFullYear(),
         url: `${process.env.CLIENT_URL}/orders/view-order/${order_id}`,
-        serviceFee: { title: 'Service Fee', description: 'Transaction Fee for this order', price: (total_price - (total_price/(1 + +process.env.TRANSACTION_FEE/100))).toFixed(2) }
     }
 
     emailData.items = [...items.map(({ product: { title, price, description } }) => ({ title, description, price })), ...emailData.items];

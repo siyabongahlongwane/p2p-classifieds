@@ -400,7 +400,7 @@ const AddProduct = () => {
         </Stack>
         <Box mt={1}>
           <Typography fontSize={12} color="gray">
-            N.B. A R1.99 service fee is added per product (It does not affect you as the seller), upon clicking 'SUBMIT', you agree to our <a target="_blank" href="#">Terms of Use</a> 
+            N.B. A 10% service fee is added per product (It does not affect you as the seller), upon clicking 'SUBMIT', you agree to our <a target="_blank" href="#">Terms of Use</a> 
             // Trigger Modal Open
           </Typography>
         </Box>

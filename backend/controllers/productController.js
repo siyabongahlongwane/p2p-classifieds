@@ -6,7 +6,7 @@ module.exports = {
             let { productPhotos, price } = req.body;
             delete req.body.photos;
 
-            const data = { ...req.body, seller_gain: price, price: (+price + +process.env.PRODUCT_SERVICE_FEE).toFixed(2) }
+            const data = { ...req.body, seller_gain: price, price: (+price * (1 + +process.env.MARK_UP)).toFixed(2) }
             console.log('NEW PRODUCT', data);
 
             const newProduct = await Product.create(data);
@@ -57,7 +57,7 @@ module.exports = {
 
             if (+dbProduct?.dataValues?.seller_gain != +req.body?.price) {
                 req.body.seller_gain = req.body?.price;
-                req.body.price = (+req.body.price + +process.env.PRODUCT_SERVICE_FEE).toFixed(2)
+                req.body.price = (+req.body.price * (1 + +process.env.MARK_UP)).toFixed(2);
             }
 
             let { productPhotos } = req.body;
