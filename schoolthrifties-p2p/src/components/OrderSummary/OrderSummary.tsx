@@ -9,6 +9,7 @@ import useToastStore from "../../stores/useToastStore";
 import PaymentOptions from "./PaymentOptions";
 import TransactionFeeInfo from "./TransactionFeeInfo";
 import OrderRow from "./OrderRow";
+import { useNavigate } from "react-router-dom";
 
 const OrderSummary = ({ user }: { user: User }) => {
     const { cart, orderObject, setField } = useStore();
@@ -17,6 +18,7 @@ const OrderSummary = ({ user }: { user: User }) => {
     const [disableWallet, setDisableWallet] = useState(false);
     const [transactionFee, setTransactionFee] = useState('0.00');
     const [selectedPayment, setSelectedPayment] = useState('');
+    const navigate = useNavigate();
 
     const { post, get } = useApi(`${import.meta.env.VITE_API_URL}`);
     const { shippingMethod, deliveryCost, cartTotal } = orderObject;
@@ -26,12 +28,29 @@ const OrderSummary = ({ user }: { user: User }) => {
             const wallet = await get(`/wallet/fetch-wallet?user_id=${user?.user_id}`);
             if (!wallet) throw new Error('Error fetching wallet');
             setWalletBalance(wallet.amount);
-            if (+wallet.amount === 0) setDisableWallet(true);
+
+            if (+wallet.amount === 0) {
+                setDisableWallet(true);
+                setSelectedPayment('ozow');
+                return;
+            }
+
             const total = cartTotal + deliveryCost;
-            if (+wallet.amount >= total) {
+
+            if (+wallet.amount > total) {
                 setSelectedPayment('wallet');
                 setDisableWallet(true);
+
+                return;
             }
+
+            if (+wallet.amount < total) {
+                setSelectedPayment('ozow');
+                setDisableWallet(true);
+
+                return;
+            }
+
         } catch (error) {
             setDisableWallet(true);
             const _error = error instanceof Error ? error.message : error;
@@ -59,7 +78,10 @@ const OrderSummary = ({ user }: { user: User }) => {
 
     const getEndpoint = (walletBalance: number, total: number): string => {
         if (walletBalance === 0) return '/orders/create-order';
-        if (walletBalance >= total) return '/orders/create-order?paymentOption=walletFull';
+        if (walletBalance === total) return '/orders/create-order?paymentOption=walletFull';
+        if (walletBalance > total) return '/orders/create-order?paymentOption=walletExcess';
+        if (walletBalance && walletBalance < total) return '/orders/create-order?paymentOption=walletPartial';
+
         return `/orders/create-order?paymentOption=walletPartial&gateway=${selectedPayment}`;
     };
 
@@ -69,7 +91,7 @@ const OrderSummary = ({ user }: { user: User }) => {
                 showToast('Please select shipping method (In Shipping Details)', 'warning');
                 return;
             }
-            
+
             if (!selectedPayment) {
                 showToast('Please select Payment Method (In Payment Screen)', 'warning');
                 return;
@@ -84,8 +106,19 @@ const OrderSummary = ({ user }: { user: User }) => {
                 customerDetails,
             });
 
-            if (!res?.url) throw new Error(`Error creating order: ${res?.errorMessage || 'Could not open payment gateway'}`);
-            window.open(res.url, '_self');
+            console.log({ res });
+
+            if (endpoint === '/orders/create-order' || endpoint.includes('walletPartial')) {
+                if (!res?.url) throw new Error(`Error creating order: ${res?.errorMessage || 'Could not open payment gateway'}`);
+                window.open(res.url, '_self');
+                return;
+            }
+
+            showToast(res.msg as string, 'success');
+            setTimeout(() => {
+                navigate('/orders');
+            }, 2500);
+
         } catch (error) {
             const _error = error instanceof Error ? error.message : error;
             showToast(_error as string, 'error');

@@ -11,8 +11,8 @@ const PaymentOptions = ({
   walletBalance: number;
   disableWallet: boolean;
 }) => {
-  const paymentOptions = [{ value: 'Ozow', label: 'Ozow' }];
-
+  const paymentOptions = [{ value: 'ozow', label: 'Ozow' }];
+  
   return (
     <FormControl component="fieldset">
       <RadioGroup value={selected} onChange={(e) => onChange(e.target.value)}>
@@ -22,6 +22,7 @@ const PaymentOptions = ({
             value={option.value}
             control={<Radio />}
             label={option.label}
+            disabled={selected === 'wallet'}
           />
         ))}
         {+walletBalance > 0 && (

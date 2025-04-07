@@ -53,7 +53,7 @@ const handleNoGatewayOrder = async (order, res) => {
         sendEmailsToBuyerAndSeller(order);
 
         logger.info('Order updated successfully', order);
-        res.status(200).send({ msg: 'Order paid successfully' });
+        res.status(200).send({ payload: { msg: 'Order paid successfully' } });
 
     } catch (error) {
         logger.error('Error updating order', error);
