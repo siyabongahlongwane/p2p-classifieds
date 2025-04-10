@@ -40,6 +40,7 @@ type Store = {
     filteredMenuItems: any[],
     ageRanges: string[],
     shoeSizes: string[],
+    [key: string]: any
 }
 
 type StoreActions = {

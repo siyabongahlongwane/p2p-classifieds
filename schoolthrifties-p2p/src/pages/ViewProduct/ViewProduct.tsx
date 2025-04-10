@@ -111,6 +111,11 @@ const ViewProduct = () => {
                 }
                 key={selectedProduct?.category_id}
               ></Chip>
+              <Chip label={selectedProduct?.child_age}></Chip>
+              {
+                selectedProduct?.shoe_size && <Chip label={selectedProduct?.shoe_size}></Chip>
+              }
+              <Chip label={selectedProduct?.gender}></Chip>
             </Box>
             <Typography variant="h5" color="var(--blue)" fontWeight={500}>
               R{selectedProduct?.price}
@@ -119,7 +124,6 @@ const ViewProduct = () => {
               <Typography variant="body2">
                 + Delivery from R59.00 with PUDO Locker-to-Locker & Kiosks
               </Typography>
-              <Typography variant="body2">+ Buyer Protection fee</Typography>
             </Stack>
             <Box display={"flex"} gap={4} justifyContent={isSold ? "start" : "space-around"}>
               {

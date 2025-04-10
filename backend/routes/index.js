@@ -12,6 +12,7 @@ const payoutsRoutes = require('./payout');
 const bankingRoutes = require('./banking');
 const shopShippingRoutes = require('./shopShippingConfig');
 const chatsRoutes = require('./message');
+const pudoRoutes = require('./pudo');
 
 const router = express.Router();
 
@@ -28,5 +29,6 @@ router.use('/payouts', payoutsRoutes);
 router.use('/banking', bankingRoutes);
 router.use('/shop-shipping', shopShippingRoutes);
 router.use('/chats', chatsRoutes);
+router.use('/pudo', pudoRoutes);
 
 module.exports = router;

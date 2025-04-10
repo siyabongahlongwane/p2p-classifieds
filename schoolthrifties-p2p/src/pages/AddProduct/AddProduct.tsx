@@ -10,6 +10,7 @@ import { NewProduct } from "../../typings";
 import { UserContext } from "../../context/User/UserContext";
 import { useNavigate, useParams } from "react-router-dom";
 import useToastStore from "../../stores/useToastStore";
+import SizeGuideDialog from "../../components/SizeGuideDialog/SizeGuideDialog";
 
 const AddProduct = () => {
   const { user } = useContext(UserContext);
@@ -29,6 +30,7 @@ const AddProduct = () => {
   const { errors } = formState;
   const { showToast } = useToastStore();
   const [isShoeCategory, setisShoeCategory] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -56,7 +58,7 @@ const AddProduct = () => {
       setisShoeCategory(categories.find(cat => cat.title === 'Shoes')?.category_id === product.category_id);
       setField("productPhotos", product["photos"]);
       Object.keys(newProduct).forEach(key => {
-        if(key == 'price') {
+        if (key == 'price') {
           form.setValue(key as keyof NewProduct, product['seller_gain']);
           return;
         }
@@ -165,7 +167,8 @@ const AddProduct = () => {
       </Stack>
       <Box component={'form'} noValidate onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={.5}>
-          <Typography variant="body1">Product Info</Typography>
+         
+          <Typography variant="body1">Product Info  {'===>'} <Button onClick={() => setOpen(true)}>View Size Guide</Button></Typography>
           <Typography fontSize={12} component={'small'} variant="body1" color="red">Please provide detailed information to improve your product's chances of selling.</Typography>
 
           <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
@@ -400,13 +403,14 @@ const AddProduct = () => {
         </Stack>
         <Box mt={1}>
           <Typography fontSize={12} color="gray">
-            N.B. A 10% service fee is added per product (It does not affect you as the seller), upon clicking 'SUBMIT', you agree to our <a target="_blank" href="#">Terms of Use</a> 
+            N.B. A 10% service fee is added per product (It does not affect you as the seller), upon clicking 'SUBMIT', you agree to our <a target="_blank" href="#">Terms of Use</a>
             // Trigger Modal Open
           </Typography>
         </Box>
         <Box display={'flex'} justifyContent={'center'}>
           <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} >Submit</Button>
         </Box>
+        <SizeGuideDialog open={open} onClose={() => setOpen(false)} />
       </Box>
     </Stack>
   )

@@ -40,9 +40,14 @@ input:not([type="file" i], [type="image" i], [type="checkbox" i], [type="radio" 
   height: .6em !important;
 }
 
+
 label[data-shrink=false]+.MuiInputBase-formControl .css-w76bbz-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
-  height: 42px;
+  /* height: 40px; */
   box-sizing: border-box;
+}
+
+input[type="text" i], input[type="password" i] {
+  height: 1em !important;
 }
 
 .MuiFormHelperText-root {

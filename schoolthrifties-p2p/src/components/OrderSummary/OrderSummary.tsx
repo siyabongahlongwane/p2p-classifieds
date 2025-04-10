@@ -89,8 +89,14 @@ const OrderSummary = ({ user }: { user: User }) => {
             const endpoint = getEndpoint(+walletBalance, orderObject.total);
             const customerDetails = { firstName: user.first_name, lastName: user.last_name };
 
+            const pudoLockerLocation = orderObject.shippingMethod === 'Delivery'
+                ?
+                `(${orderObject?.pudoLockerLocation.name} ${orderObject?.pudoLockerLocation.code}) - ${orderObject?.pudoLockerLocation?.detailed_address?.formatted_address}`
+                : '';
+
             const res = await post(endpoint, {
                 ...orderObject,
+                pudoLockerLocation,
                 user_id: user.user_id,
                 customerDetails,
             });

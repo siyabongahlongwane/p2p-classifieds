@@ -72,8 +72,23 @@ function App() {
     }
   };
 
+  const fetchPudoLockers = async () => {
+    try {
+      const pudoLockers = await get("/pudo/fetch-lockers");
+      if (!pudoLockers) throw new Error('Error fetching pudoLockers');
+
+      setField("pudoLockers", pudoLockers);
+    } catch (error) {
+      const _error = error instanceof Error ? error.message : error;
+      showToast(_error as string, 'error');
+      console.error('error', _error);
+      return;
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchPudoLockers();
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import { Stack, Typography, Grid2, Box, Checkbox, FormControlLabel, FormGroup, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Stack, Typography, Grid2, Box, Checkbox, FormControlLabel, FormGroup, FormControl, InputLabel, MenuItem, Select, TextField, Autocomplete } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../stores/store";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/User/UserContext";
 
 const ShippingDetails = () => {
-    const { cart, checkoutCrumbs, setField, orderObject } = useStore();
+    const { cart, checkoutCrumbs, setField, orderObject, pudoLockers } = useStore();
     const navigate = useNavigate();
     const [isDelivery, setIsDelivery] = useState(orderObject.shippingMethod === 'Delivery');
     const [isPickUp, setIsPickUp] = useState(orderObject.shippingMethod === 'Pick Up');
@@ -60,53 +60,66 @@ const ShippingDetails = () => {
                                             ?
                                             <Stack>
                                                 <Stack>
+                                                    {/* Province selector */}
                                                     <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                                                         <InputLabel>Select Your Province</InputLabel>
                                                         <Select
                                                             value={orderObject.province}
-                                                            onChange={(e) => setField('orderObject', { ...orderObject, province: e.target.value })}
+                                                            onChange={(e) => {
+                                                                setField('orderObject', {
+                                                                    ...orderObject,
+                                                                    province: e.target.value,
+                                                                    pudoLockerLocation: null // reset if province changes
+                                                                });
+                                                            }}
                                                             label="Province"
                                                         >
-                                                            {
-                                                                [
-                                                                    "Eastern Cape",
-                                                                    "Free State",
-                                                                    "Gauteng",
-                                                                    "KwaZulu-Natal",
-                                                                    "Limpopo",
-                                                                    "Mpumalanga",
-                                                                    "Northern Cape",
-                                                                    "North West",
-                                                                    "Western Cape"
-                                                                ].map(p => <MenuItem key={p} value={p}>{p}</MenuItem>)
-                                                            }
+                                                            {[
+                                                                "Eastern Cape",
+                                                                "Free State",
+                                                                "Gauteng",
+                                                                "KwaZulu-Natal",
+                                                                "Limpopo",
+                                                                "Mpumalanga",
+                                                                "Northern Cape",
+                                                                "North West",
+                                                                "Western Cape"
+                                                            ].map((p) => (
+                                                                <MenuItem key={p} value={p}>{p}</MenuItem>
+                                                            ))}
                                                         </Select>
                                                     </FormControl>
-                                                </Stack>
-
-                                                <Stack>
-                                                    <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                                                        <InputLabel>Select Pudo Locker Location</InputLabel>
-                                                        <Select
-                                                            value={orderObject.pudoLockerLocation}
-                                                            onChange={(e) => setField('orderObject', { ...orderObject, pudoLockerLocation: e.target.value })}
-                                                            label="Province"
-                                                        >
-                                                            {
-                                                                [
-                                                                    "Eastern Cape",
-                                                                    "Free State",
-                                                                    "Gauteng",
-                                                                    "KwaZulu-Natal",
-                                                                    "Limpopo",
-                                                                    "Mpumalanga",
-                                                                    "Northern Cape",
-                                                                    "North West",
-                                                                    "Western Cape"
-                                                                ].map(p => <MenuItem key={p} value={p}>{p}</MenuItem>)
+                                                    {/* Locker Autocomplete: Only show if province is selected */}
+                                                    {orderObject.province && (
+                                                        <Autocomplete
+                                                            options={pudoLockers.filter((locker: any) => locker?.detailed_address?.province === orderObject.province)}
+                                                            getOptionLabel={(option) => `${option.name} (${option.code})`}
+                                                            value={orderObject.pudoLockerLocation || null}
+                                                            isOptionEqualToValue={(option, value) => option.code === value?.code}
+                                                            onChange={(_, newValue) =>
+                                                                setField('orderObject', {
+                                                                    ...orderObject,
+                                                                    pudoLockerLocation: newValue
+                                                                })
                                                             }
-                                                        </Select>
-                                                    </FormControl>
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    label="Select Pudo Locker Location Nearest To You"
+                                                                    variant="standard"
+                                                                />
+                                                            )}
+                                                            renderOption={(props, option) => (
+                                                                <Box component="li" {...props}>
+                                                                    <Box>
+                                                                        <Typography fontWeight={500}>{option.name}</Typography>
+                                                                        <Typography fontSize={12} color="text.secondary">{option.address}</Typography>
+                                                                    </Box>
+                                                                </Box>
+                                                            )}
+                                                            sx={{ m: 1, minWidth: 120 }}
+                                                        />
+                                                    )}
                                                 </Stack>
 
                                                 <Stack gap={1} mt={1} p={1}>
