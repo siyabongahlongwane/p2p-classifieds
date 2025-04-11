@@ -328,5 +328,51 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ err: 'Failed to update order status', error: error.message });
         }
+    },
+    payExistingOzowOrder: async (req, res) => {
+        try {
+            const { order_id, user_id } = req.body;
+
+            const order = await Order.findOne({ where: { order_id } });
+
+            if (!order) {
+                return res.status(404).json({ err: 'Order not found' });
+            }
+
+
+            const currentWalletAmount = await Wallet.findOne({ where: { user_id } });
+
+            if (currentWalletAmount?.dataValues?.amount == 0) {
+                const requestBody = await generateRequestHash(order?.dataValues, +order_id);
+
+                logger.info('Existing Ozow Order - Pay existing order with zero funds in wallet', requestBody);
+                triggerOzowPayment(requestBody, res);
+                return;
+            }
+
+            if (currentWalletAmount?.dataValues?.amount >= order?.dataValues?.total_price) {
+                await Wallet.update({ amount: (+currentWalletAmount?.dataValues?.amount - +order?.dataValues?.total_price).toFixed(2) }, { where: { user_id } });
+
+                logger.info('Existing Ozow Order - Pay existing order with greater than price funds in wallet', order?.dataValues);
+                await handleNoGatewayOrder(order?.dataValues, res);
+                return;
+
+            }
+
+            if (+currentWalletAmount?.dataValues?.amount < +order?.dataValues?.total_price) {
+                await Wallet.update({ amount: '0.00' }, { where: { user_id } });
+
+                const requestBody = await generateRequestHash({ ...order?.dataValues, total_price: order?.dataValues?.total_price - currentWalletAmount?.dataValues?.amount }, +order_id);
+
+                logger.info('Existing Ozow Order - Pay existing order with lesser than price funds in wallet', requestBody);
+                triggerOzowPayment(requestBody, res);
+                return;
+
+            }
+        } catch (error) {
+            logger.error('Error processing existing order payment:', error);
+            res.status(500).json({ error: error.message || 'Failed to process existing order payment' });
+        }
     }
+
 };

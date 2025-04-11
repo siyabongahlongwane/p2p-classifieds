@@ -106,10 +106,7 @@ const AddProduct = () => {
       if (!newProduct) throw new Error('Error adding new product');
 
       showToast("Product added successfully!", "success");
-      setTimeout(() => {
-        // window.location.reload();
-        navigate('/my-shop');
-      }, 2000);
+      navigate('/my-shop');
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
       showToast(_error as string, 'error');
@@ -143,9 +140,6 @@ const AddProduct = () => {
       showToast("Product updated successfully!", "success");
 
       navigate('/my-shop');
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
       showToast(_error as string, 'error');

@@ -18,7 +18,7 @@ const generateRequestHash = async (order, orderNumber) => {
         SiteCode: process.env.SITE_CODE,
         CountryCode: 'ZA',
         CurrencyCode: 'ZAR',
-        Amount: order.orderTotal ? +order.orderTotal.toFixed(2) : +order.total_price.toFixed(2),
+        Amount: Number(order?.total_price)?.toFixed(2),
         TransactionReference: `School Thrifites Order ${orderNumber}`,
         BankReference: `Order ${orderNumber}`,
         Optional1: order?.uid || +orderNumber,

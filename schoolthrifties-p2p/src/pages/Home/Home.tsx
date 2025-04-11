@@ -33,7 +33,7 @@ const Home = () => {
     }
 
     fetchShops();
-  }, []);
+  }, [user]);
 
   return (
     <Stack display={"grid"} height={"100%"} rowGap={2}>

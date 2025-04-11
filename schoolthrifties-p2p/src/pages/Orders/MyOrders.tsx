@@ -60,7 +60,7 @@ const MyOrders = () => {
           <Typography fontSize={12}>View Customer Orders</Typography>
         </Box>
       </Box>
-      <OrdersList orders={orders} showEdit={false} />
+      <OrdersList orders={orders} showPayNow={true} />
     </>
   )
 }

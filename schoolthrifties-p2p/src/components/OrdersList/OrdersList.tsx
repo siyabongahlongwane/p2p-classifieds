@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     Box,
     Table,
@@ -15,8 +15,11 @@ import {
 } from "@mui/material";
 import { OrderPreview } from "../../typings/Order.int";
 import { useNavigate } from "react-router-dom";
+import useApi from "../../hooks/useApi";
+import useToastStore from "../../stores/useToastStore";
+import { UserContext } from "../../context/User/UserContext";
 
-const OrdersList = ({ orders, showEdit }: { orders: OrderPreview[], showEdit: boolean }) => {
+const OrdersList = ({ orders, showPayNow }: { orders: OrderPreview[], showPayNow: boolean }) => {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
     const navigate = useNavigate();
@@ -29,6 +32,33 @@ const OrdersList = ({ orders, showEdit }: { orders: OrderPreview[], showEdit: bo
     const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
+
+    const { post } = useApi(`${import.meta.env.VITE_API_URL}`);
+    const { showToast } = useToastStore();
+    const { user } = useContext(UserContext);
+
+    const payExistingOrder = async (order_id: number) => {
+        try {
+            const orderToPay = await post(`/orders/pay-existing-ozow-order`, { order_id, user_id: user.user_id });
+
+            if (!orderToPay) throw new Error('Error opening payment gateway');
+
+            if (orderToPay.url) {
+                window.open(orderToPay.url, '_self');
+                return;
+            }
+
+            showToast('Order paid successfully', 'success');
+            navigate('/orders');
+
+        } catch (error) {
+            const _error = error instanceof Error ? error.message : error;
+            showToast(_error as string, 'error');
+            console.error('error', _error);
+            return;
+        }
+    };
+    
     return (
         <Box>
             {/* Search Bar */}
@@ -68,10 +98,11 @@ const OrdersList = ({ orders, showEdit }: { orders: OrderPreview[], showEdit: bo
                                         View
                                     </Button>
                                     {
-                                        showEdit &&
-                                        <Button size="small" variant="outlined" color="warning">
-                                            Edit
-                                        </Button>
+                                        (showPayNow && order?.status.includes('Pending') && order.user_id != user?.user_id) ?
+                                            <Button onClick={() => payExistingOrder(+order.order_id)} size="small" variant="contained" color="success">
+                                                Pay Now {order?.isPaid}
+                                            </Button>
+                                            : null
                                     }
                                 </TableCell>
                             </TableRow>

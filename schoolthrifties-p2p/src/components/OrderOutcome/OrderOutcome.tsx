@@ -21,7 +21,7 @@ interface OrderItemProps {
 
 const OrderOutcome = () => {
     const [orderDetails, setOrderDetails] = useState<OrderProps>({} as OrderProps);
-    const { get, loading } = useApi(`${import.meta.env.VITE_API_URL}`);
+    const { get, post, loading } = useApi(`${import.meta.env.VITE_API_URL}`);
     const { user } = useContext(UserContext);
     const urlObj = new URL(window.location.href);
     const params = new URLSearchParams(urlObj.search);
@@ -65,6 +65,27 @@ const OrderOutcome = () => {
         fetchOrderDetails();
     }, [orderId]);
 
+    const payExistingOrder = async () => {
+        try {
+            const orderToPay = await post(`/orders/pay-existing-ozow-order`, { order_id: orderId, user_id: user.user_id });
+
+            if (!orderToPay) throw new Error('Error opening payment gateway');
+
+            if (orderToPay.url) {
+                window.open(orderToPay.url, '_self');
+                return;
+            }
+
+            showToast('Order paid successfully', 'success');
+            navigate('/orders');
+
+        } catch (error) {
+            const _error = error instanceof Error ? error.message : error;
+            showToast(_error as string, 'error');
+            console.error('error', _error);
+            return;
+        }
+    };
 
     return (
         <>
@@ -122,6 +143,7 @@ const OrderOutcome = () => {
                                 orderStatus !== 'Complete' && <Button
                                     variant="contained"
                                     sx={{ mt: 3, backgroundColor: "limegreen" }}
+                                    onClick={payExistingOrder}
                                 >
                                     Pay now
                                 </Button>

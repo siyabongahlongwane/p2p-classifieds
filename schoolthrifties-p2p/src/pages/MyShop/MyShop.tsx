@@ -38,7 +38,7 @@ const MyShop = () => {
     };
 
     fetchShop();
-  }, []);
+  }, [window.location.href]);
 
   useEffect(() => {
     setIsAddNewProduct(window.location.pathname.includes("add-product") || window.location.pathname.includes("edit-product"));

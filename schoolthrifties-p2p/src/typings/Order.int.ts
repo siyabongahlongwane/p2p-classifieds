@@ -36,4 +36,6 @@ export interface OrderPreview {
     date: string;
     totalAmount: string;
     status: string;
+    isPaid: boolean;
+    user_id: number;
 }
