@@ -26,7 +26,7 @@ const setUser = useUserStore((state) => state.setUser);
           position={"absolute"}
           top={0}
           right={0}
-          bgcolor={"#1976d2"}
+          bgcolor={"var(--blue)"}
           color={"#fff"}
           fontWeight={"bold"}
           border={".5px solid #fff"}

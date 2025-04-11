@@ -99,7 +99,7 @@ const CartItem = ({ product_id, user, isButton = false, shop_id }: CartItemProps
                         display={"flex"}
                         gap={0.5}
                         alignItems={"center"}
-                        bgcolor={!isInCart ? "#016ec0" : "#d4d4e0"}
+                        bgcolor={!isInCart ? "var(--blue)" : "#d4d4e0"}
                         color={isInCart ? "#fff" : "#fff"}
                         borderRadius={2}
                         p={0.5}

@@ -22,7 +22,7 @@ const ChatListItem: React.FC<ChatProps> = ({
     const {activeChatUsers} = useChatStore();
 
     const hoverStyles = {
-        backgroundColor: '#016ec0',
+        backgroundColor: "var(--blue)",
         color: '#fff',
         cursor: 'pointer',
         borderRadius: 2,
@@ -44,7 +44,7 @@ const ChatListItem: React.FC<ChatProps> = ({
             width={'100%'}
             sx={{
                 '&:hover': hoverStyles,
-                backgroundColor: activeChat ? '#016ec0' : 'transparent',
+                backgroundColor: activeChat ? 'var(--blue)' : 'transparent',
                 color: activeChat ? '#fff' : 'rgba(0,0,0, 0.8)',
                 cursor: 'pointer',
                 borderRadius: 2,

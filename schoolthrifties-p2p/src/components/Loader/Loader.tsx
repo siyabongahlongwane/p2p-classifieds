@@ -22,7 +22,7 @@ const Loader = () => {
             bgcolor="rgba(0, 0, 0, 0.5)"
             zIndex={9999}
         >
-            <CircularProgress size={60} style={{ color: '#016ec0' }} />
+            <CircularProgress size={60} style={{ color: 'var(--blue)' }} />
             {message && <p style={{ color: '#fff', marginTop: 10 }}>Loading</p>}
         </Box>
     );

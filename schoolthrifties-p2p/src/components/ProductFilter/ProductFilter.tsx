@@ -67,37 +67,42 @@ export const ProductFilter: React.FC<Props> = ({
                 MenuProps={MenuProps}
             >
                 {options.map((option) => (
-                    <MenuItem key={option} value={option}>
+                    <MenuItem key = { option } value = { option } >
                         <Checkbox
                             checked={selectedFilters[key]?.includes(option) || false}
                         />
-                        <ListItemText primary={key == 'category_id' ? categories[+option]?.title : option} />
+                        <ListItemText primary={key == 'category_id' ? categories.find((c) => c.category_id == +option)?.title : option} />
                     </MenuItem>
                 ))}
-            </Select>
-        </FormControl>
+        </Select>
+        </FormControl >
     );
 
-    return (
-        <Grid container spacing={2}>
-            <Grid item xs={12}>
-                {renderSelect('Shoe Size', 'shoe_size', filterOptions.shoe_size)}
-            </Grid>
-            <Grid item xs={12}>
-                {renderSelect('Child Age', 'child_age', filterOptions.child_age)}
-            </Grid>
-            <Grid item xs={12}>
-                {renderSelect('Gender', 'gender', filterOptions.gender)}
-            </Grid>
-            <Grid item xs={12}>
-                {renderSelect('Category', 'category_id', filterOptions.category_id)}
-            </Grid>
-            <Grid item xs={12}>
-                {renderSelect('Condition', 'condition', filterOptions.condition)}
-            </Grid>
-            <Grid item xs={12}>
-                {renderSelect('Province', 'province', filterOptions.province)}
-            </Grid>
+return (
+    <Grid container spacing={2}>
+        {
+            filterOptions.shoe_size.length > 0 && (
+                <Grid item xs={12}>
+                    {renderSelect('Shoe Size', 'shoe_size', filterOptions.shoe_size)}
+                </Grid>
+
+            )
+        }
+        <Grid item xs={12}>
+            {renderSelect('Child Age', 'child_age', filterOptions.child_age)}
         </Grid>
-    );
+        <Grid item xs={12}>
+            {renderSelect('Gender', 'gender', filterOptions.gender)}
+        </Grid>
+        <Grid item xs={12}>
+            {renderSelect('Category', 'category_id', filterOptions.category_id)}
+        </Grid>
+        <Grid item xs={12}>
+            {renderSelect('Condition', 'condition', filterOptions.condition)}
+        </Grid>
+        <Grid item xs={12}>
+            {renderSelect('Province', 'province', filterOptions.province)}
+        </Grid>
+    </Grid>
+);
 };

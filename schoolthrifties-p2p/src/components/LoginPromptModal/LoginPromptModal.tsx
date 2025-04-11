@@ -10,7 +10,7 @@ const LoginPromptModal = ({ open, onClose }: { open: boolean; onClose: () => voi
             <DialogTitle>Login Required</DialogTitle>
             <DialogContent>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <AccountCircle style={{ fontSize: 40, color: '#016ec0' }} />
+                    <AccountCircle style={{ fontSize: 40, color: 'var(--blue)' }} />
                     <Typography variant="body1">
                         You need to log in before performing this action. Please log in to continue.
                     </Typography>
