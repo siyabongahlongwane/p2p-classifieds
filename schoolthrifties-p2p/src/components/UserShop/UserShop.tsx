@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Alert, Stack } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
@@ -11,7 +11,8 @@ const UserShop = () => {
     } = useApi(`${import.meta.env.VITE_API_URL}`);
 
     const { showToast } = useToastStore();
-    const [shop, setShop] = useState([]);
+    const [shop, setShop] = useState<any>([]);
+    const [awayDate, setAwayDate] = useState<any>(null);
     const { shop_link } = useParams();
 
     useEffect(() => {
@@ -21,6 +22,7 @@ const UserShop = () => {
                 if (!shop) throw new Error('Error fetching Shop');
 
                 setShop(shop);
+                setAwayDate(shop[0]?.shop_closure);
             } catch (error) {
                 const _error = error instanceof Error ? error.message : error;
                 showToast(_error as string, 'error');
@@ -33,11 +35,20 @@ const UserShop = () => {
     }, [shop_link]);
 
     return (
-        <Stack display={"grid"} height={"100%"} rowGap={2}>
-            {shop.map((shop, index) => (
-                <ProductItemGroup shop={shop} key={index} />
-            ))}
-        </Stack>
+        <>
+            {awayDate?.is_active && (
+                <Alert severity="warning" sx={{ mb: 2 }}>
+                    This shop is temporarily closed and not processing orders from <b>{awayDate.start_date}</b> to <b>{awayDate.end_date}</b>
+                    {awayDate.reason && <> Reason — {awayDate.reason}</>}
+                </Alert>
+            )}
+
+            <Stack display={"grid"} height={"100%"} rowGap={2}>
+                {shop.map((shop: any, index: number) => (
+                    <ProductItemGroup shop={shop} key={index} />
+                ))}
+            </Stack>
+        </>
     );
 };
 

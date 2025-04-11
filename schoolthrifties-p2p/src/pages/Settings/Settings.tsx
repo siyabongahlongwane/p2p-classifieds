@@ -1,4 +1,4 @@
-import { SyntheticEvent,  useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import {
     Box,
     Tab,
@@ -9,15 +9,13 @@ import {
 import BankingDetailsSettings from "../../components/Settings/BankingDetails";
 import ProfileSettings from "../../components/Settings/Profile";
 import ShopSettings from "../../components/Settings/Shop";
-import ShippingSettings from "../../components/Settings/Shipping";
 import { useUserStore } from '../../stores/useUserStore';
 import PageHeader from "../../components/PageHeader/PageHeader";
+import ShopClosureForm from "../../components/Settings/ShopClosureDialog";
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState(0);
     const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
-
 
     const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
@@ -54,7 +52,7 @@ const setUser = useUserStore((state) => state.setUser);
                         >
                             <Tab label="Profile" />
                             <Tab label="Shop" />
-                            <Tab label="Shipping" />
+                            <Tab label="Away Date" />
                             <Tab label="Banking Details" />
                         </Tabs>
 
@@ -67,7 +65,8 @@ const setUser = useUserStore((state) => state.setUser);
                         )}
 
                         {activeTab === 2 && (
-                            <ShippingSettings shopId={user?.shop_id} />
+                            <ShopClosureForm />
+
                         )}
 
                         {activeTab === 3 && (

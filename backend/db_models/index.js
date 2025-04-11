@@ -34,6 +34,7 @@ db.models.Payout = require('./Payout')(sequelize, Sequelize.DataTypes);
 db.models.BankingDetail = require('./BankingDetail')(sequelize, Sequelize.DataTypes);
 db.models.ShippingMethod = require('./ShippingMethod')(sequelize, Sequelize.DataTypes);
 db.models.GlobalShippingPrice = require('./GlobalShippingPrices')(sequelize, Sequelize.DataTypes);
+db.models.ShopClosure = require('./ShopClosure')(sequelize, Sequelize.DataTypes);
 
 // User and Shop (One-to-One)
 db.models.User.hasOne(db.models.Shop, {
@@ -54,6 +55,20 @@ db.models.Product.belongsTo(db.models.Shop, {
     foreignKey: 'shop_id',
     as: 'shop',
 });
+
+
+// One-to-One: Shop hasOne ShopClosure
+db.models.Shop.hasOne(db.models.ShopClosure, {
+    foreignKey: 'shop_id',
+    as: 'shop_closure', // <-- alias used when including from Shop
+});
+
+// ShopClosure belongsTo Shop
+db.models.ShopClosure.belongsTo(db.models.Shop, {
+    foreignKey: 'shop_id',
+    as: 'shop', // <-- alias used when including from ShopClosure
+});
+
 
 // User and Product (Many-to-Many for Likes)
 db.models.User.belongsToMany(db.models.Product, {

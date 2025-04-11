@@ -1,4 +1,4 @@
-const { models: { User, Shop, Wallet, BankingDetail } } = require('../db_models');
+const { models: { User, Shop, Wallet, BankingDetail, ShopClosure } } = require('../db_models');
 const bcrypt = require('bcrypt');
 const mail = require('./mail');
 
@@ -40,6 +40,14 @@ const createUser = async (body) => {
     await mail(email, 'Schoolthrifties is excited to welcome you!', 'welcome-notification', emailData);
     await Wallet.create({ user_id, amount: 0 });
     await BankingDetail.create({ user_id, account_holder: `${first_name} ${last_name}` });
+
+    await ShopClosure.create({
+        shop_id: newShop.dataValues.shop_id,
+        start_date: new Date(),
+        end_date: new Date(),
+        reason: '',
+        is_active: false
+    });
 
     return { dbUser, newShop };
 }

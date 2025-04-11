@@ -14,7 +14,7 @@ const ShopSettings = () => {
     const { put, get } = useApi(import.meta.env.VITE_API_URL);
     const { showToast } = useToastStore()
     const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
+
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
             name: "",

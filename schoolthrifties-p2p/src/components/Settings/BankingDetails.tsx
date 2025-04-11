@@ -10,7 +10,7 @@ import {
     MenuItem,
     Select,
 } from "@mui/material";
-import {  useEffect } from "react";
+import { useEffect } from "react";
 import { useUserStore } from '../../stores/useUserStore';
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
@@ -18,7 +18,6 @@ import { IBankingDetails } from "../../typings/Banking.int";
 
 const BankingDetailsSettings = () => {
     const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
     const { put, get } = useApi(import.meta.env.VITE_API_URL);
     const { showToast } = useToastStore();
     const { register, handleSubmit, formState: { errors }, reset, control } = useForm({
@@ -33,7 +32,7 @@ const setUser = useUserStore((state) => state.setUser);
 
     const onSubmit = async (data: IBankingDetails) => {
         try {
-            const updatedBankingDetails = await put(`/banking/update-banking-details/${user.user_id}`, { ...data });
+            const updatedBankingDetails = await put(`/banking/update-banking-details/${user?.user_id}`, { ...data });
             if (!updatedBankingDetails) throw new Error('Error updating Banking Details');
 
             const { name, account_number, account_holder, account_type } = updatedBankingDetails;
@@ -52,7 +51,7 @@ const setUser = useUserStore((state) => state.setUser);
     useEffect(() => {
         const fetchBankingDetails = async () => {
             try {
-                const bankingDetails = await get(`/banking/fetch-banking-details?user_id=${user.user_id}`);
+                const bankingDetails = await get(`/banking/fetch-banking-details?user_id=${user?.user_id}`);
                 if (!bankingDetails) throw new Error('Error fetching Banking Details');
 
                 const { name, account_number, account_holder, account_type } = bankingDetails;
