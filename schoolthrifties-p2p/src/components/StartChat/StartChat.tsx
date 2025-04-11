@@ -1,10 +1,9 @@
 import { MessageOutlined } from '@mui/icons-material'
 import { Stack, Typography } from '@mui/material'
 import { useChatStore } from '../../stores/useChatStore'
-import { useContext } from 'react'
-import { UserContext } from '../../context/User/UserContext'
 import useToastStore from '../../stores/useToastStore'
 import { useNavigate } from 'react-router-dom'
+import { useUserStore } from '../../stores/useUserStore'
 
 interface ChatProps {
     text?: string,
@@ -12,7 +11,7 @@ interface ChatProps {
 }
 const StartChat = ({ text, user2_id }: ChatProps) => {
     const { startChat, setActiveChat, setActiveChatUsers } = useChatStore();
-    const { user: { user_id: user1_id } } = useContext(UserContext);
+    const user1_id = useUserStore((state) => state.user?.user_id) as number;
     const { showToast } = useToastStore();
     const navigate = useNavigate();
 
@@ -26,7 +25,7 @@ const StartChat = ({ text, user2_id }: ChatProps) => {
             showToast('Chat started successfully', 'success');
             setActiveChatUsers(users);
             setActiveChat(chat_id);
-            
+
             setTimeout(() => {
                 navigate(`/messages/${chat_id}`);
             }, 500);

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import "./Header.css";
 import SearchBar from "../SearchBar/SearchBar";
 import { Box, Button, Typography } from "@mui/material";
@@ -9,21 +9,21 @@ import {
 } from "@mui/icons-material";
 import Badge from "../Badge/Badge";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import useApi from "../../hooks/useApi";
 import { useStore } from "../../stores/store";
 import useToastStore from "../../stores/useToastStore";
 // import Drawer from '../Drawer/Drawer';
 
 const Header = () => {
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
 
   const { loading, get } = useApi(`${import.meta.env.VITE_API_URL}`);
 
   const { setLikes, likes = [], setCart, cart = [], setField, orderObject } = useStore();
   const { showToast } = useToastStore();
-  
+
   const fetchLikes = async () => {
     if (user) {
       try {

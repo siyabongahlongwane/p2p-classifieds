@@ -2,10 +2,10 @@ import { Box, Divider, Stack } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import { useStore } from "../../stores/store";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 
 const Home = () => {
   const {
@@ -14,7 +14,8 @@ const Home = () => {
 
   const { showToast } = useToastStore();
   const [shops, setShops] = useState([]);
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
 
   useEffect(() => {
 

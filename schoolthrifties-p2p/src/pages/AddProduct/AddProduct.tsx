@@ -1,19 +1,20 @@
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import { Controller, useForm } from "react-hook-form";
 import { useStore } from "../../stores/store";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback,  useEffect, useState } from "react";
 import useApi from "../../hooks/useApi";
 import FilePickerWithPreview from "../../components/FilePickerWithPreview/FilePickerWithPreview";
 import useFirebaseStorage from "../../hooks/useFirebaseStorage";
 import { newProduct } from "../../typings/Product.type";
 import { NewProduct } from "../../typings";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import { useNavigate, useParams } from "react-router-dom";
 import useToastStore from "../../stores/useToastStore";
 import SizeGuideDialog from "../../components/SizeGuideDialog/SizeGuideDialog";
 
 const AddProduct = () => {
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
   const { user_id, shop_id } = user;
   const { categories, provinces, productConditions, productPhotos, productStatuses, setField, ageRanges, shoeSizes } = useStore();
   const { get, post, put } = useApi(import.meta.env.VITE_API_URL);

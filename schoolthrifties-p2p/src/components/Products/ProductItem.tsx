@@ -1,7 +1,7 @@
 import { Box, Paper, Stack, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import {  useState } from "react";
 import "./Product.css";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import { useStore } from "../../stores/store";
 import { useNavigate } from "react-router-dom";
 import CartItem from "../CartItem/CartItem";
@@ -11,7 +11,8 @@ import LikeItem from "../LikeItem/LikeItem";
 const ProductItem = ({ product }: { product: PlainProduct }) => {
   const { price, status, photos, product_id } = product;
   const [isSold] = useState(status === "Sold");
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
 
   const { setField } = useStore();
 

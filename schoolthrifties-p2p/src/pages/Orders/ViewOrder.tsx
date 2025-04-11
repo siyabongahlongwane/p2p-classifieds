@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -17,7 +17,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useApi from "../../hooks/useApi";
 import { OrderWithItems } from "../../typings/Order.int";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import useToastStore from "../../stores/useToastStore";
 
 const ViewOrder = () => {
@@ -28,7 +28,8 @@ const ViewOrder = () => {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
   const { order_id } = useParams();
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
   const [isOwner, setIsOwner] = useState(false);
   const { showToast } = useToastStore();
 

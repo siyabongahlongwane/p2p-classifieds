@@ -6,14 +6,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Auth.css";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton, InputAdornment } from '@mui/material';
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import useToastStore from "../../stores/useToastStore";
 import ForgotPasswordDialog from "../../components/ForgotPasswordDialog/ForgotPasswordDialog";
 
@@ -48,7 +48,7 @@ const SignIn = () => {
     window.open(`${import.meta.env.VITE_API_URL}/auth/google`, "_self");
   }
 
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useUserStore();
 
   const userHash = new URLSearchParams(location.search)?.get('hash');
   const error = new URLSearchParams(location.search)?.get('error');

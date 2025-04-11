@@ -5,15 +5,16 @@ import {
     Button,
     Stack,
 } from "@mui/material";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback,  useEffect } from "react";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 
 const ShopSettings = () => {
     const { put, get } = useApi(import.meta.env.VITE_API_URL);
     const { showToast } = useToastStore()
-    const { user } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
             name: "",

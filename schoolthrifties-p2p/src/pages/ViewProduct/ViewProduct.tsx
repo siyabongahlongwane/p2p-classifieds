@@ -1,5 +1,5 @@
 import { Box, Chip, Grid2, Stack, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useStore } from "../../stores/store";
 import { useParams } from "react-router-dom";
 import useApi from "../../hooks/useApi";
@@ -13,7 +13,7 @@ import CartItem from "../../components/CartItem/CartItem";
 import { Photo } from "../../typings";
 import StartChat from "../../components/StartChat/StartChat";
 import useToastStore from "../../stores/useToastStore";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 
 const ViewProduct = () => {
   const { selectedProduct, setField, categories } = useStore();
@@ -22,7 +22,8 @@ const ViewProduct = () => {
   const [images, setImages] = useState<Array<{ original: string, thumbnail: string }>>([]);
   const { showToast } = useToastStore();
   const [isSold, setIsSold] = useState(false);
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
 
   const fetchCategories = async () => {
     try {

@@ -1,7 +1,7 @@
 import { Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import useApi from "../../hooks/useApi";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../context/User/UserContext";
+import {  useEffect, useState } from "react";
+import { useUserStore } from '../../stores/useUserStore';
 import { Link, useNavigate } from "react-router-dom";
 import { statusesMessages, Statuses } from "./StaticData";
 import useToastStore from "../../stores/useToastStore";
@@ -22,7 +22,8 @@ interface OrderItemProps {
 const OrderOutcome = () => {
     const [orderDetails, setOrderDetails] = useState<OrderProps>({} as OrderProps);
     const { get, post, loading } = useApi(`${import.meta.env.VITE_API_URL}`);
-    const { user } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
     const urlObj = new URL(window.location.href);
     const params = new URLSearchParams(urlObj.search);
     const orderId = params.get('Optional1');

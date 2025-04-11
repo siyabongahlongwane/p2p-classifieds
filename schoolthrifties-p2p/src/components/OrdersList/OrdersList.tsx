@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, {  useState } from "react";
 import {
     Box,
     Table,
@@ -17,7 +17,7 @@ import { OrderPreview } from "../../typings/Order.int";
 import { useNavigate } from "react-router-dom";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 
 const OrdersList = ({ orders, showPayNow }: { orders: OrderPreview[], showPayNow: boolean }) => {
     const [search, setSearch] = useState("");
@@ -35,7 +35,8 @@ const OrdersList = ({ orders, showPayNow }: { orders: OrderPreview[], showPayNow
 
     const { post } = useApi(`${import.meta.env.VITE_API_URL}`);
     const { showToast } = useToastStore();
-    const { user } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
 
     const payExistingOrder = async (order_id: number) => {
         try {

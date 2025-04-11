@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import useToastStore from "../../stores/useToastStore";
 import useApi from "../../hooks/useApi";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import { Box, Grid, Button, Typography } from "@mui/material";
 import PageHeader from "../PageHeader/PageHeader";
 import BankDetailsDialog from "./BankDetailsDialog";
@@ -13,7 +13,8 @@ const Wallet = () => {
   const [amount, setAmount] = useState("0");
   const { showToast } = useToastStore();
   const { post, get } = useApi(`${import.meta.env.VITE_API_URL}`);
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
   const [fetchPayouts, setFetchPayouts] = useState(false);
 
   const handleRequestPayout = async (bankingDetails: IBankingDetails) => {

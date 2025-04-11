@@ -1,23 +1,23 @@
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../typings/User.type';
 import useToastStore from '../stores/useToastStore';
 import { useStore } from '../stores/store';
-import { UserContext } from '../context/User/UserContext';
 import useLoaderStore from '../stores/useLoaderStore';
 import { SignUpForm } from '../pages/Auth/SignUp';
+import { useUserStore } from '../stores/useUserStore';
 
 const useAuth = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { setUser } = useContext(UserContext);
     const serverURL = import.meta.env.VITE_API_URL;
     const { showToast } = useToastStore();
     const { setField } = useStore();
     const { showLoader, hideLoader } = useLoaderStore();
+    const { setUser } = useUserStore();
 
-    // Register function, setContextUser: () => void)
+    // Register function, setCurrentUser: () => void)
 
     const signUp = async (body: SignUpForm) => {
         setLoading(true);
@@ -103,14 +103,14 @@ const useAuth = () => {
     };
 
     // Logout function
-    const logout = (setContextUser: Dispatch<SetStateAction<User | null>>) => {
+    const logout = (setCurrentUser: (user: User | null) => void) => {
         setField('cart', []);
         setField('likes', []);
         navigate('/home');
         setField('activeMenuItem', 0);
         showToast('Logged out successfully', 'success');
         setTimeout(() => {
-            setContextUser(null);
+            setCurrentUser(null);
             localStorage.removeItem('token');
             localStorage.removeItem('user');
         }, 0);

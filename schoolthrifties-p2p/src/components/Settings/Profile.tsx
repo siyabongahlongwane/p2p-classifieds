@@ -6,14 +6,14 @@ import {
     Grid,
     Stack,
 } from "@mui/material";
-import { useContext, useEffect } from "react";
-import { UserContext } from "../../context/User/UserContext";
+import {  useEffect } from "react";
+import { useUserStore } from '../../stores/useUserStore';
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
 import { User } from "../../typings";
 
 const ProfileSettings = () => {
-    const { user, setUser } = useContext(UserContext);
+    const { user, setUser } = useUserStore((state) => state);
     const { put } = useApi(import.meta.env.VITE_API_URL);
     const { showToast } = useToastStore();
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
@@ -27,7 +27,7 @@ const ProfileSettings = () => {
 
     const onSubmit = async (data: Partial<User>) => {
         try {
-            const updatedProfile = await put(`/auth/update-profile/${user.user_id}`, { ...data });
+            const updatedProfile = await put(`/auth/update-profile/${user?.user_id}`, { ...data });
             if (!updatedProfile) throw new Error('Error updating profile');
 
             setUser({ ...updatedProfile });
@@ -43,7 +43,7 @@ const ProfileSettings = () => {
     }
 
     useEffect(() => {
-        const { first_name, last_name, email, phone, } = user;
+        const { first_name, last_name, email, phone, } = user as User;
 
         reset({
             first_name, last_name, email, phone,

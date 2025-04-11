@@ -1,7 +1,7 @@
 import { Box, Grid2, Stack, Typography } from "@mui/material";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { useContext, useState, useEffect } from "react";
-import { UserContext } from "../../context/User/UserContext";
+import {  useState, useEffect } from "react";
+import { useUserStore } from '../../stores/useUserStore';
 import { Outlet, useNavigate } from "react-router-dom";
 import useApi from "../../hooks/useApi";
 import MyShopItem from "./MyShopItem";
@@ -10,7 +10,8 @@ import useToastStore from "../../stores/useToastStore";
 import { PlainProduct } from "../../typings";
 
 const MyShop = () => {
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
   const [isAddNewProduct, setIsAddNewProduct] = useState(
     window.location.pathname.includes("add-product")
   );

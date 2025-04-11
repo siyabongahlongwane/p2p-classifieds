@@ -1,19 +1,19 @@
 import { ListItem, Stack, Typography } from "@mui/material"
 import ChatListItem from "./ChatListItem"
 import { useChatStore } from "../../stores/useChatStore";
-import { useContext, useEffect } from "react";
-import { UserContext } from "../../context/User/UserContext";
+import { useEffect } from "react";
+import { useUserStore } from '../../stores/useUserStore';
 import { ChatMessage } from "../../typings";
 
 
 const ChatList = () => {
     const { activeChat, setActiveChat, setChats, chats } = useChatStore();
-    const { user: { user_id } } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
 
     useEffect(() => {
         const fetchChats = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/chats/fetch-chats?user_id=${user_id}`);
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/chats/fetch-chats?user_id=${user?.user_id}`);
                 const data = await response.json();
 
                 if (response.ok) {
@@ -27,7 +27,7 @@ const ChatList = () => {
         };
 
         fetchChats();
-    }, [setChats, user_id])
+    }, [setChats, user?.user_id])
 
     return (
         <Stack>
@@ -39,7 +39,7 @@ const ChatList = () => {
                     chats && chats?.map((chat, indx) => {
                         return (
                             <ListItem key={indx} onClick={() => setActiveChat(chat.chat_id)}>
-                                <ChatListItem chat_id={chat.chat_id} lastMessage={chat.lastMessage as ChatMessage} activeChat={activeChat === chat.chat_id} currentUser={user_id} users={chat.users} />
+                                <ChatListItem chat_id={chat.chat_id} lastMessage={chat.lastMessage as ChatMessage} activeChat={activeChat === chat.chat_id} currentUser={user?.user_id as number} users={chat.users} />
                             </ListItem>
                         )
                     })

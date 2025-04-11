@@ -1,11 +1,9 @@
-import { Dispatch, SetStateAction, useContext } from "react";
 import "./MenuItem.css";
 import { Typography } from "@mui/material";
 
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import { useNavigate } from "react-router-dom";
 import { MenuItem as MenuItemType } from "../../typings/MenuItem.type";
-import { User } from "../../typings/User.type";
 
 const MenuItem = ({
   item,
@@ -18,7 +16,7 @@ const MenuItem = ({
   setActiveMenuItem: (key: string, val: number) => void;
   index: number;
 }) => {
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useUserStore();
   const navigate = useNavigate();
   const { label, Icon, logout, route } = item;
   const isActive = index === activeMenuItem;
@@ -33,7 +31,7 @@ const MenuItem = ({
       className="menu-item"
       onClick={() =>
         logout
-          ? logout(setUser as Dispatch<SetStateAction<User | null>>)
+          ? logout(setUser as any)
           : handleItemClick(route)
       }
     >

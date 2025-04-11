@@ -4,13 +4,13 @@ import { useStore } from "../../stores/store";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import FloatingActionButton from "../../components/FloatingActionButton/FloatingActionButton";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
-import { UserContext } from "../../context/User/UserContext";
-import { useContext } from "react";
+import { useUserStore } from '../../stores/useUserStore';
+import { User } from "../../typings";
 
 const Payment = () => {
     const { cart, checkoutCrumbs } = useStore();
     const navigate = useNavigate();
-    const { user } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
     return (
         <Stack position={"relative"}>
             <Breadcrumb crumbs={checkoutCrumbs} activeCrumb={2} fontSize={20} />
@@ -37,7 +37,7 @@ const Payment = () => {
                         ))}
                     </Stack>
                     <Grid2>
-                        <OrderSummary user={user} />
+                        <OrderSummary user={user as User} />
                     </Grid2>
                 </Grid2>
             )}

@@ -1,22 +1,17 @@
 import "./Menu.css";
 import MenuItem from "../MenuItem/MenuItem";
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useMatch } from 'react-router-dom';
 import { Dashboard, HomeOutlined, LocalShippingOutlined, Lock, LogoutOutlined, MarkChatUnreadOutlined, Money, SettingsOutlined, ShoppingBagOutlined, WalletOutlined } from "@mui/icons-material";
 import useAuth from "../../hooks/useAuth";
 import { MenuItem as MenuItemType } from "../../typings/MenuItem.type";
 import { useStore } from "../../stores/store";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 
 const Menu = () => {
     const { setField, activeMenuItem, filteredMenuItems } = useStore();
     const location = useLocation();
-    const { user } = useContext(UserContext);
-    const roles = {
-        1: 'Admin',
-        2: 'Shop Manager',
-        3: 'Parent',
-    }
+    const user = useUserStore((state) => state.user);
 
     const isLoggedIn = user !== null;
     const isParent = isLoggedIn && JSON.parse(user.roles).includes(3);
@@ -57,7 +52,7 @@ const Menu = () => {
             Icon: LogoutOutlined,
             label: 'Logout',
             route: '',
-            logout: useAuth().logout
+            logout: useAuth().logout as any
         },
     ]);
 

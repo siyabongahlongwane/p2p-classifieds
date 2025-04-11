@@ -3,15 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "../../stores/store";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import FloatingActionButton from "../../components/FloatingActionButton/FloatingActionButton";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../context/User/UserContext";
+import {  useEffect, useState } from "react";
+import { useUserStore } from '../../stores/useUserStore';
 
 const ShippingDetails = () => {
     const { cart, checkoutCrumbs, setField, orderObject, pudoLockers } = useStore();
     const navigate = useNavigate();
     const [isDelivery, setIsDelivery] = useState(orderObject.shippingMethod === 'Delivery');
     const [isPickUp, setIsPickUp] = useState(orderObject.shippingMethod === 'Pick Up');
-    const { user } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
 
     useEffect(() => {
         setField('orderObject', { ...orderObject, phoneNumber: user?.phone });

@@ -1,15 +1,16 @@
 import OrdersList from '../../components/OrdersList/OrdersList'
 import { Box, Typography } from '@mui/material'
 import PageHeader from '../../components/PageHeader/PageHeader'
-import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../context/User/UserContext';
+import { useEffect, useState } from 'react';
+;
 import useApi from '../../hooks/useApi';
 import { OrderPreview, OrderWithItems } from '../../typings/Order.int';
 import { useNavigate } from 'react-router-dom';
 import useToastStore from '../../stores/useToastStore';
+import { useUserStore } from '../../stores/useUserStore';
 
 const CustomerOrders = () => {
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
   const { get } = useApi(`${import.meta.env.VITE_API_URL}`);
   const [orders, setOrders] = useState<OrderPreview[]>([]);
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const CustomerOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        let orders = await get(`/orders/fetch-orders?shop_id=${user.shop_id}`);
+        let orders = await get(`/orders/fetch-orders?shop_id=${user?.shop_id}`);
         if (!orders) throw new Error('Error fetching orders');
 
         orders = orders.map((order: OrderWithItems) => {
@@ -59,7 +60,7 @@ const CustomerOrders = () => {
           <Typography fontSize={12}>View My Orders</Typography>
         </Box>
       </Box>
-      <OrdersList orders={orders} showEdit />
+      <OrdersList orders={orders} showPayNow={false} />
     </>
   )
 }

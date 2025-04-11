@@ -1,4 +1,4 @@
-import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { SyntheticEvent,  useEffect, useState } from "react";
 import {
     Box,
     Tab,
@@ -10,12 +10,13 @@ import BankingDetailsSettings from "../../components/Settings/BankingDetails";
 import ProfileSettings from "../../components/Settings/Profile";
 import ShopSettings from "../../components/Settings/Shop";
 import ShippingSettings from "../../components/Settings/Shipping";
-import { UserContext } from "../../context/User/UserContext";
+import { useUserStore } from '../../stores/useUserStore';
 import PageHeader from "../../components/PageHeader/PageHeader";
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState(0);
-    const { user } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
 
 
     const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {

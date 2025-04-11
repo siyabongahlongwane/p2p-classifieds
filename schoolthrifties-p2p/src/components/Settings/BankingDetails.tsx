@@ -10,14 +10,15 @@ import {
     MenuItem,
     Select,
 } from "@mui/material";
-import { useContext, useEffect } from "react";
-import { UserContext } from "../../context/User/UserContext";
+import {  useEffect } from "react";
+import { useUserStore } from '../../stores/useUserStore';
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
 import { IBankingDetails } from "../../typings/Banking.int";
 
 const BankingDetailsSettings = () => {
-    const { user } = useContext(UserContext);
+    const user = useUserStore((state) => state.user);
+const setUser = useUserStore((state) => state.setUser);
     const { put, get } = useApi(import.meta.env.VITE_API_URL);
     const { showToast } = useToastStore();
     const { register, handleSubmit, formState: { errors }, reset, control } = useForm({

@@ -25,18 +25,19 @@ import Wallet from "./components/Wallet/Wallet";
 import UserShop from "./components/UserShop/UserShop";
 import Settings from "./pages/Settings/Settings";
 import ChatApp from "./pages/Messages/Messages";
-import { useContext, useEffect } from "react";
-import { UserContext } from "./context/User/UserContext";
+import { useEffect } from "react";
 import socket from "./utils/socket";
 import GlobalSearch from "./components/GlobalSearch/GlobalSearch";
 import ResetPasswordPage from "./pages/Auth/ResetPassword";
 import { useStore } from "./stores/store";
 import useApi from "./hooks/useApi";
+import { useUserStore } from "./stores/useUserStore";
 
 function App() {
   const { loading } = useLoaderStore();
   const { isOpen } = useToastStore();
-  const { user } = useContext(UserContext);
+  const user = useUserStore((state) => state.user);
+
   const { showToast } = useToastStore();
   const { setField } = useStore();
   const { get } = useApi(`${import.meta.env.VITE_API_URL}`);
