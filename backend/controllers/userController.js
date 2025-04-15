@@ -12,7 +12,7 @@ module.exports = {
             const { dbUser, newShop } = await createUser(req.body);
             const { user_id, roles } = dbUser.dataValues;
 
-            const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET);
+            const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
             delete dbUser.dataValues.password;
             res.status(200).json({ payload: { ...dbUser.dataValues, shop_id: newShop.dataValues.shop_id }, token, msg: 'Registration Successful', success: true });
 
@@ -46,7 +46,7 @@ module.exports = {
 
             if (user && await bcrypt.compare(password, user.password)) {
                 const { email, roles, user_id } = user;
-                const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET);
+                const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
                 delete user.password;
                 return res.status(200).json({ payload: user, token, success: true });
             }
@@ -68,7 +68,7 @@ module.exports = {
             });
 
             if (user && await bcrypt.compare(password, user.password)) {
-                const token = sign({ email: user.email, roles: user.roles }, process.env.ACCESS_TOKEN_SECRET);
+                const token = sign({ email: user.email, roles: user.roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
                 return res.status(200).json({ payload: user, token, success: true });
             }
 
@@ -153,7 +153,7 @@ module.exports = {
 
                         delete dbUser.password;
 
-                        const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET);
+                        const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
                         const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...dbUser?.dataValues, shop_id: newShop.shop_id }, token }));
 
                         res.redirect(`${process.env.CLIENT_URL}/sign-in?hash=${encodeStr}`);
@@ -181,7 +181,7 @@ module.exports = {
                     await updateUser(user_id, { google_id })
                 }
 
-                const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET);
+                const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
                 const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...userExists, shop_id: newShop.shop_id }, token }));
 
                 res.redirect(`${process.env.CLIENT_URL}/sign-in?hash=${encodeStr}`);
@@ -228,7 +228,7 @@ module.exports = {
             // Verify token
             let payload;
             try {
-                payload = verify(token, process.env.ACCESS_TOKEN_SECRET);
+                payload = verify(token, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
             } catch (err) {
                 return res.status(401).json({ err: "Invalid or expired token, please go back and try again" });
             }

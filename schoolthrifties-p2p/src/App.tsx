@@ -76,7 +76,7 @@ function App() {
   const fetchPudoLockers = async () => {
     try {
       const pudoLockers = await get("/pudo/fetch-lockers");
-      if (!pudoLockers) throw new Error('Error fetching pudoLockers');
+      if (!pudoLockers) throw new Error('Error fetching Pudo Lockers');
 
       setField("pudoLockers", pudoLockers);
     } catch (error) {

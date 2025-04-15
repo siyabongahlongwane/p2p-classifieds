@@ -1,4 +1,3 @@
-// src/hooks/useApi.js
 import { useState } from 'react';
 import useLoaderStore from '../stores/useLoaderStore';
 
@@ -9,15 +8,36 @@ const useApi = (baseUrl: string) => {
 
     const { showLoader, hideLoader } = useLoaderStore();
 
+    const getToken = () => {
+        const stored = localStorage.getItem('token') || null;
+        if (!stored || stored === 'undefined') return null;
+        return stored;
+    };
+
     const fetchData = async (url: string, options = {}) => {
         setLoading(true);
         setError(null);
+
+        const token = getToken();
+        const defaultHeaders = {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+        };
+
         try {
             showLoader();
-            const response = await fetch(url, options);
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...defaultHeaders,
+                    ...(options as any).headers,
+                },
+            });
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+
             const result = await response.json();
             setData(result.payload);
             return result.payload;
@@ -39,66 +59,23 @@ const useApi = (baseUrl: string) => {
     };
 
     const post = async (endpoint: string, payload: unknown) => {
-        setLoading(true);
-        setError(null);
-        try {
-            showLoader();
-            const response = await fetchData(`${baseUrl}${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            return response;
-        } catch (err) {
-            setError(err);
-        } finally {
-            setLoading(false);
-            setTimeout(() => {
-                setLoading(false);
-                hideLoader();
-            }, 1500);
-        }
+        return await fetchData(`${baseUrl}${endpoint}`, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+        });
     };
 
-    const put = async (endpoint: string, payload: any) => {
-        try {
-            const response = await fetchData(`${baseUrl}${endpoint}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            return response;
-        } catch (err) {
-            setError(err);
-        } finally {
-            setLoading(false);
-            setTimeout(() => {
-                setLoading(false);
-                hideLoader();
-            }, 1500);
-        }
+    const put = async (endpoint: string, payload: unknown) => {
+        return await fetchData(`${baseUrl}${endpoint}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        });
     };
 
     const remove = async (endpoint: string) => {
-        try {
-            const response = await fetchData(`${baseUrl}${endpoint}`, {
-                method: 'DELETE',
-            });
-            return response;
-        } catch (err) {
-            setError(err);
-        } finally {
-            setLoading(false);
-            setTimeout(() => {
-                setLoading(false);
-                hideLoader();
-            }, 1500);
-        }
+        return await fetchData(`${baseUrl}${endpoint}`, {
+            method: 'DELETE',
+        });
     };
 
     return { data, loading, error, get, post, put, remove };
