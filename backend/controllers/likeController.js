@@ -25,7 +25,7 @@ module.exports = {
                 }
             });
 
-            const liked_products = await fetchLikes(req.query.user_id);
+            const liked_products = await fetchLikes(req.user.user_id);
 
             if (!liked_products) return res.status(500).json({ err: 'Error fetching updated likes' });
             res.status(200).json({ msg: 'Item like removed successfully', payload: liked_products, success: true })
@@ -38,7 +38,7 @@ module.exports = {
 
 
     fetch: async (req, res) => {
-        const { user_id } = req.query;
+        const { user_id } = req.user;
         try {
             if (!user_id) return res.status(400).json({ err: 'User id not provided!' });
 

@@ -52,7 +52,7 @@ const CartItem = ({ product_id, user, isButton = false, shop_id }: CartItemProps
                 const likeToRemove = cart.find((p: ICartItem) => p.product_id === product_id)
                     ?.cart_item.cart_item_id;
                 const filteredCart = cart.filter((p: ICartItem) => p.product_id !== product_id);
-                const removedFromCart = await remove(`/cart/remove-cart-item/${likeToRemove}?user_id=${user_id}`);
+                const removedFromCart = await remove(`/cart/remove-cart-item/${likeToRemove}`);
 
                 if (!removedFromCart) throw new Error('Error removing liked item from cart');
                 showToast('Item removed from cart', 'success');

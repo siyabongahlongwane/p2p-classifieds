@@ -7,10 +7,8 @@ import useApi from '../../hooks/useApi';
 import { OrderPreview, OrderWithItems } from '../../typings/Order.int';
 import { useNavigate } from 'react-router-dom';
 import useToastStore from '../../stores/useToastStore';
-import { useUserStore } from '../../stores/useUserStore';
 
 const MyOrders = () => {
-  const user = useUserStore((state) => state.user);
   const { get } = useApi(`${import.meta.env.VITE_API_URL}`);
   const [orders, setOrders] = useState<OrderPreview[]>([]);
   const navigate = useNavigate();
@@ -19,7 +17,7 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        let orders = await get(`/orders/fetch-orders?user_id=${user?.user_id}`);
+        let orders = await get(`/orders/fetch-orders`);
 
         if (!orders) throw new Error('Error fetching orders');
 
@@ -36,7 +34,7 @@ const MyOrders = () => {
         setOrders(orders);
       } catch (error) {
         const _error = error instanceof Error ? error.message : error;
-        showToast(_error as string, 'error');
+        showToast(`Error fetching orders: ${_error}`, 'error', 5000);
         console.error('error', _error);
         return;
       }

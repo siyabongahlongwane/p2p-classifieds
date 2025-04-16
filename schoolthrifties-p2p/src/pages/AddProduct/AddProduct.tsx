@@ -14,7 +14,7 @@ import SizeGuideDialog from "../../components/SizeGuideDialog/SizeGuideDialog";
 
 const AddProduct = () => {
   const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
+
   const { user_id, shop_id } = user;
   const { categories, provinces, productConditions, productPhotos, productStatuses, setField, ageRanges, shoeSizes } = useStore();
   const { get, post, put } = useApi(import.meta.env.VITE_API_URL);
@@ -33,27 +33,9 @@ const setUser = useUserStore((state) => state.setUser);
   const [isShoeCategory, setisShoeCategory] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const fetchCategories = async () => {
-    try {
-      const categories = await get("/categories/fetch");
-      if (!categories) throw new Error('Error fetching categories');
-
-      setField("categories", categories);
-    } catch (error) {
-      const _error = error instanceof Error ? error.message : error;
-      showToast(_error as string, 'error');
-      console.error('error', _error);
-      return;
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
   const fetchProduct = useCallback(async () => {
     try {
-      const [product] = await get(`/product/fetch?user_id=${user_id}&product_id=${product_id}`);
+      const [product] = await get(`/product/fetch&product_id=${product_id}`);
       if (!product) throw new Error('Error fetching product');
 
       setisShoeCategory(categories.find(cat => cat.title === 'Shoes')?.category_id === product.category_id);
@@ -68,7 +50,7 @@ const setUser = useUserStore((state) => state.setUser);
 
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
-      showToast(_error as string, 'error');
+      showToast(`Error fetching product: ${_error}`, 'error', 5000);
       console.error('error', _error);
       return;
     }

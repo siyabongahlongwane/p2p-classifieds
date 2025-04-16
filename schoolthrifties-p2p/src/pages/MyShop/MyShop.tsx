@@ -11,7 +11,6 @@ import { PlainProduct } from "../../typings";
 
 const MyShop = () => {
   const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
   const [isAddNewProduct, setIsAddNewProduct] = useState(
     window.location.pathname.includes("add-product")
   );
@@ -26,13 +25,13 @@ const setUser = useUserStore((state) => state.setUser);
   useEffect(() => {
     const fetchShop = async () => {
       try {
-        const [shop] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
+        const [shop] = await get(`/shop/fetch-shops`);
         if (!shop) throw new Error('Error fetching shop');
 
         setField("selectedShop", shop);
       } catch (error) {
         const _error = error instanceof Error ? error.message : error;
-        showToast(_error as string, 'error');
+        showToast(`Error fetching your shop: ${_error}`, 'error', 5000);
         console.error('error', _error);
         return;
       }

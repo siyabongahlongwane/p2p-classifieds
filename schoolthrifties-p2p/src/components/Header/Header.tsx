@@ -27,8 +27,8 @@ const Header = () => {
   const fetchLikes = async () => {
     if (user) {
       try {
-        const likes = await get(`/likes/fetch-likes?user_id=${user.user_id}`);
-        const cart = await get(`/cart/fetch-cart?user_id=${user.user_id}`);
+        const likes = await get(`/likes/fetch-likes`);
+        const cart = await get(`/cart/fetch-cart`);
         if (!likes) throw new Error('Error fetching likes');
         if (!cart) throw new Error('Error fetching cart items');
 

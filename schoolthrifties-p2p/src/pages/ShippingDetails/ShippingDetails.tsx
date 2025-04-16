@@ -12,7 +12,6 @@ const ShippingDetails = () => {
     const [isDelivery, setIsDelivery] = useState(orderObject.shippingMethod === 'Delivery');
     const [isPickUp, setIsPickUp] = useState(orderObject.shippingMethod === 'Pick Up');
     const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
 
     useEffect(() => {
         setField('orderObject', { ...orderObject, phoneNumber: user?.phone });
@@ -106,6 +105,7 @@ const setUser = useUserStore((state) => state.setUser);
                                                             renderInput={(params) => (
                                                                 <TextField
                                                                     {...params}
+                                                                    key={params.id}
                                                                     label="Select Pudo Locker Location Nearest To You"
                                                                     variant="standard"
                                                                 />

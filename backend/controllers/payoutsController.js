@@ -4,7 +4,9 @@ const mail = require('../utils/mail');
 module.exports = {
     createPayout: async (req, res) => {
         try {
-            const { user_id, name: bank_name, account_number, account_holder } = req.body;
+            const { user_id } = req.user;
+            
+            const { name: bank_name, account_number, account_holder } = req.body;
 
             const user = await User.findByPk(user_id);
 
@@ -51,7 +53,7 @@ module.exports = {
     },
     updatePayout: async (req, res) => {
         try {
-            const { user_id } = req.params;
+            const { user_id } = req.user;
             const { amount } = req.body;
 
             const payout = await Payout.findOne({

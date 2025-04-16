@@ -2,21 +2,21 @@ import { useState } from 'react';
 import useLoaderStore from '../stores/useLoaderStore';
 
 const useApi = (baseUrl: string) => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string>('');
 
     const { showLoader, hideLoader } = useLoaderStore();
 
     const getToken = () => {
-        const stored = localStorage.getItem('token') || null;
+        const stored = localStorage.getItem('token');
         if (!stored || stored === 'undefined') return null;
         return stored;
     };
 
-    const fetchData = async (url: string, options = {}) => {
+    const fetchData = async (url: string, options: RequestInit = {}) => {
         setLoading(true);
-        setError(null);
+        setError('');
 
         const token = getToken();
         const defaultHeaders = {
@@ -26,36 +26,41 @@ const useApi = (baseUrl: string) => {
 
         try {
             showLoader();
+
             const response = await fetch(url, {
                 ...options,
                 headers: {
                     ...defaultHeaders,
-                    ...(options as any).headers,
+                    ...(options.headers || {}),
                 },
             });
 
+            const result = await response.json();
+
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const message =
+                    result?.err ||
+                    'An unexpected error occurred';
+                setError(message);
+                throw new Error(message);
             }
 
-            const result = await response.json();
-            setData(result.payload);
+            setData(result.payload || []);
             return result.payload;
-        } catch (err) {
-            setError(err);
+        } catch (err: any) {
+            const fallback = err?.message || 'Unexpected error occurred';
+            setError(fallback);
+            throw new Error(fallback);
         } finally {
             setLoading(false);
             setTimeout(() => {
-                setLoading(false);
                 hideLoader();
             }, 1500);
         }
     };
 
     const get = async (endpoint: string) => {
-        const data = await fetchData(`${baseUrl}${endpoint}`);
-        setData(data);
-        return data;
+        return await fetchData(`${baseUrl}${endpoint}`);
     };
 
     const post = async (endpoint: string, payload: unknown) => {

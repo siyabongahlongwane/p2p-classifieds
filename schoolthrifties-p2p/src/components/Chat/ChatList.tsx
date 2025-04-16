@@ -4,25 +4,29 @@ import { useChatStore } from "../../stores/useChatStore";
 import { useEffect } from "react";
 import { useUserStore } from '../../stores/useUserStore';
 import { ChatMessage } from "../../typings";
+import useApi from "../../hooks/useApi";
+import useToastStore from "../../stores/useToastStore";
 
 
 const ChatList = () => {
     const { activeChat, setActiveChat, setChats, chats } = useChatStore();
     const user = useUserStore((state) => state.user);
+    const { showToast } = useToastStore();
+
+    const { get, error } = useApi(`${import.meta.env.VITE_API_URL}`);
 
     useEffect(() => {
         const fetchChats = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/chats/fetch-chats?user_id=${user?.user_id}`);
-                const data = await response.json();
+                const response = await get(`/chats/fetch-chats`);
 
-                if (response.ok) {
-                    setChats(data.payload);
-                } else {
-                    console.error("Error:", data.err);
-                }
-            } catch (error) {
-                console.error("Fetch error:", error);
+                if (!response){
+                    throw new Error(error);
+                } 
+                setChats(response);
+            } catch (error: any) {
+                console.error("Fetch error:", error.message);
+                showToast(`Error fetching chats: ${error.message}`, 'error', 5000);
             }
         };
 

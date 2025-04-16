@@ -13,7 +13,7 @@ module.exports = {
     },
     fetchBankingDetail: async (req, res) => {
         try {
-            const { user_id } = req.query;
+            const { user_id } = req.user;
             const bankingDetail = await BankingDetail.findOne({
                 where: { user_id }
             });
@@ -29,7 +29,7 @@ module.exports = {
     },
     updateBankingDetail: async (req, res) => {
         try {
-            const { user_id } = req.params;
+            const { user_id } = req.user;
 
             const bankingDetail = await BankingDetail.findOne({
                 where: { user_id }

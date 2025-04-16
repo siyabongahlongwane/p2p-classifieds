@@ -42,7 +42,7 @@ const BankingDetailsSettings = () => {
 
         } catch (error) {
             const _error = error instanceof Error ? error.message : error;
-            showToast(_error as string, 'error');
+            showToast(`Error: ${_error}`, 'error', 5000);
             console.error('error', _error);
             return;
         }
@@ -51,14 +51,14 @@ const BankingDetailsSettings = () => {
     useEffect(() => {
         const fetchBankingDetails = async () => {
             try {
-                const bankingDetails = await get(`/banking/fetch-banking-details?user_id=${user?.user_id}`);
+                const bankingDetails = await get(`/banking/fetch-banking-details`);
                 if (!bankingDetails) throw new Error('Error fetching Banking Details');
 
                 const { name, account_number, account_holder, account_type } = bankingDetails;
                 reset({ name: name ?? '', account_number: account_number ?? '', account_holder, account_type: account_type ?? '' });
             } catch (error) {
                 const _error = error instanceof Error ? error.message : error;
-                showToast(_error as string, 'error');
+                showToast(`Error: ${_error}`, 'error', 5000);
                 console.error('error', _error);
                 return;
             }

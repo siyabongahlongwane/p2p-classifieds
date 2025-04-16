@@ -12,7 +12,7 @@ module.exports = {
             const { dbUser, newShop } = await createUser(req.body);
             const { user_id, roles } = dbUser.dataValues;
 
-            const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
+            const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
             delete dbUser.dataValues.password;
             res.status(200).json({ payload: { ...dbUser.dataValues, shop_id: newShop.dataValues.shop_id }, token, msg: 'Registration Successful', success: true });
 
@@ -46,7 +46,7 @@ module.exports = {
 
             if (user && await bcrypt.compare(password, user.password)) {
                 const { email, roles, user_id } = user;
-                const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
+                const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
                 delete user.password;
                 return res.status(200).json({ payload: user, token, success: true });
             }
@@ -68,7 +68,7 @@ module.exports = {
             });
 
             if (user && await bcrypt.compare(password, user.password)) {
-                const token = sign({ email: user.email, roles: user.roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
+                const token = sign({ email: user.email, roles: user.roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
                 return res.status(200).json({ payload: user, token, success: true });
             }
 
@@ -80,7 +80,7 @@ module.exports = {
     },
     updateProfile: async (req, res) => {
         try {
-            const { user_id } = req.params;
+            const { user_id } = req.user;
 
             const user = await User.findOne({
                 where: {
@@ -134,7 +134,6 @@ module.exports = {
                     ],
                 }
 
-                console.log('USER Not Found', email);
                 const userExists = await findUser(query);
                 if (!userExists) {
                     console.log('USER Not Found', email);
@@ -153,7 +152,7 @@ module.exports = {
 
                         delete dbUser.password;
 
-                        const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
+                        const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
                         const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...dbUser?.dataValues, shop_id: newShop.shop_id }, token }));
 
                         res.redirect(`${process.env.CLIENT_URL}/sign-in?hash=${encodeStr}`);
@@ -173,16 +172,16 @@ module.exports = {
                     return;
                 }
 
-                console.log('USER EXIST', userExists?.dataValues);
+                console.log('USER EXISTS', userExists?.dataValues);
 
-                const { user_id, roles } = userExists;
+                const { user_id, roles, shop_id } = userExists?.dataValues;
 
                 if (!userExists?.google_id) {
                     await updateUser(user_id, { google_id })
                 }
 
-                const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
-                const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...userExists, shop_id: newShop.shop_id }, token }));
+                const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
+                const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...userExists?.dataValues, shop_id }, token }));
 
                 res.redirect(`${process.env.CLIENT_URL}/sign-in?hash=${encodeStr}`);
             } else {
@@ -228,7 +227,7 @@ module.exports = {
             // Verify token
             let payload;
             try {
-                payload = verify(token, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
+                payload = verify(token, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
             } catch (err) {
                 return res.status(401).json({ err: "Invalid or expired token, please go back and try again" });
             }

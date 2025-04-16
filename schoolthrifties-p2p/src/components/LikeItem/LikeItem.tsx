@@ -46,7 +46,7 @@ const LikeItem = ({ product_id, showLabel, user }: LikeItemProps) => {
                 const likeToRemove = likes.find((p: ProductWithLike) => p.product_id === product_id)
                     ?.like_item?.like_id;
                 const newLikes = likes.filter((p: ProductWithLike) => p.product_id !== product_id);
-                const likeRemoved = await remove(`/likes/remove-like/${likeToRemove}?user_id=${user_id}`);
+                const likeRemoved = await remove(`/likes/remove-like/${likeToRemove}`);
 
                 if (!likeRemoved) throw new Error('Error removing liked item from likes');
 
@@ -54,7 +54,9 @@ const LikeItem = ({ product_id, showLabel, user }: LikeItemProps) => {
                 setLikes([...newLikes]);
                 setIsLiked(false);
             } catch (error) {
-                showToast('Error removing item from likes', 'error');
+                const _error = error instanceof Error ? error.message : error;
+                showToast(`${_error}`, 'error', 5000);
+
                 console.error(error);
             }
         } else {

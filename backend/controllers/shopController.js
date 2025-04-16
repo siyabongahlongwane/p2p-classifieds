@@ -53,7 +53,7 @@ module.exports = {
     },
     updateShop: async (req, res) => {
         try {
-            const { user_id } = req.params;
+            const { user_id } = req.user;
 
             const shop = await Shop.findOne({
                 where: { user_id }

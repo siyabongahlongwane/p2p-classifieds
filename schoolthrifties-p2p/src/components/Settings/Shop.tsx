@@ -36,7 +36,7 @@ const ShopSettings = () => {
             showToast('Shop Details updated successfully', 'success');
         } catch (error) {
             const _error = error instanceof Error ? error.message : error;
-            showToast(_error as string, 'error');
+            showToast(`Error: ${_error}`, 'error', 5000);
             console.error('error', _error);
             return;
         }
@@ -44,7 +44,7 @@ const ShopSettings = () => {
 
     const fetchShopDetails = useCallback(async () => {
         try {
-            const [shopDetails] = await get(`/shop/fetch-shops?user_id=${user.user_id}`);
+            const [shopDetails] = await get(`/shop/fetch-shops`);
             if (!shopDetails) throw new Error('Error fetching Shop Details');
 
             const { name, link, location } = shopDetails;
@@ -52,7 +52,7 @@ const ShopSettings = () => {
             reset({ name, link, location });
         } catch (error) {
             const _error = error instanceof Error ? error.message : error;
-            showToast(_error as string, 'error');
+            showToast(`Error fetching shop details: ${_error}`, 'error', 5000);
             console.error('error', _error);
             return;
         }

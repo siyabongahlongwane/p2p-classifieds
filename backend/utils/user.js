@@ -49,7 +49,7 @@ const createUser = async (body) => {
         is_active: false
     });
 
-    return { dbUser, newShop };
+    return { dbUser, newShop: newShop.dataValues };
 }
 
 const findUser = async (query) => {

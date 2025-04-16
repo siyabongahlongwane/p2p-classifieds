@@ -17,7 +17,7 @@ module.exports = {
     },
     fetchWallet: async (req, res) => {
         try {
-            const { user_id } = req.query;
+            const { user_id } = req.user;
             const wallet = await Wallet.findOne({
                 where: { user_id }
             });
@@ -33,7 +33,7 @@ module.exports = {
     },
     updateWallet: async (req, res) => {
         try {
-            const { user_id } = req.params;
+            const { user_id } = req.user;
             const { amount } = req.body;
 
             const wallet = await Wallet.findOne({

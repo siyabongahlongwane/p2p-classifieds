@@ -39,7 +39,7 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// app.use(passport.session());
+app.use(passport.session());
 app.use(passport.initialize());
 
 (async () => {

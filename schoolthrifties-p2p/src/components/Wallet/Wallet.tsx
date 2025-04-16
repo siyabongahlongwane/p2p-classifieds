@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useToastStore from "../../stores/useToastStore";
 import useApi from "../../hooks/useApi";
 import { useUserStore } from '../../stores/useUserStore';
@@ -14,7 +14,7 @@ const Wallet = () => {
   const { showToast } = useToastStore();
   const { post, get } = useApi(`${import.meta.env.VITE_API_URL}`);
   const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
+
   const [fetchPayouts, setFetchPayouts] = useState(false);
 
   const handleRequestPayout = async (bankingDetails: IBankingDetails) => {
@@ -30,7 +30,7 @@ const setUser = useUserStore((state) => state.setUser);
 
     } catch (error) {
       const _error = error instanceof Error ? error.message : error;
-      showToast(_error as string, 'error');
+      showToast(`Error creating payout: ${_error}`, 'error', 5000);
       console.error('error', _error);
       return;
     }
@@ -42,14 +42,14 @@ const setUser = useUserStore((state) => state.setUser);
   useEffect(() => {
     const fetchWallet = async () => {
       try {
-        const wallet = await get(`/wallet/fetch-wallet?user_id=${user?.user_id}`);
+        const wallet = await get(`/wallet/fetch-wallet`);
         if (!wallet) throw new Error('Error fetching wallet');
 
         setAmount(wallet.amount)
 
       } catch (error) {
         const _error = error instanceof Error ? error.message : error;
-        showToast(_error as string, 'error');
+        showToast(`Error fetching wallet: ${_error}`, 'error', 5000);
         console.error('error', _error);
         return;
       }

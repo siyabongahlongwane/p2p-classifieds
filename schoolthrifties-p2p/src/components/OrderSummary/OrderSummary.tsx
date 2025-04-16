@@ -23,7 +23,7 @@ const OrderSummary = ({ user }: { user: User }) => {
 
     const getWalletBalance = useCallback(async () => {
         try {
-            const wallet = await get(`/wallet/fetch-wallet?user_id=${user?.user_id}`);
+            const wallet = await get(`/wallet/fetch-wallet`);
             if (!wallet) throw new Error('Error fetching wallet');
             setWalletBalance(wallet.amount);
 
@@ -116,7 +116,7 @@ const OrderSummary = ({ user }: { user: User }) => {
 
         } catch (error) {
             const _error = error instanceof Error ? error.message : error;
-            showToast(_error as string, 'error');
+            showToast(`Error: ${_error}`, 'error', 5000);
         }
     };
 

@@ -36,7 +36,7 @@ module.exports = {
      */
     fetchChats: async (req, res) => {
         try {
-            const { user_id } = req.query;
+            const { user_id } = req.user;
 
             const chats = await Chat.findAll({
                 where: {
