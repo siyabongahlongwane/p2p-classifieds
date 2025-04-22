@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
@@ -32,6 +32,8 @@ import ResetPasswordPage from "./pages/Auth/ResetPassword";
 import { useStore } from "./stores/store";
 import useApi from "./hooks/useApi";
 import { useUserStore } from "./stores/useUserStore";
+import Dashboard from "./pages/Admin/Dashboard";
+import PayoutsRequests from "./pages/Admin/PayoutsRequests";
 
 function App() {
   const { loading } = useLoaderStore();
@@ -130,6 +132,10 @@ function App() {
             <Route path="shipping-details" element={<ShippingDetails />} />
             <Route path="payment" element={<Payment />} />
             {/* <Route path="*" element={<Navigate to="/not-found" />} /> */}
+            <Route path="admin" element={<Outlet />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="payout-requests" element={<PayoutsRequests />} />
+            </Route>
           </Route>
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />

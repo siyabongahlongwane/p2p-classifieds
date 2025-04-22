@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useLoaderStore from '../stores/useLoaderStore';
+import { useUserStore } from '../stores/useUserStore';
 
 const useApi = (baseUrl: string) => {
     const [data, setData] = useState<any[]>([]);
@@ -42,6 +43,12 @@ const useApi = (baseUrl: string) => {
                     result?.err ||
                     'An unexpected error occurred';
                 setError(message);
+                if(response.status === 401){
+                    setTimeout(() => {
+                        useUserStore.getState().removeUser();
+                        window.location.href = '/sign-in';
+                    }, 2000)
+                }
                 throw new Error(message);
             }
 

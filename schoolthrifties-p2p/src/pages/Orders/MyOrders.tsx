@@ -24,7 +24,7 @@ const MyOrders = () => {
         orders = orders.map((order: OrderWithItems) => {
           return {
             order_id: order.order_id,
-            buyerName: 'Owner By You',
+            buyerName: 'Owned By You',
             date: new Date(order.created_at).toLocaleString(),
             totalAmount: order.total_price,
             status: order.status,

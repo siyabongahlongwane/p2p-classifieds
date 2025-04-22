@@ -15,6 +15,7 @@ const Menu = () => {
 
     const isLoggedIn = user !== null;
     const isParent = isLoggedIn && JSON.parse(user.roles).includes(3);
+    const isAdmin = isLoggedIn && JSON.parse(user.roles).includes(1);
 
     // Routes
     const [menuItems] = useState<MenuItemType[]>([
@@ -66,6 +67,7 @@ const Menu = () => {
     const ordersViewMatch = useMatch('/orders/view-order/*');
     const myShopEditMatch = useMatch('/my-shop/edit-product/*');
     const messagesChatMatch = useMatch('/messages/*');
+    const adminMatch = useMatch('/admin/*');
 
     useEffect(() => {
         // Initialize active route based on current location
@@ -93,6 +95,12 @@ const Menu = () => {
             matchedRouteIndex = menuItems.findIndex(item => item.route === 'my-shop');
         } else if (messagesChatMatch) {
             matchedRouteIndex = menuItems.findIndex(item => item.route === 'messages');
+        } else if (adminMatch) {
+            matchedRouteIndex = filteredMenuItems.findIndex(item => {
+                const adminRoute = window.location.href.split('admin/')[1];
+
+                return item.route.includes(adminRoute);
+            });
         }
 
         // If a match is found, set the active menu item
@@ -100,7 +108,7 @@ const Menu = () => {
             setField('activeMenuItem', matchedRouteIndex);
             localStorage.setItem('activeMenuItem', matchedRouteIndex.toString());
         }
-    }, [location, menuItems, setField]);
+    }, [location, menuItems, setField, filteredMenuItems]);
 
 
     useEffect(() => {
@@ -112,13 +120,13 @@ const Menu = () => {
             const filteredItems = [
                 {
                     Icon: Dashboard,
-                    route: 'home',
+                    route: 'admin/dashboard',
                     label: 'Dashboard',
                 },
                 {
                     Icon: Money,
-                    route: 'sign-in',
-                    label: 'Payouts',
+                    route: 'admin/payout-requests',
+                    label: 'Payout Requests',
                 },
                 {
                     ...menuItems.slice().pop()

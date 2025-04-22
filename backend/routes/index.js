@@ -25,7 +25,7 @@ router.use('/categories', categoryRoutes);
 router.use('/likes', authMiddleware, likeRoutes);
 router.use('/cart', authMiddleware, cartRoutes);
 router.use('/orders', authMiddleware, orderRoutes);
-router.use('/payments', authMiddleware, paymentRoutes);
+router.use('/payments', paymentRoutes);
 router.use('/wallet', authMiddleware, walletRoutes);
 router.use('/payouts', authMiddleware, payoutsRoutes);
 router.use('/banking', authMiddleware, bankingRoutes);

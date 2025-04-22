@@ -5,7 +5,7 @@ module.exports = {
     createPayout: async (req, res) => {
         try {
             const { user_id } = req.user;
-            
+
             const { name: bank_name, account_number, account_holder } = req.body;
 
             const user = await User.findByPk(user_id);
@@ -21,6 +21,7 @@ module.exports = {
             const emailData = {
                 seller_name: `${first_name} ${last_name}`,
                 amount: wallet.amount,
+                adminUrl: `${process.env.CLIENT_URL}/admin/dashboard`,
                 year: new Date().getFullYear(),
             }
 
@@ -37,8 +38,10 @@ module.exports = {
     },
     fetchPayouts: async (req, res) => {
         try {
-            const { user_id } = req.body;
-            const payout = await Payout.findAll({
+            const { user_id, roles } = req.user;
+
+            const isAdmin = roles.includes('1');
+            const payout = isAdmin ? await Payout.findAll({ order: [['payout_id', 'DESC']] }) : await Payout.findAll({
                 where: { user_id }
             });
 

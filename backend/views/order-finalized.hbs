@@ -55,7 +55,7 @@
         </div>
         <div class="content">
             <h2>Hello {{recipientName}},</h2>
-            <p>This transaction has been finalized. Your funds are now available in your Schoolthrifties wallet. Simply visit your account and <strong>request these funds be paid into your bank account</strong>, or you can use this towards any future purchases on <a href="https://classifieds.schoolthrifties.co.za">Schoolthrifties Classifieds</a>,  if you find this is not the case within the next 24 hours, please kindly let us know. </p>
+            <p>This transaction (Order #{{orderId}}) has been finalized. Your funds of R{{orderAmount}} are now available in your Schoolthrifties wallet. Simply visit your account and <strong>request these funds be paid into your bank account</strong> <a href={{payoutUrl}}>here</a>, or you can use this towards any future purchases on <a href="{{url}}">Schoolthrifties Classifieds</a>,  if you find this is not the case within the next 24 hours, please kindly let us know. </p>
 
             <p>If you have any questions, feel free to contact us at <a href="mailto:support@schoolthrifties.co.za">support@schoolthrifties.co.za</a> </p>
         </div>

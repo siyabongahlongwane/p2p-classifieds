@@ -34,6 +34,7 @@ const createUser = async (body) => {
 
     const emailData = {
         name: `${first_name} ${last_name}`,
+        settingsUrl: `${process.env.CLIENT_URL}/settings`,
         year: new Date().getFullYear(),
     }
 

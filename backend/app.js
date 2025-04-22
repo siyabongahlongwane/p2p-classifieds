@@ -17,10 +17,12 @@ const passport = require("./utils/passport");
 const app = express();
 const db = require('./db_models');
 
-const corsOptions = {
-  origin: ['http://classifieds.schoolthrifties.co.za', 'https://classifieds.schoolthrifties.co.za', 'http://localhost:5173'],
+const prodCorsOptions = {
+  origin: ['http://classifieds.schoolthrifties.co.za', 'https://classifieds.schoolthrifties.co.za', 'https://forty-mails-check.loca.lt'],
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'DELETE']
 }
+
+const corsOptions = env === 'production' ? prodCorsOptions : { origin: '*' }
 
 const PORT = process.env.PORT || 5001;
 
@@ -31,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // app.use(cors(corsOptions));
-app.use(cors({origin: '*'}));
+app.use(cors(corsOptions));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,

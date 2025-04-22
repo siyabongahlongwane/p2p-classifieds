@@ -265,6 +265,7 @@ module.exports = {
                 orderId: order_id,
                 updatedBy: updatedBy,
                 newStatus: status,
+                url: `${process.env.CLIENT_URL}/home`,
                 year: new Date().getFullYear()
             }
 
@@ -281,7 +282,7 @@ module.exports = {
         }
     },
     updateSellerOrderStatus: async (req, res) => {
-        const { order_id, shop_id } = req.body;
+        const { order_id, shop_id, seller_gain } = req.body;
         try {
             await Order.update({ status: 'Received By Buyer' }, { where: { order_id } });
 
@@ -292,6 +293,9 @@ module.exports = {
             const emailData = {
                 recipientName: dataValues.first_name,
                 orderId: order_id,
+                orderAmount: seller_gain,
+                url: `${process.env.CLIENT_URL}`,
+                payoutUrl: `${process.env.CLIENT_URL}/my-wallet`,
                 year: new Date().getFullYear()
             }
 
