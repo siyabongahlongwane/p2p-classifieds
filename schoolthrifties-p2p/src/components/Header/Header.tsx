@@ -54,28 +54,34 @@ const Header = () => {
     <Box className="header">
       <Box className="menu-search">
         {/* <Drawer /> */}
-        <SearchBar />
+        {!user?.roles.includes('1') && <SearchBar />
+        }
       </Box>
+
       <Box className="user-actions">
-        <Box className="icons">
-          <Badge
-            onClick={() => navigate("cart")}
-            count={loading ? 0 : cart.length}
-            Icon={ShoppingCartOutlined}
-          />
-          <Badge
-            onClick={() => navigate("likes")}
-            count={loading ? 0 : likes.length}
-            Icon={FavoriteBorderOutlined}
-          />
-          {user && (
+        {
+          !user?.roles.includes('1') && (
+            <Box className="icons">
+              <Badge
+                onClick={() => navigate("cart")}
+                count={loading ? 0 : cart.length}
+                Icon={ShoppingCartOutlined}
+              />
+              <Badge
+                onClick={() => navigate("likes")}
+                count={loading ? 0 : likes.length}
+                Icon={FavoriteBorderOutlined}
+              />
+              {/* {user && (
             <Badge
               onClick={() => navigate("cart")}
               count={loading ? 0 : cart.length}
               Icon={NotificationsOutlined}
             />
-          )}
-        </Box>
+          )} */}
+            </Box>
+          )
+        }
         {user ? (
           <Box className="profile-section">
             <Box className="avatar" bgcolor={"var(--blue)"}>
