@@ -3,6 +3,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import useToastStore from "../../stores/useToastStore";
 import useApi from "../../hooks/useApi";
+import { Switch } from '@mui/material';
 
 interface Payout {
     payout_id: number;
@@ -16,8 +17,10 @@ const PayoutsRequests = () => {
     const columns: GridColDef[] = [
         { field: "payout_id", headerName: "ID", width: 90 },
         {
-            field: "createdAt", headerName: "Date Created", width: 200, valueGetter: (params: string) =>
-                params.split('T')[0]
+            field: "createdAt",
+            headerName: "Date Created",
+            width: 150,
+            valueGetter: (params: string) => params.split('T')[0]
         },
         {
             field: "datePaid",
@@ -26,33 +29,66 @@ const PayoutsRequests = () => {
             valueGetter: (params: { row: Payout }) =>
                 params?.row?.datePaid || "Not Paid Yet",
         },
-        { field: "amount", headerName: "Amount (R)", width: 180 },
-        { field: "status", headerName: "Status", width: 180 },
+        {
+            field: "amount",
+            headerName: "Amount (R)",
+            width: 180
+        },
+        {
+            field: "status",
+            headerName: "Toggle to mark as paid",
+            width: 200,
+            renderCell: (params) => (
+                <Switch
+                    checked={params.row.status === "Paid"} // Check if the status is 'Paid'
+                    disabled={params.row.status === "Paid"}
+                    onChange={() => updatePayoutStatus(params.row.payout_id)} // Call update function
+                    color="primary"
+                />
+            )
+        },
     ];
     const { showToast } = useToastStore();
-    const { post } = useApi(`${import.meta.env.VITE_API_URL}`);
+    const { post, put } = useApi(`${import.meta.env.VITE_API_URL}`);
+
+    const fetchPayouts = async () => {
+        try {
+            const payouts = await post(`/payouts/fetch-payouts`, {});
+            if (!payouts) throw new Error('Error fetching payouts');
+
+            setPayouts(payouts.map((payout: Payout) => ({
+                id: payout.payout_id,
+                ...payout
+            })))
+
+        } catch (error) {
+            const _error = error instanceof Error ? error.message : error;
+            showToast(_error as string, 'error');
+            console.error('error', _error);
+            return;
+        }
+    }
 
     useEffect(() => {
-        const fetchPayouts = async () => {
-            try {
-                const payouts = await post(`/payouts/fetch-payouts`, {});
-                if (!payouts) throw new Error('Error fetching payouts');
-
-                setPayouts(payouts.map((payout: Payout) => ({
-                    id: payout.payout_id,
-                    ...payout
-                })))
-
-            } catch (error) {
-                const _error = error instanceof Error ? error.message : error;
-                showToast(_error as string, 'error');
-                console.error('error', _error);
-                return;
-            }
-        }
-
         fetchPayouts();
     }, []);
+
+    const updatePayoutStatus = async (payout_id: number) => {
+
+        try {
+            const updatedPayout = await put(`/payouts/update-payout`, { payout_id });
+            if (!updatedPayout) throw new Error('Error updating payout request');
+
+            fetchPayouts();
+            showToast('Payout updated successfully', 'success');
+
+        } catch (error) {
+            const _error = error instanceof Error ? error.message : error;
+            showToast(_error as string, 'error');
+            console.error('error', _error);
+            return;
+        }
+    };
 
     return (
 

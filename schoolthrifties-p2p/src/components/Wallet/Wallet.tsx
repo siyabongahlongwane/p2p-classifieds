@@ -87,7 +87,7 @@ const Wallet = () => {
               </Grid>
             </Grid>
 
-            <BankDetailsDialog setDialogOpen={setDialogOpen} handleRequestPayout={handleRequestPayout} dialogOpen={dialogOpen} user_id={user?.user_id} />
+            <BankDetailsDialog setDialogOpen={setDialogOpen} handleRequestPayout={handleRequestPayout} dialogOpen={dialogOpen} />
             <PastPayouts user_id={user?.user_id} fetchPayouts={fetchPayouts} />
           </>
       }

@@ -21,7 +21,7 @@ import useToastStore from "../../stores/useToastStore";
 import useApi from "../../hooks/useApi";
 
 
-const BankDetailsDialog = ({ setDialogOpen, handleRequestPayout, dialogOpen, user_id }: { setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>, handleRequestPayout: (formState: IBankingDetails) => Promise<void>, dialogOpen: boolean, user_id: number }) => {
+const BankDetailsDialog = ({ setDialogOpen, handleRequestPayout, dialogOpen }: { setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>, handleRequestPayout: (formState: IBankingDetails) => Promise<void>, dialogOpen: boolean }) => {
     const { register, handleSubmit, formState: { errors, }, reset, control } = useForm({
         defaultValues: {
             name: "",

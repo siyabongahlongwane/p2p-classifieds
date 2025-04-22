@@ -22,6 +22,7 @@ module.exports = {
                 seller_name: `${first_name} ${last_name}`,
                 amount: wallet.amount,
                 adminUrl: `${process.env.CLIENT_URL}/admin/dashboard`,
+                website_url: `${process.env.CLIENT_URL}/my-wallet`,
                 year: new Date().getFullYear(),
             }
 
@@ -56,18 +57,17 @@ module.exports = {
     },
     updatePayout: async (req, res) => {
         try {
-            const { user_id } = req.user;
-            const { amount } = req.body;
+            const { payout_id } = req.body;
 
             const payout = await Payout.findOne({
-                where: { user_id }
+                where: { payout_id }
             });
 
             if (!payout) {
                 return res.status(404).json({ err: 'Payout not found' });
             }
 
-            await payout.update({ amount });
+            await payout.update({ status: 'Paid', datePaid: new Date().toISOString() }, { where: { user_id: payout.user_id } });
 
             return res.status(200).json({ payload: payout });
         } catch (error) {

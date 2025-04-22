@@ -75,7 +75,7 @@ const SignIn = () => {
           navigate('/home');
         }
         else if (roles.includes(1)) {
-          navigate('/admin');
+          navigate('/admin/dashboard');
         }
         showToast('Logged in successfully', 'success');
       }, 1500);

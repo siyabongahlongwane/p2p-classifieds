@@ -85,7 +85,12 @@ const useAuth = () => {
             localStorage.setItem('token', result.token || '');
             localStorage.setItem('user', JSON.stringify(result.payload || ''));
             setTimeout(() => {
-                navigate('/home');
+                if (result.payload.roles.includes(3)) {
+                    navigate('/home');
+                }
+                else if (result.payload.roles.includes(1)) {
+                    navigate('/admin/dashboard');
+                }
                 showToast('Logged in successfully', 'success');
             }, 1500);
             setError('');
