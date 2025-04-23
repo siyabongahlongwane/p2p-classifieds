@@ -23,7 +23,6 @@ jobs:
 
       - name: 🔨 Build Project
         run: |
-          cd ./schoolthrifties-p2p  # Navigate to the correct directory
           npm install
           npm run build:prod
 
@@ -34,4 +33,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           # dangerous-clean-slate: true
-          local-dir: ./dist/
+          local-dir: ./schoolthrifties-p2p/dist/
