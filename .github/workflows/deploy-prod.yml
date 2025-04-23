@@ -5,7 +5,7 @@ on:
     types:
       - closed # This ensures the workflow is triggered when a PR is merged
 
-name: 🚀 Deploy website on merge
+name: 🚀 Deploy website to PROD on merge
 jobs:
   web-deploy:
     name: 🎉 Deploy
