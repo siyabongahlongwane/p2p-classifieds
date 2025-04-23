@@ -23,6 +23,7 @@ jobs:
 
       - name: 🔨 Build Project
         run: |
+          cd ./schoolthrifties-p2p  # Navigate to the correct directory
           npm install
           npm run build:prod
 
