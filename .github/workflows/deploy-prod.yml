@@ -34,4 +34,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           dangerous-clean-slate: true
-          local-dir: ./schoolthrifties-p2p/build
+          local-dir: ./schoolthrifties-p2p/dist/
