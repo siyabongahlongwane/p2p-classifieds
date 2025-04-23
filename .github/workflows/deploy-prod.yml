@@ -19,13 +19,13 @@ jobs:
       - name: Use Node.js 18
         uses: actions/setup-node@v2
         with:
-          node-version: "18"  # Correct placement for node version
+          node-version: "18"
 
       - name: 🔨 Build Project
         run: |
+          cd ./schoolthrifties-p2p  # Navigate to the correct directory
           npm install
-          npm run build
-          npm run test
+          npm run build:prod
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
