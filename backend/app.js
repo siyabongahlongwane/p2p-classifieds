@@ -18,7 +18,7 @@ const app = express();
 const db = require('./db_models');
 
 const prodCorsOptions = {
-  origin: ['http://classifieds.schoolthrifties.co.za', 'https://classifieds.schoolthrifties.co.za', 'https://forty-mails-check.loca.lt'],
+  origin: ['http://classifieds.schoolthrifties.co.za', 'https://classifieds.schoolthrifties.co.za'],
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'DELETE']
 }
 
