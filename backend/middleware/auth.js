@@ -20,7 +20,7 @@ const authMiddleware = (req, res, next) => {
 
 
 const authorizeParent = (req, res, next) => {
-    if (req.user?.roles?.includes('2')) {
+    if (req.user?.roles?.includes('3')) {
         next();
     } else {
         return res.status(403).json({ err: 'Unauthorized to perform action' });

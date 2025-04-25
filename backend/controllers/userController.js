@@ -14,7 +14,7 @@ module.exports = {
 
             const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
             delete dbUser.dataValues.password;
-            res.status(200).json({ payload: { ...dbUser.dataValues, shop_id: newShop.dataValues.shop_id }, token, msg: 'Registration Successful', success: true });
+            res.status(200).json({ payload: { ...dbUser.dataValues, shop_id: newShop.shop_id }, token, msg: 'Registration Successful', success: true });
 
         } catch (err) {
             console.error(err);
