@@ -25,7 +25,7 @@ const MyShop = () => {
   useEffect(() => {
     const fetchShop = async () => {
       try {
-        const [shop] = await get(`/shop/fetch-shops`);
+        const [shop] = await get(`/shop/fetch-own-shop`);
         if (!shop) throw new Error('Error fetching shop');
 
         setField("selectedShop", shop);

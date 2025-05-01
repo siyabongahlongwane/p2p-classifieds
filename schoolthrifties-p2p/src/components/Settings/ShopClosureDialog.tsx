@@ -28,7 +28,7 @@ export default function ShopClosureForm() {
     const { user } = useUserStore((state) => state);
     const onSubmit = async (data: ShopClosureFormData) => {
         try {
-            const updatedShopClosure = await put(`/shop/update-shop-closure/${user?.shop_id}`, { ...data });
+            const updatedShopClosure = await put(`/shop/update-shop-closure`, { ...data });
             if (!updatedShopClosure) throw new Error(updatedShopClosure?.err || 'Error updating Shop Closure');
 
             const { start_date, end_date, is_active, reason } = updatedShopClosure;
@@ -84,6 +84,13 @@ export default function ShopClosureForm() {
     const handleValidSubmit = (data: ShopClosureFormData) => {
         if (isActive && new Date(data.end_date) < new Date(data.start_date)) {
             showToast('End date cannot be before start date', 'error');
+            return;
+        }
+
+        data = { ...data, is_active: isActive };
+
+        if (isActive && Object.values(data).some(value => !value)) {
+            showToast('All fields are required', 'warning');
             return;
         }
 

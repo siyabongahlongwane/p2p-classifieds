@@ -66,7 +66,6 @@ const CartItem = ({ product_id, user, isButton = false, shop_id }: CartItemProps
             }
         } else {
             try {
-                console.log(cart, shop_id);
                 if (cart.some((product => product.shop_id != shop_id))) {
                     showToast('You can only add items from one shop at a time, clear cart to add new shop items', 'warning', 8000);
                     return;

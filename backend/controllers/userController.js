@@ -6,15 +6,14 @@ const { Op } = require('sequelize');
 
 module.exports = {
     create: async (req, res) => {
-        const { email } = req.body;
 
         try {
-            const { dbUser, newShop } = await createUser(req.body);
-            const { user_id, roles } = dbUser.dataValues;
+            const { dbUser } = await createUser(req.body);
+            const { email, user_id, roles, shop_id } = dbUser;
 
-            const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
-            delete dbUser.dataValues.password;
-            res.status(200).json({ payload: { ...dbUser.dataValues, shop_id: newShop.shop_id }, token, msg: 'Registration Successful', success: true });
+            const token = sign({ email, roles, user_id, shop_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
+            delete dbUser.password;
+            res.status(200).json({ payload: { ...dbUser, shop_id }, token, msg: 'Registration Successful', success: true });
 
         } catch (err) {
             console.error(err);
@@ -45,8 +44,8 @@ module.exports = {
             }
 
             if (user && await bcrypt.compare(password, user.password)) {
-                const { email, roles, user_id } = user;
-                const token = sign({ email, roles, user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
+                const { email, roles, user_id, shop_id } = user;
+                const token = sign({ email, roles, user_id, shop_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
                 delete user.password;
                 return res.status(200).json({ payload: user, token, success: true });
             }
@@ -68,7 +67,8 @@ module.exports = {
             });
 
             if (user && await bcrypt.compare(password, user.password)) {
-                const token = sign({ email: user.email, roles: user.roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
+                const { email, roles, user_id, shop_id } = user;
+                const token = sign({ email, roles, user_id, shop_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
                 return res.status(200).json({ payload: user, token, success: true });
             }
 
@@ -148,12 +148,12 @@ module.exports = {
 
                     try {
                         const { dbUser, newShop } = await createUser(body);
-                        const { user_id, roles } = dbUser.dataValues;
+                        const { email, roles, user_id, shop_id } = dbUser;
 
                         delete dbUser.password;
 
-                        const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
-                        const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...dbUser?.dataValues, shop_id: newShop.shop_id }, token }));
+                        const token = sign({ email, roles, user_id, shop_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
+                        const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...dbUser, shop_id: newShop.shop_id }, token }));
 
                         res.redirect(`${process.env.CLIENT_URL}/sign-in?hash=${encodeStr}`);
                     } catch (err) {
@@ -174,13 +174,13 @@ module.exports = {
 
                 console.log('USER EXISTS', userExists?.dataValues);
 
-                const { user_id, roles, shop_id } = userExists?.dataValues;
+                const { roles, user_id, shop_id } = userExists?.dataValues;
 
                 if (!userExists?.google_id) {
                     await updateUser(user_id, { google_id })
                 }
 
-                const token = sign({ user_id, email, roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
+                const token = sign({ email, roles, user_id, shop_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
                 const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...userExists?.dataValues, shop_id }, token }));
 
                 res.redirect(`${process.env.CLIENT_URL}/sign-in?hash=${encodeStr}`);
@@ -202,9 +202,9 @@ module.exports = {
                 res.status(404).send({ err: 'Email not registered' });
                 return;
             }
-            const { user_id } = user;
+            const { roles, user_id, shop_id } = user;
 
-            const token = sign({ user_id, email }, process.env.ACCESS_TOKEN_SECRET, {
+            const token = sign({ roles, user_id, shop_id, email }, process.env.ACCESS_TOKEN_SECRET, {
                 expiresIn: '5m'
             });
 

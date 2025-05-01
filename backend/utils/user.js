@@ -50,7 +50,7 @@ const createUser = async (body) => {
         is_active: false
     });
 
-    return { dbUser, newShop: newShop.dataValues };
+    return { dbUser: { ...dbUser.dataValues, shop_id: newShop.dataValues.shop_id } };
 }
 
 const findUser = async (query) => {

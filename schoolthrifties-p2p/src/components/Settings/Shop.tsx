@@ -24,10 +24,9 @@ const ShopSettings = () => {
     });
 
     const onSubmit = async (data: { name: string, link: string, location: string }) => {
-        console.log("Updated Data:", data);
 
         try {
-            const shopDetails = await put(`/shop/update-shop/${user.user_id}`, { ...data });
+            const shopDetails = await put(`/shop/update-shop`, { ...data });
             if (!shopDetails) throw new Error('Error updating Shop Details');
 
             const { name, link, location } = shopDetails;
@@ -44,7 +43,7 @@ const ShopSettings = () => {
 
     const fetchShopDetails = useCallback(async () => {
         try {
-            const [shopDetails] = await get(`/shop/fetch-shops`);
+            const [shopDetails] = await get(`/shop/fetch-own-shop`);
             if (!shopDetails) throw new Error('Error fetching Shop Details');
 
             const { name, link, location } = shopDetails;

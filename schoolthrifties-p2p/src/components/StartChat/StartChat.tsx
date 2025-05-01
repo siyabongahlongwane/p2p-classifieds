@@ -17,9 +17,8 @@ const StartChat = ({ text, user2_id }: ChatProps) => {
 
     const handleStartChat = async () => {
         try {
-            console.log(user1_id, user2_id)
             const { chat_id, users } = await startChat(user1_id, user2_id);
-            console.log('startChat', chat_id)
+
             if (!chat_id) throw new Error('Error starting chat');
 
             showToast('Chat started successfully', 'success');

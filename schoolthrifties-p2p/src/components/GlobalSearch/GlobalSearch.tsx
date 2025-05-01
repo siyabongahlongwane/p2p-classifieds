@@ -79,7 +79,7 @@ const GlobalSearch = () => {
     const filterOptions = {
         shoe_size: [...new Set(results.products.map((p: any) => p.shoe_size).filter(Boolean))],
         child_age: [...new Set(results.products.map((p: any) => p.child_age).filter(Boolean))],
-        gender: [...new Set(results.products.map((p: any) => p.gender).filter(Boolean))],
+        gender: [...new Set(results.products.map((p: any) => p?.gender).filter(Boolean))],
         category_id: [...new Set(results.products.map((p: any) => p.category_id).filter(Boolean))],
         condition: [...new Set(results.products.map((p: any) => p.condition).filter(Boolean))],
         province: [...new Set(results.products.map((p: any) => p.province).filter(Boolean))],

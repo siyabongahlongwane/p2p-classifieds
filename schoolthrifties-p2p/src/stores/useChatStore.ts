@@ -35,7 +35,6 @@ export const useChatStore = create<ChatStore>()(
 
         // Start a chat (creates or fetches an existing chat)
         startChat: async (user1_id, user2_id) => {
-            console.log('chat', user1_id, user2_id);
             return new Promise((resolve) => {
                 socket.emit('startChat', { user1_id, user2_id }, (chat: Chat) => {
                     set((state) => ({
@@ -59,7 +58,6 @@ export const useChatStore = create<ChatStore>()(
         addMessage: (message) =>
             set((state) => {
                 // ✅ Prevent duplicate messages
-                console.log({ message });
                 if (state.messages[message.chat_id]?.some((msg) => msg.message_id === message.message_id)) {
                     console.warn("⚠️ Duplicate message detected, ignoring:", message);
                     return state;

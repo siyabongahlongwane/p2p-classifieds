@@ -101,8 +101,6 @@ const OrderSummary = ({ user }: { user: User }) => {
                 customerDetails,
             });
 
-            console.log({ res });
-
             if (endpoint === '/orders/create-order' || endpoint.includes('walletPartial')) {
                 if (!res?.url) throw new Error(`Error creating order: ${res?.errorMessage || 'Could not open payment gateway'}`);
                 window.open(res.url, '_self');

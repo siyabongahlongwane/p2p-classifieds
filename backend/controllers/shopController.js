@@ -51,19 +51,53 @@ module.exports = {
             return res.status(400).json({ err });
         }
     },
-    updateShop: async (req, res) => {
+    fetchOwnShop: async (req, res) => {
         try {
             const { user_id } = req.user;
 
+            let shop = await Shop.findAll({
+                where: { user_id },
+                include: [
+                    {
+                        model: Product,
+                        as: 'products',
+                        // attributes: ['product_id']
+                        include: [
+                            {
+                                model: ProductPhoto,
+                                as: 'photos',
+                                // attributes: ['photo_id', 'photo_url'] // Select only required fields
+                            }
+                        ]
+                    },
+                    {
+                        model: ShopClosure,
+                        as: 'shop_closure',
+                    }
+                ]
+            })
+
+            if (!shop) return res.status(400).json({ err: 'No shop found' });
+
+            res.status(200).json({ payload: shop, success: true })
+        } catch (err) {
+            console.error(err)
+            return res.status(400).json({ err });
+        }
+    },
+    updateShop: async (req, res) => {
+        try {
+            const { shop_id } = req.user;
+
             const shop = await Shop.findOne({
-                where: { user_id }
+                where: { shop_id }
             });
 
             if (!shop) {
                 return res.status(404).json({ err: 'Shop not found' });
             }
 
-            await shop.update({ ...req.body }, { where: { user_id } });
+            await shop.update({ ...req.body }, { where: { shop_id } });
 
             return res.status(200).json({ payload: shop, success: true });
         } catch (error) {
@@ -89,7 +123,7 @@ module.exports = {
     },
     updateShopClosure: async (req, res) => {
         try {
-            const { shop_id } = req.params;
+            const { shop_id } = req.user;
 
             const shopClosure = await ShopClosure.findOne({
                 where: { shop_id }

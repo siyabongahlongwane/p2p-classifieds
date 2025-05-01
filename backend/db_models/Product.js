@@ -74,8 +74,9 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: null
         },
         gender: {
-            type: ENUM('Female', 'Male', 'Unisex'),
-            allowNull: false,
+            type: STRING(30),
+            allowNull: true,
+            defaultValue: 'Unisex'
         }
     });
 

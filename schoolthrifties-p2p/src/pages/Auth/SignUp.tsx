@@ -174,7 +174,7 @@ const SignUp = () => {
             alt="Google Sign In"
           />
           <Typography component={"small"} color="gray" fontWeight={300}>
-            Don't have an account?
+            Already an account?
             <Link to={"/sign-in"}>
               <Typography ml={1} component={"span"} color="#000">
                 Sign in

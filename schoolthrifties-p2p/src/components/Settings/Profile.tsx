@@ -27,7 +27,7 @@ const ProfileSettings = () => {
 
     const onSubmit = async (data: Partial<User>) => {
         try {
-            const updatedProfile = await put(`/auth/update-profile/${user?.user_id}`, { ...data });
+            const updatedProfile = await put(`/auth/update-profile`, { ...data });
             if (!updatedProfile) throw new Error('Error updating profile');
 
             setUser({ ...updatedProfile });

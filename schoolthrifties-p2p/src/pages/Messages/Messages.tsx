@@ -13,7 +13,7 @@ const ChatApp: React.FC = () => {
   return (
     <Stack display={'grid'} gridTemplateColumns={'1fr 3fr'} direction="row" spacing={2} >
       <Stack display={'flex'} flexDirection={'column'} gap={2}>
-        <SearchUsers />
+        {/* <SearchUsers /> */}
         <ChatList />
       </Stack>
 
@@ -23,7 +23,7 @@ const ChatApp: React.FC = () => {
             ?
             <Stack display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'} height={'100%'}>
               <ChatBubbleOutline fontSize="large" />
-              <Typography color="gray" fontSize={18} variant={'body1'}>Select a chat / user to start messaging</Typography>
+              <Typography color="gray" fontSize={16} variant={'body1'}>Open a product and click on 'Message Seller' to start a conversation.</Typography>
             </Stack>
             :
             <ActiveChat chat_id={activeChat} currentUserId={user?.user_id as number} />

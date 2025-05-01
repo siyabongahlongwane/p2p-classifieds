@@ -92,7 +92,7 @@ return (
             {renderSelect('Child Age', 'child_age', filterOptions.child_age)}
         </Grid>
         <Grid item xs={12}>
-            {renderSelect('Gender', 'gender', filterOptions.gender)}
+            {renderSelect('Gender', 'gender', filterOptions?.gender)}
         </Grid>
         <Grid item xs={12}>
             {renderSelect('Category', 'category_id', filterOptions.category_id)}

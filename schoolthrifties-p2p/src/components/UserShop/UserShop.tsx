@@ -36,17 +36,21 @@ const UserShop = () => {
 
     return (
         <>
-            {awayDate?.is_active && (
-                <Alert severity="warning" sx={{ mb: 2 }}>
-                    This shop is temporarily closed and not processing orders from <b>{awayDate.start_date}</b> to <b>{awayDate.end_date}</b>
-                    {awayDate.reason && <> Reason — {awayDate.reason}</>}
-                </Alert>
-            )}
 
             <Stack display={"grid"} height={"100%"} rowGap={2}>
-                {shop.map((shop: any, index: number) => (
-                    <ProductItemGroup shop={shop} key={index} />
-                ))}
+                {shop.map((shop: any, index: number) => {
+                    return <Stack spacing={2}>
+                        {
+                            awayDate?.is_active && new Date(awayDate.end_date) > new Date()
+                            &&
+                            <Alert severity="warning" sx={{ mb: 2 }}>
+                                This shop is temporarily closed and not processing orders from <b>{awayDate.start_date}</b> to <b>{awayDate.end_date}</b>
+                                {awayDate.reason && <> With Reason — <b>{awayDate.reason}</b></>}
+                            </Alert>
+                        }
+                        <ProductItemGroup shop={shop} key={index} />
+                    </Stack>
+                })}
             </Stack>
         </>
     );

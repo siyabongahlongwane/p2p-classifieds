@@ -1,19 +1,19 @@
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import { Controller, useForm } from "react-hook-form";
 import { useStore } from "../../stores/store";
-import { useCallback,  useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useApi from "../../hooks/useApi";
 import FilePickerWithPreview from "../../components/FilePickerWithPreview/FilePickerWithPreview";
 import useFirebaseStorage from "../../hooks/useFirebaseStorage";
 import { newProduct } from "../../typings/Product.type";
-import { NewProduct } from "../../typings";
+import { NewProduct, User } from "../../typings";
 import { useUserStore } from '../../stores/useUserStore';
 import { useNavigate, useParams } from "react-router-dom";
 import useToastStore from "../../stores/useToastStore";
 import SizeGuideDialog from "../../components/SizeGuideDialog/SizeGuideDialog";
 
 const AddProduct = () => {
-  const user = useUserStore((state) => state.user);
+  const user = useUserStore((state) => state.user as User);
 
   const { user_id, shop_id } = user;
   const { categories, provinces, productConditions, productPhotos, productStatuses, setField, ageRanges, shoeSizes } = useStore();
@@ -27,15 +27,25 @@ const AddProduct = () => {
   const navigate = useNavigate();
 
 
-  const { register, handleSubmit, control, formState } = form;
+  const { register, handleSubmit, control, formState, watch } = form;
   const { errors } = formState;
   const { showToast } = useToastStore();
   const [isShoeCategory, setisShoeCategory] = useState(false);
   const [open, setOpen] = useState(false);
+  const category = watch('category_id'); // 👈 this gets the current category_id field value
+
+  const [isFlexibleCategory, setIsFlexibleCategory] = useState(false);
+
+  useEffect(() => {
+    const categoryTitle = categories.find(cat => cat.category_id === +category)?.title;
+    const isFlexible = ['Other', 'Sports goods', 'Textbooks'].includes(categoryTitle as string)
+
+    setIsFlexibleCategory(isFlexible)
+  }, [category, categories, form]);
 
   const fetchProduct = useCallback(async () => {
     try {
-      const [product] = await get(`/product/fetch&product_id=${product_id}`);
+      const [product] = await get(`/product/fetch?product_id=${product_id}`);
       if (!product) throw new Error('Error fetching product');
 
       setisShoeCategory(categories.find(cat => cat.title === 'Shoes')?.category_id === product.category_id);
@@ -62,12 +72,15 @@ const AddProduct = () => {
 
 
 
+
   const onSubmit = async (formData: NewProduct) => {
+
     try {
       if (productPhotos.length > 0) {
         if (isEdit) return updateProduct(formData);
 
-        const urls = await uploadFiles(productPhotos, "classifieds");
+        const photosWithFiles = [...productPhotos].filter(photo => photo);
+        const urls = await uploadFiles([...photosWithFiles], "classifieds");
         console.log("Files uploaded successfully!");
 
         if (urls.length > 0) {
@@ -113,7 +126,7 @@ const AddProduct = () => {
         }), "classifieds");
       }
 
-      const imagesToUpload = [...productPhotos].filter(photo => !isFile(photo));
+      const imagesToUpload = [...productPhotos.filter(photo => photo)].filter(photo => !isFile(photo));
       urls.forEach((url, indx) => {
         imagesToUpload.splice(nonLinkIndices[indx], 0, { photo_url: url });
       });
@@ -142,9 +155,9 @@ const AddProduct = () => {
           )}
         </Stack>
       </Stack>
-      <Box component={'form'} noValidate onSubmit={handleSubmit(onSubmit)}>
+      <Box component='form' noValidate onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={.5}>
-         
+
           <Typography variant="body1">Product Info  {'===>'} <Button onClick={() => setOpen(true)}>View Size Guide</Button></Typography>
           <Typography fontSize={12} component={'small'} variant="body1" color="red">Please provide detailed information to improve your product's chances of selling.</Typography>
 
@@ -211,7 +224,6 @@ const AddProduct = () => {
 
                       const isShoe = selectedValue === categories.find(c => c.title === 'Shoes')?.category_id;
                       setisShoeCategory(isShoe);
-
                     }}
                   >
                     {
@@ -272,54 +284,63 @@ const AddProduct = () => {
             </FormControl>
 
           }
+          {
+            !isFlexibleCategory
+            &&
+            <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="category-label">Gender</InputLabel>
+                <Controller
+                  name="gender"
+                  control={control}
+                  rules={!isFlexibleCategory ? { required: 'Gender is required' } : {}}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      labelId="category-label"
+                      label="gender"
+                      error={!isFlexibleCategory && !!errors.gender}
+                    >
+                      {
+                        ['Female', 'Male', 'Unisex'].map((gender) => <MenuItem key={gender} value={gender}>{gender}</MenuItem>)
+                      }
+                    </Select>
+                  )}
+                />
+                {
+                  !isFlexibleCategory &&
+                  <FormHelperText>{errors.gender?.message}</FormHelperText>
+                }
+              </FormControl>
 
-          <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="category-label">Gender</InputLabel>
-              <Controller
-                name="gender"
-                control={control}
-                rules={{ required: 'Gender is required' }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    labelId="category-label"
-                    label="gender"
-                    error={!!errors.gender}
-                  >
-                    {
-                      ['Female', 'Male', 'Unisex'].map((gender) => <MenuItem key={gender} value={gender}>{gender}</MenuItem>)
-                    }
-                  </Select>
-                )}
-              />
-              <FormHelperText>{errors.gender?.message}</FormHelperText>
-            </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="category-label">Child Age</InputLabel>
+                <Controller
+                  name="child_age"
+                  control={control}
+                  rules={!isFlexibleCategory ? { required: 'Child Age is required' } : {}}
 
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="category-label">Child Age</InputLabel>
-              <Controller
-                name="child_age"
-                control={control}
-                rules={{ required: 'Child Age is required' }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    labelId="category-label"
-                    label="Age"
-                    error={!!errors.child_age}
-                    defaultValue='Any age'
-                  >
-                    {
-                      ageRanges.map((child_age) => <MenuItem key={child_age} value={child_age}>{child_age}</MenuItem>)
-                    }
-                  </Select>
-                )}
-              />
-              <FormHelperText>{errors.child_age?.message}</FormHelperText>
-            </FormControl>
-          </Box>
-
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      labelId="category-label"
+                      label="Age"
+                      error={!isFlexibleCategory && !!errors.child_age}
+                      defaultValue='Any age'
+                    >
+                      {
+                        ageRanges.map((child_age) => <MenuItem key={child_age} value={child_age}>{child_age}</MenuItem>)
+                      }
+                    </Select>
+                  )}
+                />
+                {
+                  !isFlexibleCategory &&
+                  <FormHelperText>{errors.child_age?.message}</FormHelperText>
+                }
+              </FormControl>
+            </Box>
+          }
           <Box display={'grid'} gridTemplateColumns={"1fr 1fr"} gap={2}>
             <FormControl fullWidth margin="normal">
               <InputLabel id="category-label">Province</InputLabel>

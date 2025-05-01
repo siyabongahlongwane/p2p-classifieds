@@ -1,10 +1,9 @@
-import { Box, Divider, Stack } from "@mui/material";
+import { Alert, Box, Divider, Stack } from "@mui/material";
 import ProductItemGroup from "../../components/Products/ProductItemGroup";
 import useApi from "../../hooks/useApi";
 import useToastStore from "../../stores/useToastStore";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { useStore } from "../../stores/store";
 import { useUserStore } from '../../stores/useUserStore';
 
 const Home = () => {
@@ -15,7 +14,6 @@ const Home = () => {
   const { showToast } = useToastStore();
   const [shops, setShops] = useState([]);
   const user = useUserStore((state) => state.user);
-const setUser = useUserStore((state) => state.setUser);
 
   useEffect(() => {
 
@@ -38,8 +36,16 @@ const setUser = useUserStore((state) => state.setUser);
 
   return (
     <Stack display={"grid"} height={"100%"} rowGap={2}>
-      {shops?.length ? shops.map((shop) => (
+      {shops?.length ? shops.map((shop: any) => (
         <Box key={Math.random()} >
+          {
+            shop?.shop_closure?.is_active && new Date(shop?.shop_closure.end_date) > new Date()
+            &&
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              This shop is temporarily closed and not processing orders from <b>{shop?.shop_closure.start_date}</b> to <b>{shop?.shop_closure.end_date}</b>
+              {shop?.shop_closure.reason && <> With Reason — <b>{shop?.shop_closure.reason}</b></>}
+            </Alert>
+          }
           <ProductItemGroup shop={shop} productsToShow={3} />
           <Divider />
         </Box>
