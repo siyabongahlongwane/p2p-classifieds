@@ -147,13 +147,14 @@ module.exports = {
                     }
 
                     try {
-                        const { dbUser, newShop } = await createUser(body);
+                        const { dbUser } = await createUser(body);
+                        console.log('DB USER', dbUser);
                         const { email, roles, user_id, shop_id } = dbUser;
 
                         delete dbUser.password;
 
                         const token = sign({ email, roles, user_id, shop_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2d' });
-                        const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...dbUser, shop_id: newShop.shop_id }, token }));
+                        const encodeStr = encodeURIComponent(JSON.stringify({ user: { ...dbUser, shop_id }, token }));
 
                         res.redirect(`${process.env.CLIENT_URL}/sign-in?hash=${encodeStr}`);
                     } catch (err) {
