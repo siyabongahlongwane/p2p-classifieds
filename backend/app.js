@@ -47,6 +47,74 @@ app.use(passport.initialize());
 (async () => {
   await db.sequelize.sync({ alter: true, force: false });
   console.log("Database synced successfully");
+  const categories = await db.models.Category.count();
+
+  if (!categories) {
+    await db.models.Category.bulkCreate([
+      {
+        category_id: 1,
+        title: 'School Items',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T14:10:26.000Z')
+      },
+      {
+        category_id: 2,
+        title: 'Civvies',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 3,
+        title: 'Tops',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 4,
+        title: 'Jerseys',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 5,
+        title: 'Jackets',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 6,
+        title: 'Bottoms',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 7,
+        title: 'Shoes',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 8,
+        title: 'Textbooks',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 9,
+        title: 'Sports goods',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      },
+      {
+        category_id: 10,
+        title: 'Other',
+        createdAt: new Date('2024-11-01T12:10:49.000Z'),
+        updatedAt: new Date('2024-11-01T12:10:49.000Z')
+      }
+    ]);
+  }
+
+  console.log('🌱 Categories seeded successfully!');
 })();
 
 // Classifieds Routes

@@ -10,7 +10,7 @@ const Sidenav = () => {
         </Box>
         <Menu />
         <Typography color='gray' fontSize={12} align="center" mt={'auto'} pb={2}>
-            <span className="version">v1.0.0</span>
+            <span className="version">v{import.meta.env.VITE_APP_VERSION}</span>
         </Typography>
     </Stack>
 
